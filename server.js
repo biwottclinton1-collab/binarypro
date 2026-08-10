@@ -15,11 +15,11 @@ app.post('/api/register', async (req, res) => {
   const hashed = await bcrypt.hash(password, 10);
 
   try {
-    await pool.query('INSERT INTO users(username, email, password) VALUES ($1,$2,$3)', [username, email, hashed]);
+    await pool.query('INSERT INTO users(name, email, password) VALUES ($1,$2,$3)', [username, email, hashed]);
     res.json({message: "Account created! You can now login"});
   } catch (err) {
     console.log(err);
-    res.json({message: "Email already exists or server error"});
+    res.json({message: "Email already exists"});
   }
 });
 
