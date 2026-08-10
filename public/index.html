@@ -5,23 +5,49 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>BinaryPro</title>
 <style>
-body{background:#050a14;color:#fff;margin:0;font-family:Arial}
-.topbar{display:flex;justify-content:space-between;padding:10px;background:#0a1120}
-.logo{font-weight:800;font-size:18px}.logo span{color:#3b82f6}
-.bal{background:#1a2332;padding:5px 10px;border-radius:5px}
-.btn{background:#2563eb;color:#fff;border:0;padding:8px 16px;border-radius:5px;cursor:pointer}
-#chart{width:100%;height:300px;background:#070b14;display:block}
-.digits{display:flex;justify-content:space-around;margin:5px 0}
-.digit{width:38px;height:38px;border-radius:50%;background:#111827;border:2px solid #334155;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#0a0e14;color:#fff}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 15px;background:#0f1421}
+.logo{font-size:20px;font-weight:800}.logo span{color:#3b82f6}
+.bal{background:#1a2332;padding:6px 12px;border-radius:6px;font-weight:700}
+.btn{padding:6px 14px;border:0;border-radius:6px;font-weight:700;cursor:pointer}
+.btn-blue{background:#2563eb;color:#fff}.btn-gray{background:#374151;color:#fff}
+.container{padding:10px}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.select{background:#1a2332;color:#fff;border:1px solid #334155;padding:6px 10px;border-radius:5px}
+.price{font-size:14px}
+#chartBox{position:relative;width:100%;height:350px;background:#070b14;border-radius:8px}
+#chart{width:100%;height:100%}
+.price-tag{position:absolute;right:10px;top:50px;background:#1a2332;padding:4px 8px;border-radius:4px;font-size:12px}
+.grid{position:absolute;left:0;right:0;height:1px;background:#1a2332}
+.digits{display:flex;justify-content:space-around;margin:8px 0}
+.digit{width:44px;height:44px;border-radius:50%;background:#111827;border:2px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.digit.active{border-color:#3b82f6;box-shadow:0 0 10px #3b82f6}
 .digit.win{border-color:#22c55e;background:#22c55e}
 .digit.loss{border-color:#ef4444;background:#ef4444}
-.trade{display:flex;gap:8px}.trade button{flex:1;padding:18px;border:0;border-radius:8px;font-weight:800;font-size:16px;color:#fff;cursor:pointer}
-.green{background:#16a34a}.red{background:#dc2626}
-.stake{text-align:center;background:#0a1120;padding:10px;margin-top:10px;border-radius:8px}
-.ai{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;margin:10px auto;display:block}
+.times{display:flex;justify-content:space-around;font-size:10px;color:#64748b;margin:4px 0 10px 0}
+.tabs{display:flex;background:#1a2332;border-radius:6px;padding:4px;margin:10px 0}
+.tab{flex:1;text-align:center;padding:10px;border-radius:4px;cursor:pointer;font-weight:700}
+.tab.active{background:#2563eb}
+.subtabs{display:flex;gap:8px;margin-bottom:10px}
+.subtab{flex:1;text-align:center;padding:10px;background:#1a2332;border-radius:6px;cursor:pointer;font-size:13px}
+.subtab.active{background:#2563eb}
+.trade{display:flex;gap:8px}
+.trade button{flex:1;padding:18px;border:0;border-radius:8px;color:#fff;font-weight:800;font-size:16px;cursor:pointer}
+.trade button small{display:block;font-weight:400;font-size:11px;margin-top:4px}
+.green{background:#16a34a}.red{background:#dc2626}.blue{background:#2563eb}.purple{background:#9333ea}
+.stake{background:#0a1120;padding:12px;border-radius:8px;margin-top:10px}
+.stake-head{text-align:center;font-size:12px;color:#94a3b8;margin-bottom:8px}
+.stake-ctrl{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.stake-btn{width:35px;height:35px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:5px;font-size:18px;cursor:pointer}
+.stake-amounts{display:flex;gap:5px}
+.stake-amounts button{flex:1;padding:8px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:5px;cursor:pointer}
+.stake-amounts button.active{background:#2563eb;border-color:#2563eb}
+.payout{text-align:center;margin:8px 0;color:#94a3b8}
+.ai-btn{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;font-weight:800;font-size:18px;margin:10px auto;display:block;box-shadow:0 0 20px #3b82f6;cursor:pointer}
 .auth{text-align:center;padding-top:100px}
-.auth input{width:300px;padding:12px;margin:8px;background:#1a2332;border:1px solid #334155;color:#fff}
-#dashboard{display:none}
+.auth input{width:320px;padding:12px;margin:8px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:6px}
+#dashboard{display:none}.hidden{display:none}
 </style>
 </head>
 <body>
@@ -30,79 +56,137 @@ body{background:#050a14;color:#fff;margin:0;font-family:Arial}
 <h1 class="logo">Binary<span>Pro</span></h1>
 <input id="remail" placeholder="Email"><br>
 <input id="rpass" type="password" placeholder="Password"><br>
-<button class="btn" onclick="reg()">Register</button>
-<button class="btn" onclick="log()">Login</button>
+<button class="btn btn-blue" onclick="reg()">Register</button>
+<button class="btn btn-blue" onclick="log()">Login</button>
 <div id="msg"></div>
 </div>
 
 <div id="dashboard">
 <div class="topbar">
 <div class="logo">Binary<span>Pro</span></div>
-<div><span class="bal">Real $<span id="balance">8000.00</span></span> <button class="btn">Deposit</button> <button class="btn" onclick="logout()">Logout</button></div>
+<div style="display:flex;gap:8px">
+<span class="bal">Real $<span id="balance">8000.00</span></span>
+<button class="btn btn-blue">Deposit</button>
+<button class="btn btn-gray" onclick="logout()">Logout</button>
+</div>
 </div>
 
-<div style="padding:10px">
-<select style="background:#1a2332;color:#fff;padding:5px"><option>Volatility 10 (1s) Index</option></select>
-<span style="float:right"><span id="cprice">9599.71</span> <span style="color:red">-47.77</span></span>
+<div class="container">
+<div class="head">
+<select class="select"><option>Volatility 10 (1s) Index</option></select>
+<div class="price"><span id="cprice">9599.71</span> <span style="color:#ef4444">-47.77 (0.50%)</span></div>
+</div>
 
+<div id="chartBox">
 <canvas id="chart"></canvas>
+<div class="price-tag" id="ptag">9599.71</div>
+<div class="grid" style="top:25%"></div>
+<div class="grid" style="top:50%"></div>
+<div class="grid" style="top:75%"></div>
+</div>
 
 <div class="digits" id="digits"></div>
-<div style="display:flex;justify-content:space-between;font-size:10px;color:#64748b"><span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span></div>
+<div class="times"><span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span><span>03:15:19</span></div>
 
-<div class="trade">
+<div class="tabs"><div class="tab active">AUTO</div><div class="tab">MANUAL</div></div>
+
+<div class="subtabs">
+<div class="subtab active" onclick="showTab('eo')">Even / Odd</div>
+<div class="subtab" onclick="showTab('md')">Match / Differ</div>
+<div class="subtab" onclick="showTab('ou')">Over / Under</div>
+</div>
+
+<div id="eo" class="trade">
 <button class="green" onclick="trade('EVEN')">Even<br><small id="evenP">19.52 USD 95.22%</small></button>
 <button class="red" onclick="trade('ODD')">Odd<br><small id="oddP">19.52 USD 95.22%</small></button>
 </div>
 
-<div class="stake">
-STAKE: $<span id="stake">10</span><br>
-<button onclick="s(-1)">-</button><button onclick="s(1)">+</button><br>
-<button onclick="setS(1)">$1</button><button onclick="setS(5)">$5</button><button onclick="setS(10)">$10</button><button onclick="setS(25)">$25</button><button onclick="setS(50)">$50</button><button onclick="setS(100)">$100</button>
-<div>Payout: $<span id="payout">19.52</span></div>
-<button class="ai">AI</button>
+<div id="md" class="trade hidden">
+<button class="blue" onclick="trade('MATCH')">Match<br><small>19.52 USD 95.22%</small></button>
+<button class="purple" onclick="trade('DIFFER')">Differ<br><small>19.52 USD 95.22%</small></button>
 </div>
-<div id="tmsg"></div>
+
+<div id="ou" class="trade hidden">
+<button class="blue" onclick="trade('OVER')">Over<br><small id="overP">19.52 USD 95.22%</small></button>
+<button class="purple" onclick="trade('UNDER')">Under<br><small id="underP">19.52 USD 95.22%</small></button>
+</div>
+
+<div class="stake">
+<div class="stake-head">STAKE AMOUNT</div>
+<div class="stake-ctrl">
+<button class="stake-btn" onclick="s(-1)">-</button>
+<b>$<span id="stake">10</span></b>
+<button class="stake-btn" onclick="s(1)">+</button>
+</div>
+<div class="stake-amounts">
+<button onclick="setS(1)">$1</button><button onclick="setS(5)">$5</button>
+<button onclick="setS(10)" class="active" id="s10">$10</button>
+<button onclick="setS(25)">$25</button><button onclick="setS(50)">$50</button><button onclick="setS(100)">$100</button>
+</div>
+<div class="payout">Payout: $<span id="payout">19.52</span></div>
+<button class="ai-btn">AI</button>
+</div>
+<div id="tmsg" style="text-align:center;margin-top:10px"></div>
 </div>
 </div>
 
 <script>
-let bal=8000,stake=10,token=localStorage.t,tradeType=null;
+let bal=8000,stake=10,token=localStorage.t,tradeType=null,lastDigit=-1,prevY=150;
 const pct=[10.8,10.2,10.2,9,10.6,9.6,9.2,11.6,9.8,9];
 
 if(token){auth.style.display='none';dashboard.style.display='block';me();}
+
+function showTab(tab){document.querySelectorAll('.subtab').forEach(s=>s.classList.remove('active'));event.target.classList.add('active');document.querySelectorAll('.trade').forEach(t=>t.classList.add('hidden'));document.getElementById(tab).classList.remove('hidden');}
 
 async function reg(){let r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'boss',email:remail.value,password:rpass.value})});msg.innerText=(await r.json()).message;}
 async function log(){let r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:remail.value,password:rpass.value})});let d=await r.json();if(d.token){localStorage.t=d.token;location.reload();}else{msg.innerText=d.message;}}
 async function me(){let r=await fetch('/api/me',{headers:{'Authorization':'Bearer '+token}});let u=await r.json();bal=parseFloat(u.balance);balance.innerText=bal.toFixed(2);draw();}
 function logout(){localStorage.removeItem('t');location.reload();}
-function setS(x){stake=x;update();}
+function setS(x){stake=x;document.querySelectorAll('.stake-amounts button').forEach(b=>b.classList.remove('active'));document.getElementById('s'+x).classList.add('active');update();}
 function s(x){stake+=x;if(stake<1)stake=1;update();}
-function update(){stake.innerText=stake;payout.innerText=(stake*1.952).toFixed(2);evenP.innerText=(stake*1.952).toFixed(2)+' USD 95.22%';oddP.innerText=(stake*1.952).toFixed(2)+' USD 95.22%';}
-async function trade(t){if(stake>bal){tmsg.innerText='No money';return;}bal-=stake;tradeType=t;tmsg.innerText='Waiting for digit...';}
+function update(){stake.innerText=stake;payout.innerText=(stake*1.952).toFixed(2);['evenP','oddP','overP','underP'].forEach(id=>document.getElementById(id).innerText=(stake*1.952).toFixed(2)+' USD 95.22%');}
+async function trade(t){if(stake>bal){tmsg.innerText='Insufficient balance';tmsg.style.color='red';return;}bal-=stake;tradeType=t;tmsg.innerText='Trade placed: '+t;tmsg.style.color='#60a5fa';}
 
 function draw(){
-const c=document.getElementById('chart'),ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=300;
-digits.innerHTML='';for(let i=0;i<10;i++)digits.innerHTML+=`<div class="digit" id="d${i}">${i}<div style="font-size:7px">${pct[i]}%</div></div>`;
-let data=Array(500).fill(150),last=-1;
+const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=350;
+digits.innerHTML='';for(let i=0;i<10;i++)digits.innerHTML+=`<div class="digit" id="d${i}">${i}<div style="font-size:8px">${pct[i]}%</div></div>`;
+let data=Array(400).fill(175);
+
 setInterval(()=>{
-ctx.clearRect(0,0,c.width,c.height);ctx.strokeStyle='#fff';ctx.beginPath();
-for(let i=0;i<data.length;i++)i?ctx.lineTo(i*2,data[i]):ctx.moveTo(i*2,data[i]);ctx.stroke();
-data.shift();let y=data[data.length-1]+(Math.random()-0.5)*12;y=Math.max(50,Math.min(250,y));data.push(y);
-let digit=Math.floor((y-50)/20);
-if(digit!=last && digit>=0 && digit<10){
-document.querySelectorAll('.digit').forEach(d=>d.className='digit');
+ctx.clearRect(0,0,c.width,c.height);
+ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();
+for(let i=0;i<data.length;i++)i?ctx.lineTo(i*2.5,data[i]):ctx.moveTo(i*2.5,data[i]);ctx.stroke();
+
+data.shift();
+let y=prevY+(Math.random()-0.5)*18;
+y=Math.max(30,Math.min(320,y));
+data.push(y);prevY=y;
+
+let digit=Math.floor((y-30)/29);
+if(digit!=lastDigit && digit>=0 && digit<10){
+document.querySelectorAll('.digit').forEach(d=>d.classList.remove('active','win','loss'));
+document.getElementById('d'+digit).classList.add('active');
+
 if(tradeType){
-let win=(tradeType=='EVEN'&&digit%2==0)||(tradeType=='ODD'&&digit%2==1);
-if(win){bal+=stake*1.952;document.getElementById('d'+digit).classList.add('win');tmsg.innerText='WIN! '+digit;tmsg.style.color='lime';}
-else{document.getElementById('d'+digit).classList.add('loss');tmsg.innerText='LOSS! '+digit;tmsg.style.color='red';}
+let win=false;
+if(tradeType=='EVEN'&&digit%2==0)win=true;
+if(tradeType=='ODD'&&digit%2==1)win=true;
+if(tradeType=='OVER'&&digit>5)win=true;
+if(tradeType=='UNDER'&&digit<5)win=true;
+if(tradeType=='RISE'&&y>data[data.length-2])win=true;
+if(tradeType=='FALL'&&y<data[data.length-2])win=true;
+
+if(win){bal+=stake*1.952;document.getElementById('d'+digit).classList.add('win');tmsg.innerText='WIN! Digit '+digit;tmsg.style.color='#22c55e';}
+else{document.getElementById('d'+digit).classList.add('loss');tmsg.innerText='LOSS! Digit '+digit;tmsg.style.color='#ef4444';}
 fetch('/api/update-balance',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({newBalance:bal})});
 balance.innerText=bal.toFixed(2);tradeType=null;
-}else{document.getElementById('d'+digit).style.borderColor='#3b82f6';}
-last=digit;
 }
-cprice.innerText=(9500+Math.random()*200).toFixed(2);
-},200);
+lastDigit=digit;
+}
+
+let price=(9500+Math.random()*200).toFixed(2);
+cprice.innerText=price;ptag.innerText=price;ptag.style.top=(y-10)+'px';
+},150);
 }
 </script>
 </body>
