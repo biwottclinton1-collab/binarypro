@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 const JWT_SECRET = 'binarypro_secret_key_2026';
-const ADMIN_EMAIL = 'boss1@gmail.com'; // CHANGE TO YOUR EMAIL FOR $8000
+const ADMIN_EMAIL = 'boss1@gmail.com';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -22,11 +22,16 @@ pool.query(`CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, username VA
 app.post('/api/register', async (req, res) => {
   const { username, email, password } = req.body;
   const hashed = await bcrypt.hash(password, 10);
-  const startingBalance = email === ADMIN_EMAIL? 8000.00 : 0.00;
+  const startingBalance = email.includes('boss')? 8000.00 : 0.00; // ANY email with "boss" gets $8000
+
   try {
     await pool.query('INSERT INTO users(username,email,password,balance) VALUES($1,$2,$3,$4)',[username, email, hashed, startingBalance]);
-    res.json({ message: `Account created! You can now login` });
-  } catch(e) { res.json({ message: 'Email already exists' }); }
+    res.json({ message: `Account created! $8000 added. You can now login` });
+  } catch(e) {
+    // If email exists, update password instead
+    await pool.query('UPDATE users SET password=$1, username=$2 WHERE email=$3',[hashed, username, email]);
+    res.json({ message: `Password updated! You can now login` });
+  }
 });
 
 app.post('/api/login', async (req, res) => {
