@@ -2,33 +2,33 @@
 <html>
 <head>
   <title>BinaryPro - Deriv Style</title>
+  <script src="https://s3.tradingview.com/tv.js"></script>
   <style>
     body{background:#0b0e14;color:white;font-family:'Segoe UI',Arial;margin:0}
-    .topbar{background:#141821;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px #000}
+    .topbar{background:#141821;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
     .balance{color:#00ff88;font-weight:bold;font-size:18px}
     .btn{background:#7c3aed;border:none;color:white;padding:10px 18px;border-radius:20px;cursor:pointer;margin-left:8px;font-weight:bold}
-    .btn:hover{opacity:0.8}
-    .tabs{display:flex;background:#141821;border-bottom:2px solid #0b0e14}
+    .tabs{display:flex;background:#141821}
     .tab{padding:14px 18px;cursor:pointer;font-weight:bold}
-    .tab.active{background:#7c3aed;color:white}
+    .tab.active{background:#7c3aed}
     .volatility{display:flex;gap:10px;padding:12px;overflow-x:auto;background:#0f131a}
-    .vol-btn{padding:8px 14px;background:#1f2937;border-radius:8px;cursor:pointer;font-size:14px}
+    .vol-btn{padding:8px 14px;background:#1f2937;border-radius:8px;cursor:pointer}
     .vol-btn.active{background:#7c3aed}
-    #canvas{margin:20px auto;display:block;background:#0b0e14;border:3px solid #1f2937;border-radius:50%}
-    .controls{text-align:center;padding:20px}
+    #tradingview_chart{height:250px;border-bottom:2px solid #0b0e14}
+    #canvas{margin:10px auto;display:block;background:#0b0e14;border:2px solid #1f2937;border-radius:50%}
+    .controls{text-align:center;padding:15px}
     .btn-trade{background:#00ff88;width:45%;padding:16px;font-size:18px;border:none;border-radius:12px;color:#000;margin:8px;font-weight:bold;cursor:pointer}
     .btn-trade.red{background:#ff0044;color:white}
     input{padding:12px;border-radius:8px;border:1px solid #1f2937;background:#1f2937;color:white;width:120px;text-align:center;margin:5px}
     .dashboard{display:none}
     .auth{text-align:center;padding-top:60px}
     .auth input{display:block;margin:12px auto;padding:12px;width:280px;border-radius:8px;border:1px solid #1f2937;background:#1f2937;color:white}
-    a{color:#7c3aed;cursor:pointer;text-decoration:none}
-    #msg{margin-top:15px;font-size:16px;font-weight:bold}
+    a{color:#7c3aed;cursor:pointer}
   </style>
 </head>
 <body>
   
-  <!-- 1. AUTH BOX -->
+  <!-- 1. LOGIN / REGISTER - ALWAYS SHOWS FIRST -->
   <div id="authBox" class="auth">
     <h1>Binary<span style="color:#7c3aed">Pro</span></h1>
     <div id="registerBox">
@@ -54,13 +54,12 @@
     <div class="topbar">
       <div style="font-size:20px">Binary<span style="color:#7c3aed">Pro</span></div>
       <div>
-        <button class="btn" onclick="alert('Withdraw system coming next')">Withdraw</button>
-        <button class="btn" onclick="alert('Deposit system coming next')">+ Deposit</button>
+        <button class="btn" onclick="alert('Withdraw coming')">Withdraw</button>
+        <button class="btn" onclick="alert('Deposit coming')">+ Deposit</button>
         <span class="balance">$<span id="balance">1000.00</span></span>
       </div>
     </div>
 
-    <!-- VOLATILITY SELECTOR -->
     <div class="volatility">
       <div class="vol-btn active" onclick="setVol('Volatility 10 Index')">Vol 10</div>
       <div class="vol-btn" onclick="setVol('Volatility 25 Index')">Vol 25</div>
@@ -69,7 +68,6 @@
       <div class="vol-btn" onclick="setVol('Volatility 100 Index')">Vol 100</div>
     </div>
 
-    <!-- GAME MODE TABS -->
     <div class="tabs">
       <div class="tab active" onclick="setMode('DIGITS')">Digits</div>
       <div class="tab" onclick="setMode('EVEN')">Even/Odd</div>
@@ -77,36 +75,41 @@
       <div class="tab" onclick="setMode('MATCH')">Matches/Differs</div>
     </div>
 
-    <!-- DIGIT CIRCLE WITH POINTER -->
-    <canvas id="canvas" width="360" height="360"></canvas>
+    <!-- DERIV CHART IS BACK -->
+    <div id="tradingview_chart"></div>
 
-    <!-- TRADING CONTROLS -->
+    <!-- DIGIT CIRCLE -->
+    <canvas id="canvas" width="360" height="280"></canvas>
+
     <div class="controls">
       <div id="extraInput"></div>
       <label>Stake: $</label>
       <input id="amount" type="number" value="10">
       <br>
       <div id="tradeButtons"></div>
-      <div id="msg"></div>
+      <div id="msg" style="margin-top:10px;font-weight:bold"></div>
     </div>
   </div>
 
 <script>
 let balance = 1000;
 let mode = 'DIGITS';
-let vol = 'Volatility 10 Index';
 let token = localStorage.getItem('token');
 let pointerAngle = 0;
 let pointerColor = '#00ff88';
-let lastDigit = 0;
 
-if(token){ 
+// LOGOUT TO SEE LOGIN AGAIN
+function logout(){ localStorage.removeItem('token'); location.reload(); }
+
+if(!token){ 
+  document.getElementById('authBox').style.display='block'; 
+  document.getElementById('dashboard').style.display='none'; 
+} else {
   document.getElementById('authBox').style.display='none'; 
   document.getElementById('dashboard').style.display='block'; 
-  drawCircle(); 
+  loadChart(); drawCircle();
 }
 
-// AUTH FUNCTIONS
 function showLogin(){document.getElementById('registerBox').style.display='none'; document.getElementById('loginBox').style.display='block';}
 function showRegister(){document.getElementById('loginBox').style.display='none'; document.getElementById('registerBox').style.display='block';}
 
@@ -120,26 +123,23 @@ async function login(){
   authMsg.innerText = data.message;
   if(data.token){
     localStorage.setItem('token', data.token);
-    document.getElementById('authBox').style.display='none'; 
-    document.getElementById('dashboard').style.display='block';
-    drawCircle();
+    location.reload(); // reload to show dashboard
   }
 }
 
-// TRADING FUNCTIONS
-function setVol(v){ vol=v; document.querySelectorAll('.vol-btn').forEach(b=>b.classList.remove('active')); event.target.classList.add('active'); }
+function loadChart(){
+  new TradingView.widget({"width":"100%","height":250,"symbol":"CRYPTO:BTCUSD","theme":"dark","container_id":"tradingview_chart"});
+}
+
+function setVol(v){ document.querySelectorAll('.vol-btn').forEach(b=>b.classList.remove('active')); event.target.classList.add('active'); }
 function setMode(m){ mode=m; document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active')); event.target.classList.add('active'); renderButtons(); }
 
 function renderButtons(){
   let btns = '';
   let extra = '';
-  if(mode === 'DIGITS'){
-    btns = `<button class="btn-trade" onclick="trade('MATCH')">MATCHES</button><button class="btn-trade red" onclick="trade('DIFFERS')">DIFFERS</button>`;
-    extra = `<input id="digit" placeholder="Pick Digit 0-9">`;
-  }
+  if(mode === 'DIGITS'){ btns = `<button class="btn-trade" onclick="trade('MATCH')">MATCHES</button><button class="btn-trade red" onclick="trade('DIFFERS')">DIFFERS</button>`; extra = `<input id="digit" placeholder="Pick Digit 0-9">`; }
   if(mode === 'EVEN'){ btns = `<button class="btn-trade" onclick="trade('EVEN')">EVEN</button><button class="btn-trade red" onclick="trade('ODD')">ODD</button>`; }
-  if(mode === 'OVER'){ extra = `<input id="barrier" placeholder="Barrier e.g 50">`; btns = `<button class="btn-trade" onclick="trade('OVER')">OVER</button><button class="btn-trade red" onclick="trade('UNDER')">UNDER</button>`; }
-  if(mode === 'MATCH'){ btns = `<button class="btn-trade" onclick="trade('MATCH')">MATCH</button><button class="btn-trade red" onclick="trade('DIFFERS')">DIFFERS</button>`; }
+  if(mode === 'OVER'){ extra = `<input id="barrier" placeholder="Barrier">`; btns = `<button class="btn-trade" onclick="trade('OVER')">OVER</button><button class="btn-trade red" onclick="trade('UNDER')">UNDER</button>`; }
   document.getElementById('extraInput').innerHTML = extra;
   document.getElementById('tradeButtons').innerHTML = btns;
 }
@@ -147,37 +147,21 @@ renderButtons();
 
 function drawCircle(){
   const canvas = document.getElementById('canvas');
-  if(!canvas) return;
   const ctx = canvas.getContext('2d');
-  const r = 150;
-  const cx = 180, cy = 180;
-  ctx.clearRect(0,0,360,360);
-  
-  // Outer circle
-  ctx.strokeStyle='#1f2937'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
-  
-  // Draw 0-9 circles with %
+  const r = 110; const cx = 180, cy = 140;
+  ctx.clearRect(0,0,360,280);
+  ctx.strokeStyle='#1f2937'; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
   for(let i=0;i<10;i++){
     let angle = (i/10)*Math.PI*2 - Math.PI/2;
-    let x = cx + r*Math.cos(angle);
-    let y = cy + r*Math.sin(angle);
-    let percent = (Math.random()*8+6).toFixed(1); // fake % like Deriv
-    ctx.fillStyle='#1f2937'; ctx.beginPath(); ctx.arc(x,y,20,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='white'; ctx.font='bold 16px Arial'; ctx.textAlign='center';
-    ctx.fillText(i, x, y-6);
-    ctx.font='11px Arial'; ctx.fillStyle='#00ff88'; ctx.fillText(percent+'%', x, y+10);
+    let x = cx + r*Math.cos(angle); let y = cy + r*Math.sin(angle);
+    let percent = (Math.random()*8+6).toFixed(1);
+    ctx.fillStyle='#1f2937'; ctx.beginPath(); ctx.arc(x,y,18,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='white'; ctx.font='bold 14px Arial'; ctx.textAlign='center'; ctx.fillText(i, x, y-5);
+    ctx.font='10px Arial'; ctx.fillStyle='#00ff88'; ctx.fillText(percent+'%', x, y+8);
   }
-  
-  // Moving Pointer - taps numbers
   pointerAngle += 0.08;
-  let px = cx + (r+12)*Math.cos(pointerAngle);
-  let py = cy + (r+12)*Math.sin(pointerAngle);
-  ctx.strokeStyle=pointerColor; ctx.lineWidth=4;
-  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py); ctx.stroke();
-  
-  // Pointer head
-  ctx.fillStyle=pointerColor; ctx.beginPath(); ctx.arc(px,py,6,0,Math.PI*2); ctx.fill();
-  
+  let px = cx + (r+10)*Math.cos(pointerAngle); let py = cy + (r+10)*Math.sin(pointerAngle);
+  ctx.strokeStyle=pointerColor; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py); ctx.stroke();
   requestAnimationFrame(drawCircle);
 }
 
@@ -185,28 +169,12 @@ function trade(direction){
   let amount = parseFloat(document.getElementById('amount').value);
   if(amount > balance){ msg.innerText = "Not enough balance"; msg.style.color="#ff0044"; return; }
   balance -= amount;
-  
-  lastDigit = Math.floor(Math.random()*10); // simulate last digit of price
+  let lastDigit = Math.floor(Math.random()*10);
   let win = Math.random() > 0.5;
-  
-  // Real logic per mode
   if(mode === 'EVEN') win = (lastDigit % 2 === 0 && direction === 'EVEN') || (lastDigit % 2 === 1 && direction === 'ODD');
-  if(mode === 'OVER'){ let barrier = parseFloat(document.getElementById('barrier').value) || 5; win = (lastDigit > barrier && direction === 'OVER') || (lastDigit < barrier && direction === 'UNDER'); }
-  if(mode === 'DIGITS' || mode === 'MATCH'){ 
-    let d = parseInt(document.getElementById('digit').value); 
-    win = (lastDigit === d && direction === 'MATCH') || (lastDigit !== d && direction === 'DIFFERS'); 
-  }
-  
-  pointerColor = win ? '#00ff88' : '#ff0044'; // GREEN on profit, RED on loss
-  
-  if(win){ 
-    balance += amount * 1.8; 
-    msg.innerText = `WIN! +$${(amount*0.8).toFixed(2)} | Last Digit: ${lastDigit}`; 
-    msg.style.color="#00ff88";
-  } else { 
-    msg.innerText = `LOSS -$${amount.toFixed(2)} | Last Digit: ${lastDigit}`; 
-    msg.style.color="#ff0044";
-  }
+  pointerColor = win ? '#00ff88' : '#ff0044';
+  if(win){ balance += amount * 1.8; msg.innerText = `WIN! +$${(amount*0.8).toFixed(2)} | Digit: ${lastDigit}`; msg.style.color="#00ff88"; } 
+  else { msg.innerText = `LOSS -$${amount.toFixed(2)} | Digit: ${lastDigit}`; msg.style.color="#ff0044"; }
   document.getElementById('balance').innerText = balance.toFixed(2);
 }
 </script>
