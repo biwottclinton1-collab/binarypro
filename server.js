@@ -1,42 +1,48 @@
 const express = require('express');
-const { Pool } = require('pg');
+const pool = require('./db');
+const bcrypt = require('bcrypt');
 const cors = require('cors');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const path = require('path');
 
 const app = express();
-app.use(cors());
 app.use(express.json());
+app.use(cors());
+app.use(express.static('public')); // this shows our signup page
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
+// REGISTER API
+app.post('/api/register', async (req, res) => {
+  const { name, email, password } = req.body;
+  const hashed = await bcrypt.hash(password, 10);
 
-app.get('/', (req, res) => {
-  res.json({ message: "BinaryPro API is Running with Postgres!" });
-});
-
-app.post('/register', async (req, res) => {
   try {
-    const { email, password } = req.body;
-    if(!email ||!password) {
-      return res.status(400).json({ error: "Email and password required" });
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await pool.query(
-      'INSERT INTO users(email, password) VALUES($1, $2) RETURNING id',
-      [email, hashedPassword]
-    );
-    res.json({ message: "User registered", userId: result.rows[0].id });
+    await pool.query('INSERT INTO users(name, email, password) VALUES ($1,$2,$3)', [name, email, hashed]);
+    res.json({message: "Account created! You can now login"});
   } catch (err) {
-    if(err.code === '23505') {
-      return res.status(400).json({ error: "Email already exists" });
-    }
-    res.status(500).json({ error: err.message });
+    res.json({error: "Email already exists"});
   }
 });
 
+// LOGIN API
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const user = result.rows[0];
+
+    if(!user) return res.json({error: "User not found"});
+
+    const match = await bcrypt.compare(password, user.password);
+    if(!match) return res.json({error: "Wrong password"});
+
+    res.json({message: "Login success", user: {id:user.id, name:user.name, balance:user.balance}});
+  } catch (err) {
+    res.json({error: "Server error"});
+  }
+});
+
+// FIXED FOR RENDER
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
