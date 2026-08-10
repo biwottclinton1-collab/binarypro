@@ -3,47 +3,57 @@
 <head>
   <title>Binary Pro</title>
   <style>
-    body{background:#0a0a23;color:white;text-align:center;font-family:Arial}
-    input,button{padding:10px;margin:5px;border-radius:5px;border:none}
-    button{background:#00f5d4;color:#000;cursor:pointer}
+    body{background:#0a0a23;color:white;text-align:center;font-family:Arial;padding-top:50px}
+    input,button{padding:10px;margin:5px;border-radius:5px;border:none;width:250px}
+    button{background:#00f5d4;color:#000;cursor:pointer;font-weight:bold}
     #msg{color:#00ff88;margin-top:10px}
+    a{color:#00f5d4;cursor:pointer}
   </style>
 </head>
 <body>
   <h1>Binary Pro</h1>
   
-  <div id="register">
+  <div id="registerBox">
     <h2>Create Your Free Account</h2>
     <input id="regName" placeholder="Name"><br>
     <input id="regEmail" placeholder="Email"><br>
     <input id="regPass" type="password" placeholder="Password"><br>
     <button onclick="register()">Register</button>
-    <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+    <p>Already have an account? <a onclick="showLogin()">Login</a></p>
   </div>
 
-  <div id="login" style="display:none">
+  <div id="loginBox" style="display:none">
     <h2>Login to Your Account</h2>
     <input id="logEmail" placeholder="Email"><br>
     <input id="logPass" type="password" placeholder="Password"><br>
     <button onclick="login()">Login</button>
-    <p>Don't have account? <a href="#" onclick="showRegister()">Register</a></p>
+    <p>Don't have account? <a onclick="showRegister()">Register</a></p>
   </div>
 
   <div id="msg"></div>
 
 <script>
+function showLogin(){
+  document.getElementById('registerBox').style.display='none'; 
+  document.getElementById('loginBox').style.display='block'; 
+}
+function showRegister(){
+  document.getElementById('loginBox').style.display='none'; 
+  document.getElementById('registerBox').style.display='block'; 
+}
+
 async function register(){
   const res = await fetch('/api/register',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
-      username:regName.value,
-      email:regEmail.value,
-      password:regPass.value
+      username:document.getElementById('regName').value,
+      email:document.getElementById('regEmail').value,
+      password:document.getElementById('regPass').value
     })
   });
   const data = await res.json();
-  msg.innerText = data.message;
+  document.getElementById('msg').innerText = data.message;
 }
 
 async function login(){
@@ -51,21 +61,17 @@ async function login(){
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
-      email:logEmail.value,
-      password:logPass.value
+      email:document.getElementById('logEmail').value,
+      password:document.getElementById('logPass').value
     })
   });
   const data = await res.json();
-  msg.innerText = data.message;
+  document.getElementById('msg').innerText = data.message;
   if(data.token){
     localStorage.setItem('token', data.token);
-    msg.innerText = "Login successful! Redirecting to Trading...";
-    // NEXT: we will redirect to dashboard.html
+    document.getElementById('msg').innerText = "Login successful! Next: Trading Dashboard";
   }
 }
-
-function showLogin(){ register.style.display='none'; login.style.display='block'; }
-function showRegister(){ login.style.display='none'; register.style.display='block'; }
 </script>
 </body>
 </html>
