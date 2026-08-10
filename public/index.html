@@ -3,117 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BinaryPro - Binary Trading Platform</title>
+<title>BinaryPro</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
-body{background:#080c14;color:#fff;overflow:hidden}
-
-.topbar{background:#111827;height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid #1f2937}
-.top-left{display:flex;gap:25px;align-items:center}
-.logo{font-size:18px;font-weight:700}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial,sans-serif}
+body{background:#070b14;color:#fff;overflow:hidden}
+.topbar{height:52px;background:#0f172a;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid #1e293b}
+.t-left{display:flex;align-items:center;gap:24px}
+.logo{font-size:19px;font-weight:800}
 .logo span{color:#3b82f6}
-.nav-item{display:flex;align-items:center;gap:6px;font-size:14px;color:#9ca3af;cursor:pointer}
-.nav-item:hover{color:#fff}
-.top-right{display:flex;gap:12px;align-items:center}
-.balance{background:#1f2937;padding:6px 14px;border-radius:6px;font-size:14px}
-.btn{background:#2563eb;color:#fff;border:none;padding:8px 18px;border-radius:6px;font-weight:600;cursor:pointer}
-
-.main{display:flex;height:calc(100vh - 50px)}
-.left{width:270px;background:#0f172a;border-right:1px solid #1f2937;padding:12px}
-.tabs{display:flex;border-bottom:1px solid #1f2937;margin-bottom:15px}
-.tab{flex:1;text-align:center;padding:10px;font-size:13px;color:#64748b;cursor:pointer}
-.tab.active{color:#3b82f6;border-bottom:2px solid #3b82f6}
-.no-trades{text-align:center;padding-top:70px;color:#64748b}
-.no-trades.icon{font-size:36px;margin-bottom:8px}
-
-.center{flex:1;padding:12px}
-.vol-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.vol-select{background:#1f2937;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:14px}
+.nav{display:flex;align-items:center;gap:7px;font-size:13.5px;color:#94a3b8}
+.t-right{display:flex;align-items:center;gap:12px}
+.bal{background:#1e293b;padding:7px 14px;border-radius:7px;font-size:14px}
+.btn{background:#2563eb;color:#fff;border:0;padding:8px 18px;border-radius:7px;font-weight:700;cursor:pointer}
+.main{display:flex;height:calc(100vh - 52px)}
+.left{width:275px;background:#0b1220;border-right:1px solid #1e293b;padding:14px}
+.tabs{display:flex;border-bottom:1px solid #1e293b}
+.tab{flex:1;text-align:center;padding:11px 0;font-size:13px;color:#64748b}
+.tab.active{color:#60a5fa;border-bottom:2px solid #60a5fa}
+.no-trade{text-align:center;padding-top:80px;color:#64748b}
+.no-trade.icon{font-size:38px;margin-bottom:10px}
+.center{flex:1;display:flex;flex-direction:column;padding:14px}
+.vol{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.vol select{background:#1e293b;color:#fff;border:0;padding:9px 14px;border-radius:7px;font-size:14px}
 .vol-price{font-size:14px}
-.vol-price.red{color:#ef4444}
-#chart{width:100%;height:430px;background:#050a14;border-radius:8px}
-
-.digits{display:flex;justify-content:center;gap:12px;margin-top:14px}
-.digit{width:50px;height:50px;border-radius:50%;background:#1e293b;border:2px solid #334155;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700}
-.digit.pct{font-size:10px;color:#10b981;margin-top:2px}
-.digit.active{border-color:#3b82f6;box-shadow:0 0 12px #3b82f6}
-.digit.win{border-color:#10b981;background:#052e1a}
-.digit.loss{border-color:#ef4444;background:#2e0505}
-.times{display:flex;justify-content:center;gap:40px;margin-top:6px;font-size:11px;color:#64748b}
-
-.right{width:330px;background:#0f172a;border-left:1px solid #1f2937;padding:14px;overflow-y:auto}
-.toggle{display:flex;background:#1e293b;border-radius:8px;margin-bottom:12px}
-.toggle.btn{flex:1;background:transparent;border:none;color:#94a3b8;padding:10px;border-radius:8px;font-weight:600;cursor:pointer}
-.toggle.btn.active{background:#2563eb;color:#fff}
-
-.trade-types{display:flex;gap:6px;margin-bottom:12px}
-.t-type{flex:1;background:#1e293b;border:none;color:#94a3b8;padding:8px;border-radius:6px;font-size:12px;cursor:pointer}
-.t-type.active{background:#2563eb;color:#fff}
-
-.stake{background:#1e293b;padding:12px;border-radius:8px;margin-bottom:10px}
+.vol-price.red{color:#f87171}
+#chart{flex:1;background:#050811;border-radius:8px}
+.digits-wrap{padding:10px 0}
+.digits{display:flex;justify-content:center;gap:11px;margin-bottom:6px}
+.digit{width:55px;height:55px;border-radius:50%;background:#1e293b;border:2px solid #334155;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:16px}
+.digit.p{font-size:10px;color:#22c55e}
+.digit.active{border-color:#60a5fa;box-shadow:0 0 14px #60a5fa}
+.digit.win{border-color:#22c55e;background:#052e16}
+.digit.loss{border-color:#ef4444;background:#2f0a0a}
+.times{display:flex;justify-content:center;gap:38px;font-size:11px;color:#64748b}
+.trade-action-bar{display:flex;gap:10px;justify-content:center;margin-top:12px;min-height:60px}
+.trade-action-bar button{padding:14px 25px;border:0;border-radius:9px;font-weight:800;font-size:15px;cursor:pointer;color:#fff;min-width:160px}
+.btn-even{background:#22c55e}
+.btn-odd{background:#ef4444}
+.right{width:335px;background:#0b1220;border-left:1px solid #1e293b;padding:14px}
+.mode{display:flex;background:#1e293b;border-radius:9px;margin-bottom:12px}
+.mode button{flex:1;background:0;border:0;color:#94a3b8;padding:11px;border-radius:9px;font-weight:700;cursor:pointer}
+.mode button.on{background:#2563eb;color:#fff}
+.types{display:flex;gap:7px;margin-bottom:12px}
+.types button{flex:1;background:#1e293b;border:0;color:#94a3b8;padding:9px;border-radius:7px;font-size:12.5px;cursor:pointer}
+.types button.on{background:#2563eb;color:#fff}
+.stake{background:#1e293b;padding:13px;border-radius:8px;margin-bottom:10px}
 .stake label{font-size:12px;color:#94a3b8}
-.stake-row{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
-.stake-row button{width:32px;height:32px;background:#334155;border:none;color:#fff;border-radius:6px;font-size:18px;cursor:pointer}
-.stake-row b{font-size:20px}
-.presets{display:flex;gap:6px;margin-top:8px}
-.preset{flex:1;background:#334155;border:none;color:#fff;padding:6px;border-radius:4px;font-size:12px;cursor:pointer}
-.preset.active{background:#2563eb}
-
-.payout{display:flex;justify-content:space-between;font-size:13px;margin:10px 0}
-
-.tp-sl{display:flex;gap:8px;margin-bottom:12px}
-.tp,.sl{flex:1;padding:10px;border-radius:6px;font-size:12px}
-.tp{background:#052e1a}
-.sl{background:#2e0505}
-
-.place-trade{display:flex;flex-direction:column;gap:8px}
-.place-trade button{padding:14px;border:none;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;color:#fff}
-.even{background:#10b981}
-.odd{background:#ef4444}
-.place-trade small{font-weight:400;font-size:12px;display:block;margin-top:3px}
-
-.auth{padding:100px 20px;text-align:center}
-.auth input{width:360px;padding:14px;margin:10px;border-radius:8px;border:1px solid #334155;background:#1e293b;color:#fff}
-.btn-auth{padding:14px 50px;background:#2563eb;border:none;color:#fff;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer}
+.s-row{display:flex;align-items:center;justify-content:space-between;margin-top:7px}
+.s-row button{width:34px;height:34px;background:#334155;border:0;color:#fff;border-radius:7px;font-size:20px;cursor:pointer}
+.s-row b{font-size:21px}
+.presets{display:flex;gap:6px;margin-top:9px}
+.presets button{flex:1;background:#334155;border:0;color:#fff;padding:7px;border-radius:5px;font-size:12.5px;cursor:pointer}
+.presets button.on{background:#2563eb}
+.payout{display:flex;justify-content:space-between;font-size:13.5px;margin:11px 0}
+.tp-sl{display:flex;gap:9px;margin-bottom:12px}
+.tp,.sl{flex:1;padding:11px;border-radius:7px;font-size:12.5px}
+.tp{background:#052e16}
+.sl{background:#2f0a0a}
+.input-box{width:100%;padding:10px;margin-bottom:10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#fff}
+.auth{padding:110px 20px;text-align:center}
+.auth input{width:370px;padding:15px;margin:11px;border-radius:9px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:15px}
+.btn-auth{padding:15px 55px;background:#2563eb;border:0;color:#fff;border-radius:9px;font-size:16.5px;font-weight:800;cursor:pointer}
 .dashboard{display:none}
+#msg{color:#22c55e;text-align:center;margin-top:8px;font-weight:700}
 </style>
 </head>
 <body>
 
-<!-- AUTH -->
 <div id="authBox" class="auth">
   <h1 class="logo">Binary<span>Pro</span></h1>
   <div id="registerBox">
-    <h2>Create Account</h2>
+    <h2 style="margin-bottom:15px">Create Account</h2>
     <input id="regName" placeholder="Full Name"><br>
     <input id="regEmail" placeholder="Email"><br>
     <input id="regPass" type="password" placeholder="Password"><br>
     <button class="btn-auth" onclick="register()">Register</button>
-    <p style="margin-top:15px">Have account? <a onclick="showLogin()" style="color:#3b82f6;cursor:pointer">Login</a></p>
+    <p style="margin-top:16px">Have account? <a onclick="showLogin()" style="color:#3b82f6;cursor:pointer">Login</a></p>
   </div>
   <div id="loginBox" style="display:none">
-    <h2>Login</h2>
+    <h2 style="margin-bottom:15px">Login</h2>
     <input id="logEmail" placeholder="Email"><br>
     <input id="logPass" type="password" placeholder="Password"><br>
     <button class="btn-auth" onclick="login()">Login</button>
-    <p style="margin-top:15px">No account? <a onclick="showRegister()" style="color:#3b82f6;cursor:pointer">Register</a></p>
+    <p style="margin-top:16px">No account? <a onclick="showRegister()" style="color:#3b82f6;cursor:pointer">Register</a></p>
   </div>
-  <div id="authMsg" style="color:#10b981;margin-top:10px"></div>
+  <div id="authMsg" style="color:#22c55e;margin-top:12px"></div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="dashboard">
   <div class="topbar">
-    <div class="top-left">
+    <div class="t-left">
       <div class="logo">Binary<span>Pro</span></div>
-      <div class="nav-item">🏠 Trader's Hub</div>
-      <div class="nav-item">➕ Deposit</div>
-      <div class="nav-item">➖ Withdraw</div>
-      <div class="nav-item">🕒 History</div>
-      <div class="nav-item">💬 Chat</div>
+      <div class="nav">🏠 Trader's Hub</div>
+      <div class="nav">➕ Deposit</div>
+      <div class="nav">➖ Withdraw</div>
+      <div class="nav">🕒 History</div>
+      <div class="nav">💬 Chat</div>
     </div>
-    <div class="top-right">
-      <div class="balance">$<span id="balance">8000.00</span></div>
+    <div class="t-right">
+      <div class="bal">$<span id="balance">8000.00</span></div>
       <button class="btn">Deposit</button>
       <button class="btn" onclick="logout()" style="background:#334155">Logout</button>
     </div>
@@ -126,7 +114,7 @@ body{background:#080c14;color:#fff;overflow:hidden}
         <div class="tab">Closed (0)</div>
         <div class="tab">Transactions</div>
       </div>
-      <div class="no-trades">
+      <div class="no-trade">
         <div class="icon">⭕</div>
         <h3>No open positions</h3>
         <p>Your active trades will appear here</p>
@@ -134,109 +122,156 @@ body{background:#080c14;color:#fff;overflow:hidden}
     </div>
 
     <div class="center">
-      <div class="vol-row">
-        <select class="vol-select">
+      <div class="vol">
+        <select>
           <option>Volatility 10 (1s) Index</option>
-          <option>Volatility 25 (1s) Index</option>
-          <option>Volatility 50 (1s) Index</option>
-          <option>Volatility 75 (1s) Index</option>
-          <option>Volatility 100 (1s) Index</option>
         </select>
         <div class="vol-price">9547.77 <span class="red">-47.77 (0.50%)</span></div>
       </div>
       <canvas id="chart"></canvas>
-      <div class="digits" id="digitsRow"></div>
-      <div class="times">
-        <span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span><span>03:15:19</span>
+
+      <div class="digits-wrap">
+        <div class="digits" id="digitsRow"></div>
+        <div class="times">
+          <span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span><span>03:15:19</span>
+        </div>
+        <!-- TRADE BUTTONS APPEAR HERE BELOW CIRCLES -->
+        <div class="trade-action-bar" id="tradeActionBar"></div>
       </div>
     </div>
 
     <div class="right">
-      <div class="toggle">
-        <button class="btn active">AUTO</button>
-        <button class="btn">MANUAL</button>
+      <div class="mode">
+        <button class="on">AUTO</button>
+        <button>MANUAL</button>
       </div>
 
-      <div class="trade-types">
-        <button class="t-type active">Even / Odd</button>
-        <button class="t-type">Match / Differ</button>
-        <button class="t-type">Over / Under</button>
+      <div class="types">
+        <button class="on" onclick="setTradeType('EVEN')">Even / Odd</button>
+        <button onclick="setTradeType('MATCH')">Match / Differ</button>
+        <button onclick="setTradeType('OVER')">Over / Under</button>
       </div>
+
+      <div id="tradeInputs"></div>
 
       <div class="stake">
         <label>STAKE AMOUNT</label>
-        <div class="stake-row">
-          <button onclick="changeStake(-1)">-</button>
+        <div class="s-row">
+          <button onclick="stakeChange(-1)">-</button>
           <b>$<span id="stake">10</span></b>
-          <button onclick="changeStake(1)">+</button>
+          <button onclick="stakeChange(1)">+</button>
         </div>
         <div class="presets">
-          <button class="preset">$1</button><button class="preset">$5</button>
-          <button class="preset active">$10</button><button class="preset">$25</button>
-          <button class="preset">$50</button><button class="preset">$100</button>
+          <button onclick="setStake(1)">$1</button><button onclick="setStake(5)">$5</button>
+          <button class="on" onclick="setStake(10)">$10</button><button onclick="setStake(25)">$25</button>
+          <button onclick="setStake(50)">$50</button><button onclick="setStake(100)">$100</button>
         </div>
       </div>
 
-      <div class="payout"><span>Payout</span><span><b>19.52</b></span></div>
+      <div class="payout"><span>Payout</span><span><b id="payout">19.52</b></span></div>
 
       <div class="tp-sl">
         <div class="tp">🎯 TARGET PROFIT</div>
         <div class="sl">⚠️ STOP LOSS</div>
       </div>
-
-      <div class="place-trade">
-        <button class="even" onclick="placeTrade('EVEN')">Even<small>19.52 USD 95.22%</small></button>
-        <button class="odd" onclick="placeTrade('ODD')">Odd<small>19.52 USD 95.22%</small></button>
-      </div>
+      <div id="msg"></div>
     </div>
   </div>
 </div>
 
 <script>
-let balance=8000, stake=10, currentDigit=3, token=localStorage.getItem('token');
-const percents=[10.8,10.2,10.2,9.0,10.6,9.6,9.2,11.6,9.8,9.0];
+let balance=8000, stake=10, digit=0, token=localStorage.getItem('token'), tradeType='EVEN';
+const pct=[10.8,10.2,10.2,9.0,10.6,9.6,9.2,11.6,9.8,9.0];
 
-if(!token){document.getElementById('authBox').style.display='block';document.getElementById('dashboard').style.display='none';}
-else{document.getElementById('authBox').style.display='none';document.getElementById('dashboard').style.display='block';init();}
+if(!token){authBox.style.display='block';dashboard.style.display='none';}
+else{authBox.style.display='none';dashboard.style.display='block';init();}
 
 function logout(){localStorage.removeItem('token');location.reload();}
 function showLogin(){registerBox.style.display='none';loginBox.style.display='block';}
 function showRegister(){loginBox.style.display='none';registerBox.style.display='block';}
 
 async function register(){
-  const res=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:regName.value,email:regEmail.value,password:regPass.value})});
-  authMsg.innerText=(await res.json()).message;
+  let r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:regName.value,email:regEmail.value,password:regPass.value})});
+  authMsg.innerText=(await r.json()).message;
 }
 async function login(){
-  const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:logEmail.value,password:logPass.value})});
-  const data=await res.json();
-  if(data.token){localStorage.setItem('token',data.token);location.reload();}else{authMsg.innerText=data.message;}
+  let r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:logEmail.value,password:logPass.value})});
+  let d=await r.json();
+  if(d.token){localStorage.setItem('token',d.token);location.reload();}else{authMsg.innerText=d.message;}
 }
 
-function changeStake(d){stake+=d;if(stake<1)stake=1;document.getElementById('stake').innerText=stake;}
+function stakeChange(n){stake+=n;if(stake<1)stake=1;updateStake();}
+function setStake(s){stake=s;updateStake();}
+function updateStake(){
+  document.getElementById('stake').innerText=stake;
+  document.getElementById('payout').innerText=(stake*1.952).toFixed(2);
+  document.querySelectorAll('.presets button').forEach(b=>b.classList.remove('on'));
+  event.target.classList.add('on');
+  renderTradeUI();
+}
 
-function init(){drawDigits();drawChart();}
+function setTradeType(type){
+  tradeType=type;
+  document.querySelectorAll('.types button').forEach(b=>b.classList.remove('on'));
+  event.target.classList.add('on');
+  renderTradeUI();
+}
+
+function renderTradeUI(){
+  let inputs='', buttons='';
+  if(tradeType==='EVEN'){
+    buttons=`<button class="btn-even" onclick="trade('EVEN')">Even<br><small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>
+             <button class="btn-odd" onclick="trade('ODD')">Odd<br><small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>`;
+  }
+  if(tradeType==='OVER'){
+    inputs=`<input id="barrier" class="input-box" type="number" placeholder="Barrier 0-9" value="5">`;
+    buttons=`<button class="btn-even" onclick="trade('OVER')">Over<br><small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>
+             <button class="btn-odd" onclick="trade('UNDER')">Under<br><small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>`;
+  }
+  if(tradeType==='MATCH'){
+    inputs=`<input id="digitPick" class="input-box" type="number" placeholder="Pick Digit 0-9" value="5">`;
+    buttons=`<button class="btn-even" onclick="trade('MATCH')">Matches<br><small>${(stake*3.5).toFixed(2)} USD 900%</small></button>
+             <button class="btn-odd" onclick="trade('DIFFERS')">Differs<br><small>${(stake*1.1).toFixed(2)} USD 10%</small></button>`;
+  }
+  document.getElementById('tradeInputs').innerHTML=inputs;
+  document.getElementById('tradeActionBar').innerHTML=buttons; // MOVED BELOW CIRCLES
+}
+
+function trade(t){
+  if(stake>balance){msg.innerText='Not enough balance';msg.style.color='#ef4444';return;}
+  balance-=stake;
+
+  let win=false;
+  let barrier=parseInt(document.getElementById('barrier')?.value)||5;
+  let pick=parseInt(document.getElementById('digitPick')?.value)||0;
+
+  if(t==='EVEN')win=digit%2===0;
+  if(t==='ODD')win=digit%2===1;
+  if(t==='OVER')win=digit>barrier;
+  if(t==='UNDER')win=digit<barrier;
+  if(t==='MATCH')win=digit===pick;
+  if(t==='DIFFERS')win=digit!==pick;
+
+  document.getElementById('dg'+digit).classList.add(win?'win':'loss');
+  setTimeout(()=>document.getElementById('dg'+digit).classList.remove('win','loss'),2000);
+
+  let payout=1.952; if(t==='MATCH')payout=3.5; if(t==='DIFFERS')payout=1.1;
+  if(win){balance+=stake*payout; msg.innerText=`WIN +$${(stake*(payout-1)).toFixed(2)} | Digit:${digit}`; msg.style.color='#22c55e';}
+  else{msg.innerText=`LOSS -$${stake.toFixed(2)} | Digit:${digit}`; msg.style.color='#ef4444';}
+
+  document.getElementById('balance').innerText=balance.toFixed(2);
+}
+
+function init(){drawDigits();drawChart();renderTradeUI();}
 function drawDigits(){
   digitsRow.innerHTML='';
-  for(let i=0;i<10;i++){
-    digitsRow.innerHTML+=`<div class="digit ${i===currentDigit?'active':''}" id="d${i}">${i}<div class="pct">${percents[i]}%</div></div>`;
-  }
-  setInterval(()=>{document.querySelectorAll('.digit').forEach(d=>d.classList.remove('active','win','loss'));currentDigit=Math.floor(Math.random()*10);document.getElementById('d'+currentDigit).classList.add('active');},2000);
+  for(let i=0;i<10;i++)digitsRow.innerHTML+=`<div class="digit ${i===digit?'active':''}" id="dg${i}">${i}<div class="p">${pct[i]}%</div></div>`;
+  setInterval(()=>{document.querySelectorAll('.digit').forEach(d=>d.classList.remove('active'));digit=Math.floor(Math.random()*10);document.getElementById('dg'+digit).classList.add('active');},2000);
 }
-
 function drawChart(){
-  const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=430;
-  let data=[];let y=215;for(let i=0;i<c.width;i++){y+=(Math.random()-0.5)*3.5;y=Math.max(120,Math.min(310,y));data.push(y);}
-  setInterval(()=>{ctx.clearRect(0,0,c.width,c.height);ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();for(let x=0;x<data.length;x++){x===0?ctx.moveTo(x,data[x]):ctx.lineTo(x,data[x]);}ctx.stroke();data.shift();let ny=data[data.length-1]+(Math.random()-0.5)*3.5;ny=Math.max(120,Math.min(310,ny));data.push(ny);},90);
-}
-
-function placeTrade(type){
-  if(stake>balance){alert('Not enough balance');return;}
-  balance-=stake;
-  const win=type==='EVEN'?currentDigit%2===0:currentDigit%2===1;
-  document.getElementById('d'+currentDigit).classList.add(win?'win':'loss');
-  if(win)balance+=stake*1.952;
-  document.getElementById('balance').innerText=balance.toFixed(2);
+  const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=c.offsetHeight;
+  let data=[],y=215;for(let i=0;i<c.width;i++){y+=(Math.random()-0.5)*1.2; y=0.92*y + 0.08*215; y=Math.max(150,Math.min(280,y)); data.push(y);} // SMOOTHER
+  setInterval(()=>{ctx.clearRect(0,0,c.width,c.height);ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.beginPath();for(let x=0;x<data.length;x++)x?ctx.lineTo(x,data[x]):ctx.moveTo(x,data[x]);ctx.stroke();data.shift();let ny=data[data.length-1]+(Math.random()-0.5)*1.2; ny=0.92*ny + 0.08*215; ny=Math.max(150,Math.min(280,ny)); data.push(ny);},100);
 }
 </script>
 </body>
