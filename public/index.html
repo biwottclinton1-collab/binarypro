@@ -1,176 +1,117 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>BinaryPro</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial}
-body{background:#0a0e1a;color:#fff}
-.topbar{height:50px;background:#0f1424;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid #1a2332}
-.logo{font-size:18px;font-weight:800}.logo span{color:#3b82f6}
-.rgt{display:flex;gap:8px;align-items:center}
-.bal{background:#1a2332;padding:6px 10px;border-radius:6px;font-size:12px}
-.btn{background:#2563eb;color:#fff;border:0;padding:6px 14px;border-radius:6px;font-weight:700;cursor:pointer}
-.main{display:flex}
-.center{flex:1;padding:10px}
-.vol{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.vol select{background:#1a2332;color:#fff;border:0;padding:7px 10px;border-radius:5px}
+body{background:#0a0e1a;color:#fff;margin:0;font-family:Arial}
+.topbar{display:flex;justify-content:space-between;padding:10px;background:#0f1424}
+.logo{font-weight:800;font-size:18px}.logo span{color:#3b82f6}
+.bal{background:#1a2332;padding:5px 10px;border-radius:5px}
+.btn{background:#2563eb;color:#fff;border:0;padding:8px 16px;border-radius:5px;cursor:pointer;font-weight:700}
+.main{display:flex}.center{flex:1;padding:10px}
 #chart{width:100%;height:280px;background:#070b14;border-radius:5px}
-.digits{display:flex;justify-content:center;gap:6px;margin:10px 0}
-.digit{width:44px;height:44px;border-radius:50%;background:#1a2332;border:2px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:13px}
-.digit.p{font-size:5px;color:#22c55e}
-.digit.active{border-color:#60a5fa;box-shadow:0 0 8px #60a5fa}
-.times{display:flex;justify-content:center;gap:25px;font-size:9px;color:#64748b;margin-bottom:10px}
-.trade{display:flex;gap:8px;margin-bottom:10px}
-.trade button{flex:1;padding:16px;border:0;border-radius:8px;font-weight:800;font-size:15px;color:#fff;cursor:pointer}
-.trade.g{background:#16a34a}.trade.r{background:#dc2626}
-.trade small{display:block;font-size:10px;margin-top:3px;font-weight:500}
-.right{width:320px;background:#0b101d;padding:10px;border-left:1px solid #1a2332}
-.mode{display:flex;background:#1a2332;border-radius:7px;margin-bottom:8px}
-.mode button{flex:1;padding:11px;border:0;background:0;color:#94a3b8;font-weight:800;cursor:pointer;border-radius:7px}
-.mode.on{background:#2563eb;color:#fff}
-.types{display:flex;gap:5px;margin-bottom:8px}
-.types button{flex:1;padding:9px;border:0;background:#1a2332;color:#94a3b8;border-radius:5px;font-weight:700;cursor:pointer;font-size:12px}
-.types.on{background:#2563eb;color:#fff}
-.stake{background:#1a2332;padding:10px;border-radius:6px}
-.s-row{display:flex;justify-content:space-between;align-items:center;margin:6px 0}
-.s-row button{width:32px;height:32px;background:#2a3441;border:0;color:#fff;border-radius:5px;font-size:18px;cursor:pointer}
-.presets{display:flex;gap:4px}
-.presets button{flex:1;padding:6px;background:#2a3441;border:0;color:#fff;border-radius:4px;cursor:pointer;font-size:12px}
-.presets.on{background:#2563eb}
-.payout{text-align:center;font-size:11px;color:#94a3b8;margin:8px 0}
-.ai{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;font-weight:900;font-size:16px;margin:0 auto;display:block;cursor:pointer;box-shadow:0 0 15px #3b82f6}
-.auth{text-align:center;padding-top:80px}
+.digits{display:flex;gap:5px;justify-content:center;margin:10px 0}
+.digit{width:45px;height:45px;border-radius:50%;background:#1a2332;border:2px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px}
+.digit.active{border-color:#60a5fa}
+.trade{display:flex;gap:8px}.trade button{flex:1;padding:18px;border:0;border-radius:8px;font-weight:800;font-size:16px;color:#fff;cursor:pointer}
+.green{background:#16a34a}.red{background:#dc2626}
+.right{width:320px;background:#0b101d;padding:10px}
+.auth{text-align:center;padding-top:100px}
 .auth input{width:300px;padding:12px;margin:8px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:6px}
 #dashboard{display:none}
-@media(max-width:768px){.main{flex-direction:column}.right{width:100%}}
+.msg{margin-top:10px;font-weight:700}
 </style>
 </head>
 <body>
 
 <div id="auth" class="auth">
 <h1 class="logo">Binary<span>Pro</span></h1>
-<div id="reg">
+<div id="regBox">
 <h2>Register</h2>
 <input id="rname" placeholder="Full Name"><br>
 <input id="remail" placeholder="Email"><br>
 <input id="rpass" type="password" placeholder="Password"><br>
-<button class="btn" onclick="register()">Register</button>
-<p style="margin-top:10px">Have account? <a onclick="toLogin()" style="color:#3b82f6;cursor:pointer">Login</a></p>
+<button class="btn" onclick="doRegister()">Register</button>
+<p>Have account? <a onclick="showLogin()" style="color:#3b82f6;cursor:pointer">Login</a></p>
 </div>
-<div id="log" style="display:none">
+<div id="logBox" style="display:none">
 <h2>Login</h2>
 <input id="lemail" placeholder="Email"><br>
 <input id="lpass" type="password" placeholder="Password"><br>
-<button class="btn" onclick="login()">Login</button>
-<p style="margin-top:10px">No account? <a onclick="toReg()" style="color:#3b82f6;cursor:pointer">Register</a></p>
+<button class="btn" onclick="doLogin()">Login</button>
+<p>No account? <a onclick="showReg()" style="color:#3b82f6;cursor:pointer">Register</a></p>
 </div>
-<div id="msg" style="color:#22c55e;margin-top:10px"></div>
+<div id="msg" class="msg" style="color:#22c55e"></div>
 </div>
 
 <div id="dashboard">
 <div class="topbar">
 <div class="logo">Binary<span>Pro</span></div>
-<div class="rgt"><span class="bal">Real $<span id="balance">8000.00</span></span><button class="btn">Deposit</button><button class="btn" onclick="logout()" style="background:#2a3441">Logout</button></div>
+<div><span class="bal">Real $<span id="balance">8000.00</span></span> <button class="btn">Deposit</button> <button class="btn" onclick="logout()">Logout</button></div>
 </div>
 <div class="main">
 <div class="center">
-<div class="vol">
-<select><option>Volatility 10 (1s) Index</option></select>
-<div><span id="cprice">9599.71</span> <span style="color:#f87171">-47.77 (0.50%)</span></div>
-</div>
+<div style="display:flex;justify-content:space-between;margin-bottom:8px"><b>Volatility 10 (1s) Index</b><div><span id="cprice">9599.71</span> <span style="color:#f87171">-47.77</span></div></div>
 <canvas id="chart"></canvas>
 <div class="digits" id="digits"></div>
-<div class="times"><span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span><span>03:15:19</span></div>
-<div class="trade"><button class="g" onclick="trade('EVEN')">Even<small id="evenTxt">19.52 USD 95.22%</small></button><button class="r" onclick="trade('ODD')">Odd<small id="oddTxt">19.52 USD 95.22%</small></button></div>
+<div style="display:flex;justify-content:center;gap:20px;font-size:10px;color:#64748b;margin:8px 0"><span>03:14:28</span><span>03:14:43</span><span>03:14:59</span></div>
+<div class="trade"><button class="green" onclick="trade('EVEN')">Even<br><small id="evenP">19.52 USD 95.22%</small></button><button class="red" onclick="trade('ODD')">Odd<br><small id="oddP">19.52 USD 95.22%</small></button></div>
 </div>
 <div class="right">
-<div class="mode"><button class="on">AUTO</button><button>MANUAL</button></div>
-<div class="types">
-<button class="on" onclick="setType('EVEN')">Even / Odd</button>
-<button onclick="setType('MATCH')">Match / Differ</button>
-<button onclick="setType('OVER')">Over / Under</button>
-</div>
-<div id="inputs"></div>
-<div class="stake">
-<label style="font-size:10px;color:#94a3b8">STAKE AMOUNT</label>
-<div class="s-row"><button onclick="changeStake(-1)">-</button><b>$<span id="stake">10</span></b><button onclick="changeStake(1)">+</button></div>
-<div class="presets">
-<button onclick="setStake(1)">$1</button><button onclick="setStake(5)">$5</button>
-<button class="on" onclick="setStake(10)">$10</button><button onclick="setStake(25)">$25</button>
-<button onclick="setStake(50)">$50</button><button onclick="setStake(100)">$100</button>
-</div>
-</div>
-<div class="payout">Payout: $<span id="payout">19.52</span></div>
-<button class="ai" onclick="aiTrade()">AI</button>
-<div id="tmsg" style="text-align:center;margin-top:8px;font-weight:700"></div>
+<h4>STAKE: $<span id="stake">10</span></h4>
+<button onclick="changeStake(-1)">-</button><button onclick="changeStake(1)">+</button>
+<div>Payout: $<span id="payout">19.52</span></div>
+<button style="width:60px;height:60px;border-radius:50%;background:#3b82f6;border:0;color:#fff;margin-top:10px" onclick="alert('AI Trade')">AI</button>
+<div id="tmsg" class="msg"></div>
 </div>
 </div>
 </div>
 
 <script>
-let balance=8000,stake=10,digit=0,token=localStorage.token,type='EVEN';
+let balance=8000,stake=10,token=localStorage.token;
 const pct=[10.8,10.2,10.2,9.0,10.6,9.6,9.2,11.6,9.8,9.0];
-let price=9599.71;
 
 if(token){auth.style.display='none';dashboard.style.display='block';loadUser();}
 
-function toLogin(){reg.style.display='none';log.style.display='block';}
-function toReg(){log.style.display='none';reg.style.display='block';}
+function showLogin(){regBox.style.display='none';logBox.style.display='block';msg.innerText=''}
+function showReg(){logBox.style.display='none';regBox.style.display='block';msg.innerText=''}
 function logout(){localStorage.removeItem('token');location.reload();}
 
-async function register(){
+async function doRegister(){
+msg.style.color='#22c55e';
 let r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:rname.value,email:remail.value,password:rpass.value})});
 msg.innerText=(await r.json()).message;
 }
-async function login(){
+
+async function doLogin(){
+msg.style.color='#ef4444';
 let r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:lemail.value,password:lpass.value})});
 let d=await r.json();
 if(d.token){localStorage.token=d.token;location.reload();}else{msg.innerText=d.message;}
 }
+
 async function loadUser(){
 let r=await fetch('/api/me',{headers:{'Authorization':'Bearer '+token}});
-let u=await r.json();balance=parseFloat(u.balance);balance.innerText=balance.toFixed(2);init();
+let u=await r.json();balance=parseFloat(u.balance);document.getElementById('balance').innerText=balance.toFixed(2);init();
 }
 
-function changeStake(n){stake+=n;if(stake<1)stake=1;updateStake();}
-function setStake(s){stake=s;updateStake();}
-function updateStake(){
-stake.innerText=stake;
-payout.innerText=(stake*1.952).toFixed(2);
-evenTxt.innerText=(stake*1.952).toFixed(2)+' USD 95.22%';
-oddTxt.innerText=(stake*1.952).toFixed(2)+' USD 95.22%';
-document.querySelectorAll('.presets button').forEach(b=>b.classList.remove('on'));
-event.target.classList.add('on');
-}
-
-function setType(t){type=t;document.querySelectorAll('.types button').forEach(b=>b.classList.remove('on'));event.target.classList.add('on');}
+function changeStake(n){stake+=n;if(stake<1)stake=1;document.getElementById('stake').innerText=stake;document.getElementById('payout').innerText=(stake*1.952).toFixed(2);evenP.innerText=(stake*1.952).toFixed(2)+' USD 95.22%';oddP.innerText=(stake*1.952).toFixed(2)+' USD 95.22%';}
 
 async function trade(t){
-if(stake>balance){tmsg.innerText='Not enough balance';tmsg.style.color='#ef4444';return;}
-balance-=stake;
-let win=Math.random()>0.5; // random for now
-let d=document.getElementById('dg'+digit);d.classList.add(win?'win':'loss');setTimeout(()=>d.classList.remove('win','loss'),1200);
-if(win){balance+=stake*1.952;tmsg.innerText=`WIN +$${(stake*0.952).toFixed(2)}`;tmsg.style.color='#22c55e';}
-else{tmsg.innerText=`LOSS -$${stake.toFixed(2)}`;tmsg.style.color='#ef4444';}
-balance.innerText=balance.toFixed(2);
+if(stake>balance){tmsg.innerText='No balance';tmsg.style.color='red';return;}
+balance-=stake;let win=Math.random()>0.5;
+if(win){balance+=stake*1.952;tmsg.innerText='WIN';tmsg.style.color='#22c55e';}else{tmsg.innerText='LOSS';tmsg.style.color='#ef4444';}
+document.getElementById('balance').innerText=balance.toFixed(2);
 await fetch('/api/update-balance',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({newBalance:balance})});
 }
 
-function aiTrade(){trade('EVEN');tmsg.innerText='AI: Traded EVEN';}
-
 function init(){
-digits.innerHTML='';
-for(let i=0;i<10;i++)digits.innerHTML+=`<div class="digit" id="dg${i}">${i}<div class="p">${pct[i]}%</div></div>`;
-setInterval(()=>{document.querySelectorAll('.digit').forEach(d=>d.classList.remove('active'));digit=Math.floor(Math.random()*10);document.getElementById('dg'+digit).classList.add('active');},2000);
-
-const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=280;
-let data=[];for(let i=0;i<c.width;i++)data.push(140+(Math.random()-0.5)*80);
-setInterval(()=>{ctx.clearRect(0,0,c.width,c.height);
-ctx.strokeStyle='#1a2332';for(let y=0;y<280;y+=56){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();}
-ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.beginPath();for(let x=0;x<data.length;x++)x?ctx.lineTo(x,data[x]):ctx.moveTo(x,data[x]);ctx.stroke();
-data.shift();data.push(data[data.length-1]+(Math.random()-0.5)*15);price+=Math.random()-0.5;cprice.innerText=price.toFixed(2);},100);
+digits.innerHTML='';for(let i=0;i<10;i++)digits.innerHTML+=`<div class="digit" id="d${i}">${i}<div style="font-size:6px;color:#22c55e">${pct[i]}%</div></div>`;
+setInterval(()=>{document.querySelectorAll('.digit').forEach(d=>d.classList.remove('active'));let dg=Math.floor(Math.random()*10);document.getElementById('d'+dg).classList.add('active');},2000);
+const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=280;let data=[];for(let i=0;i<c.width;i++)data.push(140);setInterval(()=>{ctx.clearRect(0,0,c.width,c.height);ctx.strokeStyle='#fff';ctx.beginPath();for(let x=0;x<data.length;x++)x?ctx.lineTo(x,data[x]):ctx.moveTo(x,data[x]);ctx.stroke();data.shift();data.push(data[data.length-1]+(Math.random()-0.5)*10);},100);
 }
 </script>
-</body></html>
+</body>
+</html>
