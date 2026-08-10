@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const { Pool } = require('pg');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -9,27 +9,34 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
-const JWT_SECRET = process.env.JWT_SECRET || "binarypro_secret";
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
-// Test Route
 app.get('/', (req, res) => {
-  res.json({ message: "BinaryPro API is Running!" });
+  res.json({ message: "BinaryPro API is Running with Postgres!" });
 });
 
-// Example User Model
-const UserSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
+app.post('/register', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if(!email ||!password) {
+      return res.status(400).json({ error: "Email and password required" });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await pool.query(
+      'INSERT INTO users(email, password) VALUES($1, $2) RETURNING id',
+      [email, hashedPassword]
+    );
+    res.json({ message: "User registered", userId: result.rows[0].id });
+  } catch (err) {
+    if(err.code === '23505') {
+      return res.status(400).json({ error: "Email already exists" });
+    }
+    res.status(500).json({ error: err.message });
+  }
 });
-const User = mongoose.model('User', UserSchema);
 
-// Connect to MongoDB
-mongoose.connect(MONGO_URI)
-.then(() => console.log("MongoDB Connected"))
-.catch(err => console.log(err));
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));
