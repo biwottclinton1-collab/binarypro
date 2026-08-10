@@ -30,18 +30,18 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
 .chart-box{flex:1;position:relative}
 #chart{width:100%;height:100%;background:#070b14;border-radius:5px}
 .digits-wrap{padding:0 0 6px 0;background:#0a0e1a}
-.digits{display:flex;justify-content:center;gap:6px;margin-bottom:3px;overflow-x:auto;padding:0 4px}
+.digits{display:flex;justify-content:center;gap:6px;margin-bottom:6px;overflow-x:auto;padding:0 4px}
 .digit{width:46px;height:46px;min-width:46px;border-radius:50%;background:#1a2332;border:2px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:14px;gap:0}
 .digit.p{font-size:5.5px;color:#22c55e;font-weight:600}
 .digit.active{border-color:#60a5fa;box-shadow:0 0 10px #60a5fa}
 .digit.win{border-color:#22c55e;background:#052e16}
 .digit.loss{border-color:#ef4444;background:#2f0a0a}
-.times{display:flex;justify-content:center;gap:30px;font-size:9px;color:#64748b;margin-bottom:5px}
+.times{display:flex;justify-content:center;gap:30px;font-size:9px;color:#64748b;margin-bottom:8px}
 .trade-action-bar{display:flex;gap:8px;justify-content:center;padding:0 4px}
-.trade-action-bar button{padding:14px 0;border:0;border-radius:8px;font-weight:800;font-size:15px;cursor:pointer;color:#fff;flex:1}
+.trade-action-bar button{padding:16px 0;border:0;border-radius:8px;font-weight:800;font-size:16px;cursor:pointer;color:#fff;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.trade-action-bar button small{font-weight:500;font-size:10px;margin-top:2px;opacity:0.9}
 .btn-even{background:#16a34a}
 .btn-odd{background:#dc2626}
-.trade-action-bar small{font-weight:500;font-size:10px;display:block;margin-top:1px;opacity:0.9} /* KEEP THIS */
 .right{width:300px;background:#0b101d;border-left:1px solid #1a2332;padding:10px;overflow-y:auto}
 .mode{display:flex;background:#1a2332;border-radius:7px;margin-bottom:8px}
 .mode button{flex:1;background:0;border:0;color:#94a3b8;padding:11px;border-radius:7px;font-weight:800;cursor:pointer;font-size:13px}
@@ -69,22 +69,22 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
 #msg{color:#22c55e;text-align:center;margin-top:5px;font-weight:700;font-size:12px}
 .price-label{position:absolute;right:8px;background:#1a2332;padding:2px 6px;border-radius:3px;font-size:10px;border:1px solid #334155;z-index:10}
 
-/* MOBILE VIEW */
 @media (max-width: 768px){
 .main{flex-direction:column}
 .left{display:none}
-.right{width:100%;height:40%;border-left:0;border-top:1px solid #1a2332;padding:8px}
-.center{height:60%;padding:8px}
+.right{width:100%;height:45%;border-left:0;border-top:1px solid #1a2332;padding:8px}
+.center{height:55%;padding:8px}
 .topbar{height:44px;padding:0 10px}
 .nav{display:none}
 .btn{padding:5px 10px;font-size:11px}
 .digit{width:42px;height:42px;min-width:42px;font-size:13px}
-.trade-action-bar button{padding:16px 0;font-size:16px}
+.trade-action-bar button{padding:18px 0;font-size:17px}
 .ai-btn{width:55px;height:55px;font-size:15px}
 .vol-price{font-size:11px}
 .auth input{width:90%}
 .mode button{padding:12px;font-size:14px}
 .types button{padding:10px;font-size:13px}
+}
 </style>
 </head>
 <body>
@@ -121,7 +121,7 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
     </div>
     <div class="t-right">
       <div class="bal">Real $<span id="balance">8000.00</span></div>
-      <button class="btn">Deposit</button>
+      <button class="btn" id="depositBtn">Deposit</button>
       <button class="btn" onclick="logout()" style="background:#2a3441">Logout</button>
     </div>
   </div>
@@ -190,8 +190,6 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
         </div>
       </div>
 
-      <!-- REMOVED PAYOUT LINE HERE -->
-
       <button class="ai-btn" onclick="aiScan()">AI</button>
       <div class="ai-signal" id="aiSignal"></div>
       <button class="ai-trade-btn" id="aiTradeBtn" onclick="executeAISignal()">TRADE NOW</button>
@@ -255,18 +253,18 @@ function setTradeType(type){
 function renderTradeUI(){
   let inputs='', buttons='';
   if(tradeType==='EVEN'){
-    buttons=`<button class="btn-even" onclick="trade('EVEN')">Even<br><small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>
-             <button class="btn-odd" onclick="trade('ODD')">Odd<br><small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>`; // 19.52 IS BACK
+    buttons=`<button class="btn-even" onclick="trade('EVEN')">Even<small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>
+             <button class="btn-odd" onclick="trade('ODD')">Odd<small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>`;
   }
   if(tradeType==='OVER'){
     inputs=`<input id="barrier" class="input-box" type="number" placeholder="Barrier 0-9" value="5">`;
-    buttons=`<button class="btn-even" onclick="trade('OVER')">Over<br><small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>
-             <button class="btn-odd" onclick="trade('UNDER')">Under<br><small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>`;
+    buttons=`<button class="btn-even" onclick="trade('OVER')">Over<small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>
+             <button class="btn-odd" onclick="trade('UNDER')">Under<small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>`;
   }
   if(tradeType==='MATCH'){
     inputs=`<input id="digitPick" class="input-box" type="number" placeholder="Pick Digit 0-9" value="5">`;
-    buttons=`<button class="btn-even" onclick="trade('MATCH')">Matches<br><small>${(stake*3.5).toFixed(2)} USD 900%</small></button>
-             <button class="btn-odd" onclick="trade('DIFFERS')">Differs<br><small>${(stake*1.1).toFixed(2)} USD 10%</small></button>`;
+    buttons=`<button class="btn-even" onclick="trade('MATCH')">Matches<small>${(stake*3.5).toFixed(2)} USD 900%</small></button>
+             <button class="btn-odd" onclick="trade('DIFFERS')">Differs<small>${(stake*1.1).toFixed(2)} USD 10%</small></button>`;
   }
   document.getElementById('tradeInputs').innerHTML=inputs;
   document.getElementById('tradeActionBar').innerHTML=buttons;
@@ -368,6 +366,28 @@ function drawChart(){
     document.getElementById('priceTag').style.top = newY-12+'px';
   }
   setInterval(render,100);
+}
+
+// DEPOSIT BUTTON
+document.getElementById('depositBtn').onclick = () => {
+  let phone = prompt("Send money to M-PESA: 2547XXXXXXXX\n\nEnter your M-Pesa number:");
+  let amount = prompt("Minimum $3\nEnter Amount in USD:");
+  if(phone && amount) requestDeposit(phone, amount);
+}
+
+async function requestDeposit(phone, amount){
+  if(amount < 3){ alert('Minimum deposit is $3'); return; }
+  msg.innerText = 'Creating deposit request...';
+  msg.style.color = '#3b82f6';
+  let r = await fetch('/api/deposit/request',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body:JSON.stringify({phone, amount})
+  });
+  let d = await r.json();
+  alert(d.message);
+  msg.innerText = 'Waiting for admin confirmation';
+  msg.style.color = '#f59e0b';
 }
 </script>
 </body>
