@@ -29,9 +29,9 @@ body{background:#070b14;color:#fff;overflow:hidden}
 .vol-price.red{color:#f87171}
 #chart{flex:1;background:#050811;border-radius:8px}
 .digits-wrap{padding:10px 0}
-.digits{display:flex;justify-content:center;gap:11px;margin-bottom:6px}
-.digit{width:55px;height:55px;border-radius:50%;background:#1e293b;border:2px solid #334155;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:16px}
-.digit.p{font-size:10px;color:#22c55e}
+.digits{display:flex;justify-content:center;gap:10px;margin-bottom:6px}
+.digit{width:52px;height:52px;border-radius:50%;background:#1e293b;border:2px solid #334155;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.digit.p{font-size:8px;color:#22c55e;line-height:1} /* MINIMIZED FONT */
 .digit.active{border-color:#60a5fa;box-shadow:0 0 14px #60a5fa}
 .digit.win{border-color:#22c55e;background:#052e16}
 .digit.loss{border-color:#ef4444;background:#2f0a0a}
@@ -56,10 +56,6 @@ body{background:#070b14;color:#fff;overflow:hidden}
 .presets button{flex:1;background:#334155;border:0;color:#fff;padding:7px;border-radius:5px;font-size:12.5px;cursor:pointer}
 .presets button.on{background:#2563eb}
 .payout{display:flex;justify-content:space-between;font-size:13.5px;margin:11px 0}
-.tp-sl{display:flex;gap:9px;margin-bottom:12px}
-.tp,.sl{flex:1;padding:11px;border-radius:7px;font-size:12.5px}
-.tp{background:#052e16}
-.sl{background:#2f0a0a}
 .input-box{width:100%;padding:10px;margin-bottom:10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#fff}
 .auth{padding:110px 20px;text-align:center}
 .auth input{width:370px;padding:15px;margin:11px;border-radius:9px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:15px}
@@ -101,7 +97,7 @@ body{background:#070b14;color:#fff;overflow:hidden}
       <div class="nav">💬 Chat</div>
     </div>
     <div class="t-right">
-      <div class="bal">$<span id="balance">8000.00</span></div>
+      <div class="bal">Real $<span id="balance">8000.00</span></div> <!-- 1. REAL BALANCE -->
       <button class="btn">Deposit</button>
       <button class="btn" onclick="logout()" style="background:#334155">Logout</button>
     </div>
@@ -135,8 +131,7 @@ body{background:#070b14;color:#fff;overflow:hidden}
         <div class="times">
           <span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span><span>03:15:19</span>
         </div>
-        <!-- TRADE BUTTONS APPEAR HERE BELOW CIRCLES -->
-        <div class="trade-action-bar" id="tradeActionBar"></div>
+        <div class="trade-action-bar" id="tradeActionBar"></div> <!-- 3. BUTTONS BELOW -->
       </div>
     </div>
 
@@ -169,11 +164,7 @@ body{background:#070b14;color:#fff;overflow:hidden}
       </div>
 
       <div class="payout"><span>Payout</span><span><b id="payout">19.52</b></span></div>
-
-      <div class="tp-sl">
-        <div class="tp">🎯 TARGET PROFIT</div>
-        <div class="sl">⚠️ STOP LOSS</div>
-      </div>
+      <!-- 2. REMOVED TP/SL -->
       <div id="msg"></div>
     </div>
   </div>
@@ -182,6 +173,7 @@ body{background:#070b14;color:#fff;overflow:hidden}
 <script>
 let balance=8000, stake=10, digit=0, token=localStorage.getItem('token'), tradeType='EVEN';
 const pct=[10.8,10.2,10.2,9.0,10.6,9.6,9.2,11.6,9.8,9.0];
+let chartData = JSON.parse(localStorage.getItem('chartData')) || []; // 6. REMEMBER CHART
 
 if(!token){authBox.style.display='block';dashboard.style.display='none';}
 else{authBox.style.display='none';dashboard.style.display='block';init();}
@@ -234,7 +226,7 @@ function renderTradeUI(){
              <button class="btn-odd" onclick="trade('DIFFERS')">Differs<br><small>${(stake*1.1).toFixed(2)} USD 10%</small></button>`;
   }
   document.getElementById('tradeInputs').innerHTML=inputs;
-  document.getElementById('tradeActionBar').innerHTML=buttons; // MOVED BELOW CIRCLES
+  document.getElementById('tradeActionBar').innerHTML=buttons;
 }
 
 function trade(t){
@@ -252,8 +244,10 @@ function trade(t){
   if(t==='MATCH')win=digit===pick;
   if(t==='DIFFERS')win=digit!==pick;
 
-  document.getElementById('dg'+digit).classList.add(win?'win':'loss');
-  setTimeout(()=>document.getElementById('dg'+digit).classList.remove('win','loss'),2000);
+  // 4. TURN GREEN ON PROFIT RED ON LOSS
+  let dEl = document.getElementById('dg'+digit);
+  dEl.classList.add(win?'win':'loss');
+  setTimeout(()=>dEl.classList.remove('win','loss'),1500);
 
   let payout=1.952; if(t==='MATCH')payout=3.5; if(t==='DIFFERS')payout=1.1;
   if(win){balance+=stake*payout; msg.innerText=`WIN +$${(stake*(payout-1)).toFixed(2)} | Digit:${digit}`; msg.style.color='#22c55e';}
@@ -268,10 +262,31 @@ function drawDigits(){
   for(let i=0;i<10;i++)digitsRow.innerHTML+=`<div class="digit ${i===digit?'active':''}" id="dg${i}">${i}<div class="p">${pct[i]}%</div></div>`;
   setInterval(()=>{document.querySelectorAll('.digit').forEach(d=>d.classList.remove('active'));digit=Math.floor(Math.random()*10);document.getElementById('dg'+digit).classList.add('active');},2000);
 }
+
 function drawChart(){
   const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=c.offsetHeight;
-  let data=[],y=215;for(let i=0;i<c.width;i++){y+=(Math.random()-0.5)*1.2; y=0.92*y + 0.08*215; y=Math.max(150,Math.min(280,y)); data.push(y);} // SMOOTHER
-  setInterval(()=>{ctx.clearRect(0,0,c.width,c.height);ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.beginPath();for(let x=0;x<data.length;x++)x?ctx.lineTo(x,data[x]):ctx.moveTo(x,data[x]);ctx.stroke();data.shift();let ny=data[data.length-1]+(Math.random()-0.5)*1.2; ny=0.92*ny + 0.08*215; ny=Math.max(150,Math.min(280,ny)); data.push(ny);},100);
+  
+  // 5. TAGOPTION STYLE CHART - FLAT LINE
+  if(chartData.length===0){
+    let y=215; for(let i=0;i<c.width;i++){y+=(Math.random()-0.5)*0.8; y=Math.max(200,Math.min(230,y)); chartData.push(y);}
+  }
+
+  function render(){
+    ctx.clearRect(0,0,c.width,c.height);
+    ctx.strokeStyle='#ffffff';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    for(let x=0;x<chartData.length;x++)x?ctx.lineTo(x,chartData[x]):ctx.moveTo(x,chartData[x]);
+    ctx.stroke();
+    
+    chartData.shift();
+    let lastY=chartData[chartData.length-1];
+    let ny=lastY+(Math.random()-0.5)*0.8;
+    ny=Math.max(200,Math.min(230,ny)); // FLAT LIKE TAGOPTION
+    chartData.push(ny);
+    localStorage.setItem('chartData', JSON.stringify(chartData)); // SAVE CHART
+  }
+  setInterval(render,120);
 }
 </script>
 </body>
