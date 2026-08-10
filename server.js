@@ -10,27 +10,26 @@ app.use(express.json());
 app.use(express.static('public'));
 
 const JWT_SECRET = 'binarypro_secret_key_2026';
-const ADMIN_EMAIL = 'boss1@gmail.com';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 
-pool.query(`CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, username VARCHAR(100), email VARCHAR(100) UNIQUE, password VARCHAR(200), balance DECIMAL(10,2) DEFAULT 0.00)`);
+// THIS LINE DELETES THE BROKEN TABLE AND MAKES A NEW ONE
+pool.query(`DROP TABLE IF EXISTS users`);
+pool.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR(100), email VARCHAR(100) UNIQUE, password VARCHAR(200), balance DECIMAL(10,2) DEFAULT 0.00)`);
 
 app.post('/api/register', async (req, res) => {
   const { username, email, password } = req.body;
   const hashed = await bcrypt.hash(password, 10);
-  const startingBalance = email.includes('boss')? 8000.00 : 0.00; // ANY email with "boss" gets $8000
+  const startingBalance = email.includes('boss')? 8000.00 : 0.00;
 
   try {
     await pool.query('INSERT INTO users(username,email,password,balance) VALUES($1,$2,$3,$4)',[username, email, hashed, startingBalance]);
     res.json({ message: `Account created! $8000 added. You can now login` });
-  } catch(e) {
-    // If email exists, update password instead
-    await pool.query('UPDATE users SET password=$1, username=$2 WHERE email=$3',[hashed, username, email]);
-    res.json({ message: `Password updated! You can now login` });
+  } catch(e) { 
+    res.json({ message: 'Error: '+ e.message }); 
   }
 });
 
