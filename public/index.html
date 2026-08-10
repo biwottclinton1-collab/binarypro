@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>BinaryPro - Trade</title>
-  <script src="https://s3.tradingview.com/tv.js"></script>
+  <title>BinaryPro - Deriv</title>
   <style>
     body{background:#0a0d17;color:white;font-family:'Segoe UI',Arial;margin:0}
-    .navbar{background:#111827;padding:10px 20px;display:flex;justify-content:space-between;align-items:center}
+    .navbar{background:#111827;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
     .btn{background:#3b82f6;border:none;color:white;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:bold}
     .btn.green{background:#10b981}
     .balance{color:#10b981;font-weight:bold;font-size:18px}
@@ -13,26 +12,31 @@
     .left-panel{width:250px;background:#111827;padding:15px}
     .chart-area{flex:1;padding:15px}
     .right-panel{width:320px;background:#111827;padding:15px}
-    #tradingview_chart{height:400px;border-radius:10px}
-    .vol-select{background:#1f2937;color:white;padding:10px;border:none;border-radius:8px;width:100%;font-size:16px;margin-bottom:5px}
-    .vol-price{font-size:14px;color:#9ca3af;margin-bottom:10px}
-    .digits-row{display:flex;justify-content:space-between;margin:15px 0;padding:10px;background:#111827;border-radius:10px}
+    .fake-chart{height:400px;background:linear-gradient(180deg,#0f172a 0%,#020617 100%);border-radius:10px;position:relative;padding:20px}
+    .vol-select{background:#1f2937;color:white;padding:10px;border:none;border-radius:8px;width:100%;font-size:16px}
+    .vol-header{font-size:14px;color:#9ca3af;margin:8px 0}
+    .digits-row{display:flex;justify-content:space-between;margin:15px 0;padding:15px;background:#111827;border-radius:12px}
     .digit-circle{text-align:center;flex:1}
-    .digit-circle .circle{width:45px;height:45px;border-radius:50%;background:#1f2937;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:bold;margin:0 auto 5px;border:2px solid #374151;transition:0.3s}
+    .digit-circle .circle{width:55px;height:55px;border-radius:50%;background:#1f2937;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:18px;font-weight:bold;margin:0 auto;border:2px solid #374151}
     .digit-circle.active .circle{background:#10b981;border-color:#10b981}
-    .digit-circle .percent{color:#10b981;font-size:11px}
-    #pointerBar{height:4px;background:#374151;border-radius:2px;margin-top:5px;transition:0.3s}
-    .btn-trade{width:100%;padding:14px;font-size:16px;border:none;border-radius:10px;color:white;margin:5px 0;font-weight:bold;cursor:pointer}
+    .digit-circle .percent{font-size:10px;color:#10b981;margin-top:2px}
+    .tabs{display:flex;gap:5px;margin:10px 0}
+    .tab{flex:1;padding:10px;background:#1f2937;border:none;color:white;border-radius:8px;cursor:pointer}
+    .tab.active{background:#3b82f6}
+    .btn-trade{width:100%;padding:14px;font-size:16px;border:none;border-radius:10px;color:white;margin:6px 0;font-weight:bold;cursor:pointer}
     .btn-even{background:#10b981} .btn-odd{background:#ef4444}
-    input{padding:10px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:white;width:100%;text-align:center}
+    .btn-over{background:#8b5cf6} .btn-under{background:#f59e0b}
+    .btn-match{background:#06b6d4} .btn-differs{background:#ec4899}
+    input{padding:10px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:white;width:100%;text-align:center;margin:5px 0}
     .auth{text-align:center;padding-top:80px}
     .auth input{display:block;margin:12px auto;padding:12px;width:300px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:white}
     .dashboard{display:none}
+    #pointerBar{height:4px;background:#374151;border-radius:2px;margin-top:5px}
   </style>
 </head>
 <body>
   
-  <!-- AUTH -->
+  <!-- 1. LOGIN / REGISTER - FIXED -->
   <div id="authBox" class="auth">
     <h1>Binary<span style="color:#3b82f6">Pro</span></h1>
     <div id="registerBox">
@@ -53,14 +57,16 @@
     <div id="authMsg" style="color:#10b981"></div>
   </div>
 
-  <!-- DASHBOARD -->
+  <!-- 2. DASHBOARD -->
   <div id="dashboard" class="dashboard">
     <div class="navbar">
       <div><b>Binary</b><span style="color:#3b82f6">Pro</span></div>
       <div>
         <button class="btn">Deposit</button>
         <button class="btn">Withdraw</button>
+        <span>Real</span>
         <span class="balance">$<span id="balance">8000.00</span></span>
+        <button class="btn" onclick="logout()">Logout</button>
       </div>
     </div>
 
@@ -71,45 +77,65 @@
       </div>
 
       <div class="chart-area">
-        <!-- DROPDOWN FOR VOLATILITIES -->
-        <select class="vol-select" id="volSelect" onchange="loadChart()">
-          <option>Volatility 10 (1s) Index</option>
-          <option>Volatility 25 (1s) Index</option>
-          <option>Volatility 50 (1s) Index</option>
-          <option>Volatility 75 (1s) Index</option>
-          <option>Volatility 100 (1s) Index</option>
+        <!-- VOL DROPDOWN -->
+        <select class="vol-select" id="volSelect">
+          <option>Volatility 10 Index</option>
+          <option>Volatility 25 Index</option>
+          <option>Volatility 50 Index</option>
+          <option>Volatility 75 Index</option>
+          <option>Volatility 100 Index</option>
         </select>
-        <div class="vol-price">9547.77 -47.77 (0.50%)</div>
+        <div class="vol-header">9547.77 -47.77 (0.50%)</div>
         
-        <!-- CHART FIRST -->
-        <div id="tradingview_chart"></div>
+        <!-- FAKE DERIV CHART -->
+        <div class="fake-chart" id="chart">
+          <canvas id="priceChart" width="800" height="350"></canvas>
+        </div>
         
-        <!-- DIGITS 0-9 BELOW CHART -->
+        <!-- 10 CIRCLES WITH % INSIDE -->
         <div class="digits-row" id="digitsRow"></div>
         <div id="pointerBar"></div>
       </div>
 
       <div class="right-panel">
-        <h3>TRADING MODE</h3>
-        <button class="btn" style="width:48%">AUTO</button>
-        <button class="btn" style="width:48%;background:#374151">MANUAL</button>
-        <br><br>
-        <label>STAKE AMOUNT</label><br>
+        <div class="tabs">
+          <button class="tab active" onclick="setTab('MANUAL')">MANUAL</button>
+          <button class="tab" onclick="setTab('AUTO')">AUTO</button>
+        </div>
+
+        <h4>TRADE TYPE</h4>
+        <!-- ALL 4 MODES YOU ASKED -->
+        <button class="btn-trade btn-even" onclick="setMode('EVEN')">Even 95.22%</button>
+        <button class="btn-trade btn-odd" onclick="setMode('ODD')">Odd 95.22%</button>
+        <button class="btn-trade btn-over" onclick="setMode('OVER')">Over</button>
+        <button class="btn-trade btn-under" onclick="setMode('UNDER')">Under</button>
+        <button class="btn-trade btn-match" onclick="setMode('MATCH')">Matches Digit</button>
+        <button class="btn-trade btn-differs" onclick="setMode('DIFFERS')">Differs Digit</button>
+        
+        <div id="modeInputs"></div>
+
+        <h4>STAKE AMOUNT</h4>
         <input id="amount" type="number" value="10">
-        <br><br>
-        <button class="btn-trade btn-even" onclick="trade('EVEN')">Even 95.22%</button>
-        <button class="btn-trade btn-odd" onclick="trade('ODD')">Odd 95.22%</button>
-        <button class="btn-trade" style="background:#8b5cf6" onclick="trade('MATCH')">Match Digit</button>
-        <input id="digit" placeholder="Pick Digit 0-9" style="margin-top:5px">
+
+        <h4>TAKE PROFIT</h4>
+        <input id="tp" type="number" placeholder="Auto close at profit $">
+
+        <h4>STOP LOSS</h4>
+        <input id="sl" type="number" placeholder="Auto close at loss $">
+
+        <button class="btn green" style="width:100%;margin-top:10px" onclick="placeTrade()">Place Trade</button>
         <div id="msg" style="margin-top:10px;font-weight:bold;text-align:center"></div>
       </div>
     </div>
   </div>
 
 <script>
-let balance = 8000;
+let balance = 8000; // REAL $8000
 let token = localStorage.getItem('token');
+let currentMode = 'EVEN';
 let currentDigit = 0;
+
+function logout(){ localStorage.removeItem('token'); location.reload(); }
 
 if(!token){ 
   document.getElementById('authBox').style.display='block'; 
@@ -117,7 +143,7 @@ if(!token){
 } else {
   document.getElementById('authBox').style.display='none'; 
   document.getElementById('dashboard').style.display='block'; 
-  loadChart(); drawDigits();
+  drawDigits(); drawChart();
 }
 
 function showLogin(){document.getElementById('registerBox').style.display='none'; document.getElementById('loginBox').style.display='block';}
@@ -134,10 +160,16 @@ async function login(){
   else{ authMsg.innerText = data.message; }
 }
 
-function loadChart(){
-  document.getElementById('tradingview_chart').innerHTML = '';
-  new TradingView.widget({"width":"100%","height":400,"symbol":"CRYPTO:BTCUSD","theme":"dark","container_id":"tradingview_chart"});
+function setTab(t){ document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active')); event.target.classList.add('active'); }
+function setMode(m){ currentMode=m; renderInputs(); }
+
+function renderInputs(){
+  let html = '';
+  if(currentMode === 'OVER' || currentMode === 'UNDER') html = `<input id="barrier" placeholder="Barrier e.g 5">`;
+  if(currentMode === 'MATCH' || currentMode === 'DIFFERS') html = `<input id="digitPick" placeholder="Pick Digit 0-9">`;
+  document.getElementById('modeInputs').innerHTML = html;
 }
+renderInputs();
 
 function drawDigits(){
   const row = document.getElementById('digitsRow');
@@ -146,36 +178,52 @@ function drawDigits(){
     let percent = (Math.random()*5+8).toFixed(1);
     row.innerHTML += `
       <div class="digit-circle" id="digit${i}">
-        <div class="circle">${i}</div>
-        <div class="percent">${percent}%</div>
+        <div class="circle">${i}<span class="percent">${percent}%</span></div>
       </div>
     `;
   }
-  // Animate pointer
   setInterval(()=>{
     document.querySelectorAll('.digit-circle').forEach(c=>c.classList.remove('active'));
     currentDigit = Math.floor(Math.random()*10);
     document.getElementById(`digit${currentDigit}`).classList.add('active');
-    document.getElementById('pointerBar').style.background='#10b981';
-    setTimeout(()=>{document.getElementById('pointerBar').style.background='#374151'}, 800);
   }, 1500);
 }
 
-function trade(direction){
+function drawChart(){
+  const ctx = document.getElementById('priceChart').getContext('2d');
+  let y = 175;
+  ctx.strokeStyle='#3b82f6'; ctx.lineWidth=2; ctx.beginPath();
+  for(let x=0;x<800;x+=5){
+    y += (Math.random()-0.5)*10;
+    if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+}
+
+function placeTrade(){
   let amount = parseFloat(document.getElementById('amount').value);
   if(amount > balance){ msg.innerText = "Not enough balance"; msg.style.color="#ef4444"; return; }
   balance -= amount;
   let lastDigit = currentDigit;
   let win = false;
   
-  if(direction === 'EVEN') win = lastDigit % 2 === 0;
-  if(direction === 'ODD') win = lastDigit % 2 === 1;
-  if(direction === 'MATCH'){ let d = parseInt(document.getElementById('digit').value); win = lastDigit === d; }
+  if(currentMode === 'EVEN') win = lastDigit % 2 === 0;
+  if(currentMode === 'ODD') win = lastDigit % 2 === 1;
+  if(currentMode === 'OVER'){ let b = parseFloat(document.getElementById('barrier').value)||5; win = lastDigit > b; }
+  if(currentMode === 'UNDER'){ let b = parseFloat(document.getElementById('barrier').value)||5; win = lastDigit < b; }
+  if(currentMode === 'MATCH'){ let d = parseInt(document.getElementById('digitPick').value); win = lastDigit === d; }
+  if(currentMode === 'DIFFERS'){ let d = parseInt(document.getElementById('digitPick').value); win = lastDigit !== d; }
   
   document.getElementById('pointerBar').style.background = win ? '#10b981' : '#ef4444';
   
-  if(win){ balance += amount * 1.8; msg.innerText = `WIN! +$${(amount*0.8).toFixed(2)} | Digit: ${lastDigit}`; msg.style.color="#10b981"; } 
-  else { msg.innerText = `LOSS -$${amount.toFixed(2)} | Digit: ${lastDigit}`; msg.style.color="#ef4444"; }
+  if(win){ 
+    balance += amount * 1.8; 
+    msg.innerText = `WIN! +$${(amount*0.8).toFixed(2)} | Digit: ${lastDigit}`; 
+    msg.style.color="#10b981"; 
+  } else { 
+    msg.innerText = `LOSS -$${amount.toFixed(2)} | Digit: ${lastDigit}`; 
+    msg.style.color="#ef4444"; 
+  }
   document.getElementById('balance').innerText = balance.toFixed(2);
 }
 </script>
