@@ -5,6 +5,9 @@
   <script src="https://s3.tradingview.com/tv.js"></script>
   <style>
     body{background:#050510;color:white;font-family:Arial;margin:0}
+    .auth{text-align:center;padding-top:80px}
+    .auth input{display:block;margin:10px auto;padding:10px;width:250px;border-radius:5px;border:none}
+    .auth button{padding:10px 20px;background:#a855f7;color:white;border:none;border-radius:5px;cursor:pointer}
     .topbar{background:#0f0f2a;padding:10px;display:flex;justify-content:space-between;align-items:center}
     .balance{color:#a855f7;font-weight:bold}
     .deposit{background:#a855f7;border:none;color:white;padding:8px 15px;border-radius:20px;cursor:pointer}
@@ -20,51 +23,104 @@
     .profit-loss{display:flex;justify-content:space-around;margin:15px}
     .card{background:#0f0f2a;padding:10px;border-radius:10px;width:45%}
     input{padding:10px;border-radius:5px;border:none;width:100px;text-align:center}
+    .dashboard{display:none}
+    a{color:#a855f7;cursor:pointer}
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div>Binary<span style="color:#a855f7">Pro</span></div>
-    <div class="balance">$<span id="balance">1000.00</span></div>
-    <button class="deposit" onclick="alert('Deposit coming')">+ Deposit</button>
-  </div>
-
-  <div class="tabs">
-    <div class="tab active" onclick="setMode('RISE')">Rise/Fall</div>
-    <div class="tab" onclick="setMode('EVEN')">Even/Odd</div>
-    <div class="tab" onclick="setMode('OVER')">Over/Under</div>
-    <div class="tab" onclick="setMode('MATCH')">Matches/Differs</div>
-  </div>
-
-  <div id="tradingview_chart"></div>
-
-  <div class="profit-loss">
-    <div class="card">TARGET PROFIT<br>$<input id="target" value="20"></div>
-    <div class="card">STOP LOSS<br>$<input id="stoploss" value="15"></div>
-  </div>
-
-  <div class="controls">
-    <label>Duration Ticks: </label>
-    <div class="ticks">
-      <button onclick="setTicks(1)">1</button>
-      <button onclick="setTicks(3)">3</button>
-      <button class="active" onclick="setTicks(5)">5</button>
-      <button onclick="setTicks(10)">10</button>
+  
+  <!-- LOGIN / REGISTER BOX -->
+  <div id="authBox" class="auth">
+    <h1>Binary<span style="color:#a855f7">Pro</span></h1>
+    <div id="registerBox">
+      <h2>Create Account</h2>
+      <input id="regName" placeholder="Name">
+      <input id="regEmail" placeholder="Email">
+      <input id="regPass" type="password" placeholder="Password">
+      <button onclick="register()">Register</button>
+      <p>Already have account? <a onclick="showLogin()">Login</a></p>
     </div>
-    <br>
-    <div id="extraInput"></div>
-    <input id="amount" type="number" value="10">
-    <br><br>
-    <div id="tradeButtons"></div>
-    <div id="msg" style="margin-top:10px;color:#22c55e"></div>
+
+    <div id="loginBox" style="display:none">
+      <h2>Login</h2>
+      <input id="logEmail" placeholder="Email">
+      <input id="logPass" type="password" placeholder="Password">
+      <button onclick="login()">Login</button>
+      <p>Don't have account? <a onclick="showRegister()">Register</a></p>
+    </div>
+    <div id="authMsg" style="color:#22c55e"></div>
+  </div>
+
+  <!-- TRADING DASHBOARD -->
+  <div id="dashboard" class="dashboard">
+    <div class="topbar">
+      <div>Binary<span style="color:#a855f7">Pro</span></div>
+      <div class="balance">$<span id="balance">1000.00</span></div>
+      <button class="deposit" onclick="alert('Deposit coming')">+ Deposit</button>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="setMode('RISE')">Rise/Fall</div>
+      <div class="tab" onclick="setMode('EVEN')">Even/Odd</div>
+      <div class="tab" onclick="setMode('OVER')">Over/Under</div>
+      <div class="tab" onclick="setMode('MATCH')">Matches/Differs</div>
+    </div>
+
+    <div id="tradingview_chart"></div>
+
+    <div class="profit-loss">
+      <div class="card">TARGET PROFIT<br>$<input id="target" value="20"></div>
+      <div class="card">STOP LOSS<br>$<input id="stoploss" value="15"></div>
+    </div>
+
+    <div class="controls">
+      <label>Duration Ticks: </label>
+      <div class="ticks">
+        <button onclick="setTicks(1)">1</button>
+        <button onclick="setTicks(3)">3</button>
+        <button class="active" onclick="setTicks(5)">5</button>
+        <button onclick="setTicks(10)">10</button>
+      </div>
+      <br>
+      <div id="extraInput"></div>
+      <input id="amount" type="number" value="10">
+      <br><br>
+      <div id="tradeButtons"></div>
+      <div id="msg" style="margin-top:10px;color:#22c55e"></div>
+    </div>
   </div>
 
 <script>
 let balance = 1000;
 let ticks = 5;
 let mode = 'RISE';
+let token = localStorage.getItem('token');
 
-new TradingView.widget({"width":"100%","height":300,"symbol":"FX:EURUSD","theme":"dark","container_id":"tradingview_chart"});
+if(token){ document.getElementById('authBox').style.display='none'; document.getElementById('dashboard').style.display='block'; loadChart(); }
+
+function showLogin(){document.getElementById('registerBox').style.display='none'; document.getElementById('loginBox').style.display='block';}
+function showRegister(){document.getElementById('loginBox').style.display='none'; document.getElementById('registerBox').style.display='block';}
+
+async function register(){
+  const res = await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:regName.value,email:regEmail.value,password:regPass.value})});
+  authMsg.innerText = (await res.json()).message;
+}
+
+async function login(){
+  const res = await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:logEmail.value,password:logPass.value})});
+  const data = await res.json();
+  authMsg.innerText = data.message;
+  if(data.token){
+    localStorage.setItem('token', data.token);
+    document.getElementById('authBox').style.display='none'; 
+    document.getElementById('dashboard').style.display='block';
+    loadChart();
+  }
+}
+
+function loadChart(){
+  new TradingView.widget({"width":"100%","height":300,"symbol":"FX:EURUSD","theme":"dark","container_id":"tradingview_chart"});
+}
 
 function setTicks(t){ ticks=t; document.querySelectorAll('.ticks button').forEach(b=>b.classList.remove('active')); event.target.classList.add('active'); }
 
@@ -78,20 +134,10 @@ function setMode(m){
 function renderButtons(){
   let btns = '';
   let extra = '';
-  if(mode === 'RISE'){
-    btns = `<button class="btn-trade" onclick="trade('RISE')">RISE</button><button class="btn-trade red" onclick="trade('FALL')">FALL</button>`;
-  }
-  if(mode === 'EVEN'){
-    btns = `<button class="btn-trade" onclick="trade('EVEN')">EVEN</button><button class="btn-trade red" onclick="trade('ODD')">ODD</button>`;
-  }
-  if(mode === 'OVER'){
-    extra = `<input id="barrier" placeholder="Barrier e.g 1.1690">`;
-    btns = `<button class="btn-trade" onclick="trade('OVER')">OVER</button><button class="btn-trade red" onclick="trade('UNDER')">UNDER</button>`;
-  }
-  if(mode === 'MATCH'){
-    extra = `<input id="digit" placeholder="Digit 0-9">`;
-    btns = `<button class="btn-trade" onclick="trade('MATCH')">MATCHES</button><button class="btn-trade red" onclick="trade('DIFFERS')">DIFFERS</button>`;
-  }
+  if(mode === 'RISE'){ btns = `<button class="btn-trade" onclick="trade('RISE')">RISE</button><button class="btn-trade red" onclick="trade('FALL')">FALL</button>`; }
+  if(mode === 'EVEN'){ btns = `<button class="btn-trade" onclick="trade('EVEN')">EVEN</button><button class="btn-trade red" onclick="trade('ODD')">ODD</button>`; }
+  if(mode === 'OVER'){ extra = `<input id="barrier" placeholder="Barrier e.g 1.1690">`; btns = `<button class="btn-trade" onclick="trade('OVER')">OVER</button><button class="btn-trade red" onclick="trade('UNDER')">UNDER</button>`; }
+  if(mode === 'MATCH'){ extra = `<input id="digit" placeholder="Digit 0-9">`; btns = `<button class="btn-trade" onclick="trade('MATCH')">MATCHES</button><button class="btn-trade red" onclick="trade('DIFFERS')">DIFFERS</button>`; }
   document.getElementById('extraInput').innerHTML = extra;
   document.getElementById('tradeButtons').innerHTML = btns;
 }
@@ -101,21 +147,13 @@ function trade(direction){
   let amount = parseFloat(document.getElementById('amount').value);
   if(amount > balance){ msg.innerText = "Not enough balance"; return; }
   balance -= amount;
-  
-  let lastDigit = Math.floor(Math.random()*10); // simulate last digit
-  let win = Math.random() > 0.5; // 50/50 for demo
-  
-  // Real logic for demo
+  let lastDigit = Math.floor(Math.random()*10);
+  let win = Math.random() > 0.5;
   if(mode === 'EVEN') win = (lastDigit % 2 === 0 && direction === 'EVEN') || (lastDigit % 2 === 1 && direction === 'ODD');
-  if(mode === 'OVER'){ let barrier = parseFloat(document.getElementById('barrier').value) || 1.1690; win = (Math.random()*2 > barrier && direction === 'OVER'); }
   if(mode === 'MATCH'){ let d = parseInt(document.getElementById('digit').value); win = (lastDigit === d && direction === 'MATCH') || (lastDigit !== d && direction === 'DIFFERS'); }
   
-  if(win){
-    balance += amount * 1.8;
-    msg.innerText = `YOU WON! +$${(amount*0.8).toFixed(2)} | Last digit: ${lastDigit}`;
-  } else {
-    msg.innerText = `YOU LOST -$${amount.toFixed(2)} | Last digit: ${lastDigit}`;
-  }
+  if(win){ balance += amount * 1.8; msg.innerText = `YOU WON! +$${(amount*0.8).toFixed(2)} | Last digit: ${lastDigit}`; } 
+  else { msg.innerText = `YOU LOST -$${amount.toFixed(2)} | Last digit: ${lastDigit}`; }
   document.getElementById('balance').innerText = balance.toFixed(2);
 }
 </script>
