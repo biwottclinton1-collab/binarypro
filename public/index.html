@@ -57,6 +57,8 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
 .presets{display:flex;gap:5px;margin-top:8px}
 .presets button{flex:1;background:#2a3441;border:0;color:#fff;padding:6px;border-radius:4px;font-size:12px;cursor:pointer}
 .presets button.on{background:#2563eb}
+.ai-btn{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;font-weight:900;font-size:18px;margin:12px auto;display:block;cursor:pointer;box-shadow:0 0 20px #3b82f6}
+.ai-btn:hover{transform:scale(1.05)}
 .input-box{width:100%;padding:9px;margin-bottom:8px;border-radius:5px;border:1px solid #2a3441;background:#1a2332;color:#fff;font-size:13px}
 .auth{padding:100px 20px;text-align:center}
 .auth input{width:350px;padding:14px;margin:10px;border-radius:8px;border:1px solid #2a3441;background:#1a2332;color:#fff;font-size:14px}
@@ -124,12 +126,12 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
         <select>
           <option>Volatility 10 (1s) Index</option>
         </select>
-        <div class="vol-price"><span id="currentPrice">9464.59</span> <span class="red">-47.77 (0.50%)</span></div>
+        <div class="vol-price"><span id="currentPrice">9547.77</span> <span class="red">-47.77 (0.50%)</span></div>
       </div>
 
       <div class="chart-box">
         <canvas id="chart"></canvas>
-        <div class="price-label" id="priceTag" style="top:50%">9464.59</div>
+        <div class="price-label" id="priceTag" style="top:50%">9547.77</div>
       </div>
 
       <div class="digits-wrap">
@@ -168,6 +170,11 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
           <button onclick="setStake(50)">$50</button><button onclick="setStake(100)">$100</button>
         </div>
       </div>
+
+      <!-- AI SCANNER BUTTON -->
+      <button class="ai-btn" onclick="aiScan()">AI</button>
+      <div id="aiMsg" style="text-align:center;font-size:11px;color:#94a3b8"></div>
+
       <div id="msg"></div>
     </div>
   </div>
@@ -176,7 +183,7 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
 <script>
 let balance=8000, stake=10, digit=0, token=localStorage.getItem('token'), tradeType='EVEN';
 const pct=[10.8,10.2,10.2,9.0,10.6,9.6,9.2,11.6,9.8,9.0];
-let price = 9464.59;
+let price = 9547.77;
 
 if(!token){authBox.style.display='block';dashboard.style.display='none';}
 else{authBox.style.display='none';dashboard.style.display='block';init();}
@@ -257,6 +264,16 @@ function trade(t){
   document.getElementById('balance').innerText=balance.toFixed(2);
 }
 
+function aiScan(){
+  aiMsg.innerText='Scanning market...';
+  setTimeout(()=>{
+    let signals = ['EVEN 92%', 'OVER 5 - 88%', 'MATCH 3 - 95%'];
+    let pick = signals[Math.floor(Math.random()*signals.length)];
+    aiMsg.innerText=`AI Signal: ${pick}`;
+    aiMsg.style.color='#22c55e';
+  },1500);
+}
+
 function init(){drawDigits();drawChart();renderTradeUI();}
 function drawDigits(){
   digitsRow.innerHTML='';
@@ -268,46 +285,42 @@ function drawChart(){
   const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=c.offsetHeight;
   let data=[];
 
-  // SMOOTH WAVES WITH SPACE - LIKE YOUR SCREENSHOT
+  // EXACT TAGOPTION SPIKES - TALLER
   for(let i=0;i<c.width;i++){
     if(i===0) data.push(c.height/2);
     else{
-      let change = (Math.random()-0.5)*8; // SMALL MOVES
-      change *= 0.3; // SMOOTHING
+      let change = (Math.random()-0.5)*35; // BIGGER SPIKES
+      if(Math.random()<0.06) change *= 3; // TALL SPIKES
       let newY = data[i-1] + change;
-      newY = Math.max(40, Math.min(c.height-40, newY));
+      newY = Math.max(30, Math.min(c.height-30, newY));
       data.push(newY);
     }
   }
 
   function render(){
     ctx.clearRect(0,0,c.width,c.height);
-
-    // GRID LINES WITH SPACE
     ctx.strokeStyle='#1a2332'; ctx.lineWidth=1;
-    for(let y=0;y<c.height;y+=c.height/4){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();}
+    for(let y=0;y<c.height;y+=c.height/5){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();}
 
-    // SMOOTH WHITE LINE
     ctx.strokeStyle='#ffffff'; ctx.lineWidth=2;
     ctx.beginPath();
     for(let x=0;x<data.length;x++)x?ctx.lineTo(x,data[x]):ctx.moveTo(x,data[x]);
     ctx.stroke();
 
-    // SLOW SMOOTH MOVEMENT
     data.shift();
     let lastY=data[data.length-1];
-    let change = (Math.random()-0.5)*8;
-    change *= 0.3;
+    let change = (Math.random()-0.5)*35;
+    if(Math.random()<0.06) change *= 3;
     let newY = lastY + change;
-    newY = Math.max(40, Math.min(c.height-40, newY));
+    newY = Math.max(30, Math.min(c.height-30, newY));
     data.push(newY);
 
-    price += (Math.random()-0.5)*3;
+    price += (Math.random()-0.5)*10;
     document.getElementById('currentPrice').innerText=price.toFixed(2);
     document.getElementById('priceTag').innerText=price.toFixed(2);
     document.getElementById('priceTag').style.top = newY-15+'px';
   }
-  setInterval(render,120);
+  setInterval(render,100);
 }
 </script>
 </body>
