@@ -30,8 +30,8 @@ body{background:#070b14;color:#fff;overflow:hidden}
 #chart{flex:1;background:#050811;border-radius:8px}
 .digits-wrap{padding:10px 0}
 .digits{display:flex;justify-content:center;gap:10px;margin-bottom:6px}
-.digit{width:52px;height:52px;border-radius:50%;background:#1e293b;border:2px solid #334155;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:15px}
-.digit.p{font-size:8px;color:#22c55e;line-height:1} /* MINIMIZED FONT */
+.digit{width:52px;height:52px;border-radius:50%;background:#1e293b;border:2px solid #334155;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:16px;gap:1px} /* BIGGER GAP */
+.digit.p{font-size:7px;color:#22c55e;font-weight:600} /* TINY % */
 .digit.active{border-color:#60a5fa;box-shadow:0 0 14px #60a5fa}
 .digit.win{border-color:#22c55e;background:#052e16}
 .digit.loss{border-color:#ef4444;background:#2f0a0a}
@@ -55,7 +55,7 @@ body{background:#070b14;color:#fff;overflow:hidden}
 .presets{display:flex;gap:6px;margin-top:9px}
 .presets button{flex:1;background:#334155;border:0;color:#fff;padding:7px;border-radius:5px;font-size:12.5px;cursor:pointer}
 .presets button.on{background:#2563eb}
-.payout{display:flex;justify-content:space-between;font-size:13.5px;margin:11px 0}
+.payout-value{text-align:right;font-size:13.5px;margin:11px 0} /* REMOVED "PAYOUT" LABEL */
 .input-box{width:100%;padding:10px;margin-bottom:10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#fff}
 .auth{padding:110px 20px;text-align:center}
 .auth input{width:370px;padding:15px;margin:11px;border-radius:9px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:15px}
@@ -97,7 +97,7 @@ body{background:#070b14;color:#fff;overflow:hidden}
       <div class="nav">💬 Chat</div>
     </div>
     <div class="t-right">
-      <div class="bal">Real $<span id="balance">8000.00</span></div> <!-- 1. REAL BALANCE -->
+      <div class="bal">Real $<span id="balance">8000.00</span></div>
       <button class="btn">Deposit</button>
       <button class="btn" onclick="logout()" style="background:#334155">Logout</button>
     </div>
@@ -131,7 +131,7 @@ body{background:#070b14;color:#fff;overflow:hidden}
         <div class="times">
           <span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span><span>03:15:19</span>
         </div>
-        <div class="trade-action-bar" id="tradeActionBar"></div> <!-- 3. BUTTONS BELOW -->
+        <div class="trade-action-bar" id="tradeActionBar"></div>
       </div>
     </div>
 
@@ -163,8 +163,8 @@ body{background:#070b14;color:#fff;overflow:hidden}
         </div>
       </div>
 
-      <div class="payout"><span>Payout</span><span><b id="payout">19.52</b></span></div>
-      <!-- 2. REMOVED TP/SL -->
+      <div class="payout-value"><b id="payout">19.52</b></div> <!-- NO "PAYOUT" WORD -->
+
       <div id="msg"></div>
     </div>
   </div>
@@ -173,7 +173,7 @@ body{background:#070b14;color:#fff;overflow:hidden}
 <script>
 let balance=8000, stake=10, digit=0, token=localStorage.getItem('token'), tradeType='EVEN';
 const pct=[10.8,10.2,10.2,9.0,10.6,9.6,9.2,11.6,9.8,9.0];
-let chartData = JSON.parse(localStorage.getItem('chartData')) || []; // 6. REMEMBER CHART
+let chartData = JSON.parse(localStorage.getItem('chartData')) || [];
 
 if(!token){authBox.style.display='block';dashboard.style.display='none';}
 else{authBox.style.display='none';dashboard.style.display='block';init();}
@@ -244,7 +244,6 @@ function trade(t){
   if(t==='MATCH')win=digit===pick;
   if(t==='DIFFERS')win=digit!==pick;
 
-  // 4. TURN GREEN ON PROFIT RED ON LOSS
   let dEl = document.getElementById('dg'+digit);
   dEl.classList.add(win?'win':'loss');
   setTimeout(()=>dEl.classList.remove('win','loss'),1500);
@@ -265,8 +264,7 @@ function drawDigits(){
 
 function drawChart(){
   const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=c.offsetHeight;
-  
-  // 5. TAGOPTION STYLE CHART - FLAT LINE
+
   if(chartData.length===0){
     let y=215; for(let i=0;i<c.width;i++){y+=(Math.random()-0.5)*0.8; y=Math.max(200,Math.min(230,y)); chartData.push(y);}
   }
@@ -278,13 +276,13 @@ function drawChart(){
     ctx.beginPath();
     for(let x=0;x<chartData.length;x++)x?ctx.lineTo(x,chartData[x]):ctx.moveTo(x,chartData[x]);
     ctx.stroke();
-    
+
     chartData.shift();
     let lastY=chartData[chartData.length-1];
     let ny=lastY+(Math.random()-0.5)*0.8;
-    ny=Math.max(200,Math.min(230,ny)); // FLAT LIKE TAGOPTION
+    ny=Math.max(200,Math.min(230,ny));
     chartData.push(ny);
-    localStorage.setItem('chartData', JSON.stringify(chartData)); // SAVE CHART
+    localStorage.setItem('chartData', JSON.stringify(chartData));
   }
   setInterval(render,120);
 }
