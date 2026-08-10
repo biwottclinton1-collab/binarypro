@@ -1,4 +1,11 @@
 {
+  "name": "binarypro",
+  "version": "1.0.0",
+  "description": "Backend for BinaryPro app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
