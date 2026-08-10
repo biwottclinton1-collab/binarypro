@@ -22,17 +22,17 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
 .tab.active{color:#60a5fa;border-bottom:2px solid #60a5fa}
 .no-trade{text-align:center;padding-top:70px;color:#64748b;font-size:13px}
 .no-trade.icon{font-size:32px;margin-bottom:8px;color:#ef4444}
-.center{flex:1;display:flex;flex-direction:column;padding:12px 12px 0 12px} /* NO BOTTOM PADDING */
+.center{flex:1;display:flex;flex-direction:column;padding:12px 12px 0 12px}
 .vol{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .vol select{background:#1a2332;color:#fff;border:0;padding:8px 12px;border-radius:6px;font-size:13px}
 .vol-price{font-size:13px}
 .vol-price.red{color:#f87171}
-.chart-box{flex:1;position:relative} /* CHART TAKES ALL SPACE */
+.chart-box{flex:1;position:relative}
 #chart{width:100%;height:100%;background:#070b14;border-radius:6px}
-.digits-wrap{padding:0 0 8px 0;background:#0a0e1a} /* STICK TO BOTTOM */
+.digits-wrap{padding:0 0 8px 0;background:#0a0e1a}
 .digits{display:flex;justify-content:center;gap:8px;margin-bottom:4px}
 .digit{width:50px;height:50px;border-radius:50%;background:#1a2332;border:2px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:15px;gap:0}
-.digit.p{font-size:6px;color:#22c55e;font-weight:600} /* 6PX */
+.digit.p{font-size:6px;color:#22c55e;font-weight:600}
 .digit.active{border-color:#60a5fa;box-shadow:0 0 12px #60a5fa}
 .digit.win{border-color:#22c55e;background:#052e16}
 .digit.loss{border-color:#ef4444;background:#2f0a0a}
@@ -124,15 +124,15 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
         <select>
           <option>Volatility 10 (1s) Index</option>
         </select>
-        <div class="vol-price"><span id="currentPrice">9536.31</span> <span class="red">-47.77 (0.50%)</span></div>
+        <div class="vol-price"><span id="currentPrice">9464.59</span> <span class="red">-47.77 (0.50%)</span></div>
       </div>
 
-      <div class="chart-box"> <!-- CHART NOW FULL HEIGHT -->
+      <div class="chart-box">
         <canvas id="chart"></canvas>
-        <div class="price-label" id="priceTag" style="top:50%">9536.31</div>
+        <div class="price-label" id="priceTag" style="top:50%">9464.59</div>
       </div>
 
-      <div class="digits-wrap"> <!-- STUCK TO BOTTOM -->
+      <div class="digits-wrap">
         <div class="digits" id="digitsRow"></div>
         <div class="times">
           <span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span><span>03:15:19</span>
@@ -176,7 +176,7 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
 <script>
 let balance=8000, stake=10, digit=0, token=localStorage.getItem('token'), tradeType='EVEN';
 const pct=[10.8,10.2,10.2,9.0,10.6,9.6,9.2,11.6,9.8,9.0];
-let price = 9536.31;
+let price = 9464.59;
 
 if(!token){authBox.style.display='block';dashboard.style.display='none';}
 else{authBox.style.display='none';dashboard.style.display='block';init();}
@@ -268,41 +268,46 @@ function drawChart(){
   const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=c.offsetHeight;
   let data=[];
 
+  // SMOOTH WAVES WITH SPACE - LIKE YOUR SCREENSHOT
   for(let i=0;i<c.width;i++){
     if(i===0) data.push(c.height/2);
     else{
-      let change = (Math.random()-0.5)*20;
-      if(Math.random()<0.04) change *= 3.5; // SPIKES
+      let change = (Math.random()-0.5)*8; // SMALL MOVES
+      change *= 0.3; // SMOOTHING
       let newY = data[i-1] + change;
-      newY = Math.max(30, Math.min(c.height-30, newY));
+      newY = Math.max(40, Math.min(c.height-40, newY));
       data.push(newY);
     }
   }
 
   function render(){
     ctx.clearRect(0,0,c.width,c.height);
-    ctx.strokeStyle='#1a2332'; ctx.lineWidth=1;
-    for(let y=0;y<c.height;y+=c.height/6){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();}
 
+    // GRID LINES WITH SPACE
+    ctx.strokeStyle='#1a2332'; ctx.lineWidth=1;
+    for(let y=0;y<c.height;y+=c.height/4){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();}
+
+    // SMOOTH WHITE LINE
     ctx.strokeStyle='#ffffff'; ctx.lineWidth=2;
     ctx.beginPath();
     for(let x=0;x<data.length;x++)x?ctx.lineTo(x,data[x]):ctx.moveTo(x,data[x]);
     ctx.stroke();
 
+    // SLOW SMOOTH MOVEMENT
     data.shift();
     let lastY=data[data.length-1];
-    let change = (Math.random()-0.5)*20;
-    if(Math.random()<0.04) change *= 3.5;
+    let change = (Math.random()-0.5)*8;
+    change *= 0.3;
     let newY = lastY + change;
-    newY = Math.max(30, Math.min(c.height-30, newY));
+    newY = Math.max(40, Math.min(c.height-40, newY));
     data.push(newY);
 
-    price += (Math.random()-0.5)*6;
+    price += (Math.random()-0.5)*3;
     document.getElementById('currentPrice').innerText=price.toFixed(2);
     document.getElementById('priceTag').innerText=price.toFixed(2);
     document.getElementById('priceTag').style.top = newY-15+'px';
   }
-  setInterval(render,100);
+  setInterval(render,120);
 }
 </script>
 </body>
