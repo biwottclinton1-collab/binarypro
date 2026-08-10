@@ -2,64 +2,83 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>BinaryPro</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0e14;color:#fff;font-family:-apple-system,Arial}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#0f1421}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,Arial}
+body{background:#0a0e14;color:#fff;overflow:hidden}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#0f1421;height:48px}
 .logo{font-size:18px;font-weight:800}.logo span{color:#3b82f6}
-.bal{background:#1a2332;padding:5px 10px;border-radius:6px;font-size:12px}
-.btn{padding:5px 10px;border:0;border-radius:5px;font-weight:700;font-size:12px}
+.bal{background:#1a2332;padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600}
+.btn{padding:6px 12px;border:0;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer}
 .btn-blue{background:#2563eb;color:#fff}.btn-gray{background:#374151;color:#fff}
-.container{padding:8px}
-.head{display:flex;justify-content:space-between;margin-bottom:6px}
-.select{background:#1a2332;color:#fff;border:1px solid #334155;padding:5px 8px;border-radius:5px;font-size:11px}
-#chartWrap{position:relative;height:45vh;background:#000;border-radius:8px}
+.container{padding:8px;height:calc(100vh - 48px);display:flex;flex-direction:column}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.select{background:#1a2332;color:#fff;border:1px solid #334155;padding:6px 8px;border-radius:5px;font-size:11px}
+.price{font-size:11px;font-weight:600}
+#chartBox{position:relative;width:100%;flex:1;background:#000;border-radius:8px;min-height:0}
 #chart{width:100%;height:100%}
-.priceTag{position:absolute;right:8px;top:50%;background:#1a2332;padding:3px 6px;border-radius:4px;font-size:10px}
-.grid{position:absolute;width:100%;height:1px;background:#1a2332}
-.digits{display:flex;gap:3px;margin:8px 0;justify-content:center}
-.digit{width:32px;height:32px;border-radius:50%;background:#111827;border:1.5px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;font-weight:700}
-.digit span{font-size:7px}
+.price-tag{position:absolute;right:8px;background:#1a2332;padding:3px 7px;border-radius:4px;font-size:10px;font-weight:600}
+.grid{position:absolute;left:0;right:0;height:1px;background:#151e2e}
+.digits{display:flex;justify-content:space-between;margin:8px 0;gap:3px}
+.digit{flex:1;aspect-ratio:1;border-radius:50%;background:#111827;border:1.5px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;font-weight:700;min-width:0}
+.digit span{font-size:7px;margin-top:1px}
 .digit.active{border-color:#3b82f6;box-shadow:0 0 8px #3b82f6}
-.times{display:flex;justify-content:space-between;font-size:8px;color:#64748b;margin-bottom:8px}
-.trade{display:flex;gap:6px;margin-bottom:8px}
-.trade button{flex:1;padding:14px;border:0;border-radius:8px;color:#fff;font-weight:800;font-size:14px}
-.green{background:#16a34a}.red{background:#dc2626}
-.tabs{display:flex;background:#1a2332;border-radius:6px;padding:3px;margin-bottom:6px}
-.tab{flex:1;text-align:center;padding:8px;border-radius:4px;font-weight:700;font-size:12px}
+.times{display:flex;justify-content:space-between;font-size:9px;color:#64748b;margin:3px 0 8px 0}
+.tabs{display:flex;background:#1a2332;border-radius:6px;padding:3px;margin:8px 0}
+.tab{flex:1;text-align:center;padding:9px;border-radius:4px;cursor:pointer;font-weight:700;font-size:13px}
 .tab.active{background:#2563eb}
-.subtabs{display:flex;gap:4px;margin-bottom:8px}
-.subtab{flex:1;text-align:center;padding:8px;background:#1a2332;border-radius:6px;font-size:11px}
+.subtabs{display:flex;gap:5px;margin-bottom:8px}
+.subtab{flex:1;text-align:center;padding:9px;background:#1a2332;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600}
 .subtab.active{background:#2563eb}
-.stake{background:#0a1120;padding:10px;border-radius:8px;text-align:center}
-.stake-amounts{display:flex;gap:4px;margin:6px 0}
-.stake-amounts button{flex:1;padding:6px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:5px;font-size:10px}
-.stake-amounts button.active{background:#2563eb}
-.ai-btn{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;font-weight:800;font-size:16px;margin:8px auto;display:block;box-shadow:0 0 15px rgba(59,130,246,0.6)}
+.trade{display:flex;gap:6px}
+.trade button{flex:1;padding:16px;border:0;border-radius:8px;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+.trade button small{display:block;font-weight:500;font-size:10px;margin-top:3px;opacity:0.9}
+.green{background:#16a34a}.red{background:#dc2626}
+.stake{background:#0a1120;padding:10px;border-radius:8px;margin-top:8px;text-align:center}
+.stake-head{text-align:center;font-size:11px;color:#94a3b8;margin-bottom:6px;letter-spacing:0.5px}
+.stake-ctrl{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.stake-btn{width:32px;height:32px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:5px;font-size:16px;font-weight:700}
+.stake-amounts{display:flex;gap:4px}
+.stake-amounts button{flex:1;padding:7px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:5px;font-size:12px;font-weight:600}
+.stake-amounts button.active{background:#2563eb;border-color:#2563eb}
+.payout{text-align:center;margin:6px 0;color:#94a3b8;font-size:12px}
+.ai-btn{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;font-weight:800;font-size:16px;margin:8px auto;display:block;box-shadow:0 0 18px rgba(59,130,246,0.5);cursor:pointer}
+.auth{text-align:center;padding-top:80px}
+.auth input{width:90%;max-width:320px;padding:12px;margin:8px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:6px}
+#dashboard{display:none}.hidden{display:none}
 </style>
 </head>
 <body>
 
+<div id="auth" class="auth">
+<h1 class="logo">Binary<span>Pro</span></h1>
+<input id="remail" placeholder="Email"><br>
+<input id="rpass" type="password" placeholder="Password"><br>
+<button class="btn btn-blue" onclick="reg()">Register</button>
+<button class="btn btn-blue" onclick="log()">Login</button>
+<div id="msg" style="margin-top:10px"></div>
+</div>
+
+<div id="dashboard">
 <div class="topbar">
 <div class="logo">Binary<span>Pro</span></div>
-<div style="display:flex;gap:5px">
-<span class="bal">Real $8000.00</span>
+<div style="display:flex;gap:6px">
+<span class="bal">Real $<span id="balance">8000.00</span></span>
 <button class="btn btn-blue">Deposit</button>
-<button class="btn btn-gray">Logout</button>
+<button class="btn btn-gray" onclick="logout()">Logout</button>
 </div>
 </div>
 
 <div class="container">
 <div class="head">
 <select class="select"><option>Volatility 10 (1s) Index</option></select>
-<div>9599.71 <span style="color:#ef4444">-47.77 (0.50%)</span></div>
+<div class="price"><span id="cprice">9599.71</span> <span style="color:#ef4444">-47.77 (0.50%)</span></div>
 </div>
 
-<div id="chartWrap">
+<div id="chartBox">
 <canvas id="chart"></canvas>
-<div class="priceTag">9599.71</div>
+<div class="price-tag" id="ptag">9599.71</div>
 <div class="grid" style="top:25%"></div>
 <div class="grid" style="top:50%"></div>
 <div class="grid" style="top:75%"></div>
@@ -67,11 +86,6 @@ body{background:#0a0e14;color:#fff;font-family:-apple-system,Arial}
 
 <div class="digits" id="digits"></div>
 <div class="times"><span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span><span>03:15:19</span></div>
-
-<div class="trade">
-<button class="green">Even<br><small>19.52 USD 95.22%</small></button>
-<button class="red">Odd<br><small>19.52 USD 95.22%</small></button>
-</div>
 
 <div class="tabs"><div class="tab active">AUTO</div><div class="tab">MANUAL</div></div>
 
@@ -81,39 +95,80 @@ body{background:#0a0e14;color:#fff;font-family:-apple-system,Arial}
 <div class="subtab">Over / Under</div>
 </div>
 
-<div class="stake">
-STAKE AMOUNT<br>
-<b>$10</b><br>
-<div class="stake-amounts">
-<button>$1</button><button>$5</button>
-<button class="active">$10</button>
-<button>$25</button><button>$50</button><button>$100</button>
+<div class="trade">
+<button class="green">Even<br><small id="evenP">19.52 USD 95.22%</small></button>
+<button class="red">Odd<br><small id="oddP">19.52 USD 95.22%</small></button>
 </div>
-Payout: $19.52
+
+<div class="stake">
+<div class="stake-head">STAKE AMOUNT</div>
+<div class="stake-ctrl">
+<button class="stake-btn" onclick="s(-1)">-</button>
+<b>$<span id="stake">10</span></b>
+<button class="stake-btn" onclick="s(1)">+</button>
+</div>
+<div class="stake-amounts">
+<button onclick="setS(1)">$1</button><button onclick="setS(5)">$5</button>
+<button onclick="setS(10)" class="active" id="s10">$10</button>
+<button onclick="setS(25)">$25</button><button onclick="setS(50)">$50</button><button onclick="setS(100)">$100</button>
+</div>
+<div class="payout">Payout: $<span id="payout">19.52</span></div>
 <button class="ai-btn">AI</button>
+</div>
 </div>
 </div>
 
 <script>
+let bal=8000,stake=10,token=localStorage.t;
 const pct=[10.8,10.2,10.2,9,10.6,9.6,9.2,11.6,9.8,9];
-digits.innerHTML='';
-for(let i=0;i<10;i++)digits.innerHTML+=`<div class="digit">${i}<span>${pct[i]}%</span></div>`;
 
-const c=chart,ctx=c.getContext('2d');
-c.width=c.offsetWidth;c.height=c.offsetHeight;
-let y=c.height/2;
+if(token){auth.style.display='none';dashboard.style.display='block';me();}
+
+async function reg(){let r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'boss',email:remail.value,password:rpass.value})});msg.innerText=(await r.json()).message;msg.style.color='#22c55e';}
+async function log(){let r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:remail.value,password:rpass.value})});let d=await r.json();if(d.token){localStorage.t=d.token;location.reload();}else{msg.innerText=d.message;msg.style.color='#ef4444';}}
+async function me(){let r=await fetch('/api/me',{headers:{'Authorization':'Bearer '+token}});let u=await r.json();bal=parseFloat(u.balance);balance.innerText=bal.toFixed(2);draw();}
+function logout(){localStorage.removeItem('t');location.reload();}
+function setS(x){stake=x;document.querySelectorAll('.stake-amounts button').forEach(b=>b.classList.remove('active'));document.getElementById('s'+x).classList.add('active');update();}
+function s(x){stake+=x;if(stake<1)stake=1;update();}
+function update(){stake.innerText=stake;payout.innerText=(stake*1.952).toFixed(2);['evenP','oddP'].forEach(id=>document.getElementById(id).innerText=(stake*1.952).toFixed(2)+' USD 95.22%');}
+
+function draw(){
+const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=c.offsetHeight;
+digits.innerHTML='';for(let i=0;i<10;i++)digits.innerHTML+=`<div class="digit" id="d${i}">${i}<span>${pct[i]}%</span></div>`;
+
+// EXACT CHART LIKE YOUR SCREENSHOT
+let data=Array(300).fill(c.height/2);
+let lastDigit=-1;
 
 setInterval(()=>{
-ctx.strokeStyle='#fff';
-ctx.lineWidth=2;
-ctx.beginPath();
-for(let i=0;i<c.width;i+=2){
-  y=y+(Math.random()-0.5)*8;
-  if(i==0)ctx.moveTo(i,y);
-  else ctx.lineTo(i,y);
+ctx.clearRect(0,0,c.width,c.height);
+ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();
+for(let i=0;i<data.length;i++){
+  let x=i*(c.width/data.length);
+  i?ctx.lineTo(x,data[i]):ctx.moveTo(x,data[i]);
 }
 ctx.stroke();
-},150);
+
+data.shift();
+let lastY=data[data.length-1];
+let newY=lastY+(Math.random()-0.5)*30; // BIG SPIKES
+if(newY<c.height*0.1)newY=c.height*0.1;
+if(newY>c.height*0.9)newY=c.height*0.9;
+data.push(newY);
+
+// PRICE TAG
+let price=(9500+Math.random()*200).toFixed(2);
+cprice.innerText=price;ptag.innerText=price;ptag.style.top=(newY-15)+'px';
+
+// DIGIT
+let digit=Math.floor((newY-c.height*0.1)/(c.height*0.8/10));
+if(digit!=lastDigit && digit>=0 && digit<10){
+document.querySelectorAll('.digit').forEach(d=>d.classList.remove('active'));
+document.getElementById('d'+digit).classList.add('active');
+lastDigit=digit;
+}
+},130);
+}
 </script>
 </body>
 </html>
