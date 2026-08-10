@@ -5,38 +5,44 @@
   <style>
     body{background:#0a0d17;color:white;font-family:'Segoe UI',Arial;margin:0}
     .navbar{background:#111827;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+    .nav-right{display:flex;gap:15px;align-items:center}
+    .nav-btn{color:#9ca3af;cursor:pointer}
     .btn{background:#3b82f6;border:none;color:white;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:bold}
     .btn.green{background:#10b981}
     .balance{color:#10b981;font-weight:bold;font-size:18px}
-    .main{display:flex}
-    .left-panel{width:250px;background:#111827;padding:15px}
-    .chart-area{flex:1;padding:15px}
+    .main{display:flex;height:calc(100vh - 60px)}
+    .left-panel{width:300px;background:#111827;padding:15px;border-right:1px solid #1f2937}
+    .position-tabs{display:flex;border-bottom:1px solid #1f2937}
+    .p-tab{flex:1;padding:10px;text-align:center;cursor:pointer;color:#9ca3af}
+    .p-tab.active{color:white;border-bottom:2px solid #3b82f6}
+    .chart-area{flex:1;padding:15px;overflow-y:auto}
     .right-panel{width:320px;background:#111827;padding:15px}
-    .fake-chart{height:400px;background:linear-gradient(180deg,#0f172a 0%,#020617 100%);border-radius:10px;position:relative;padding:20px}
-    .vol-select{background:#1f2937;color:white;padding:10px;border:none;border-radius:8px;width:100%;font-size:16px}
-    .vol-header{font-size:14px;color:#9ca3af;margin:8px 0}
+    .fake-chart{height:350px;background:linear-gradient(180deg,#0f172a 0%,#020617 100%);border-radius:10px}
+    .vol-select{background:#1f2937;color:white;padding:10px;border:none;border-radius:8px;width:100%;font-size:16px;margin-bottom:10px}
     .digits-row{display:flex;justify-content:space-between;margin:15px 0;padding:15px;background:#111827;border-radius:12px}
     .digit-circle{text-align:center;flex:1}
-    .digit-circle .circle{width:55px;height:55px;border-radius:50%;background:#1f2937;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:18px;font-weight:bold;margin:0 auto;border:2px solid #374151}
-    .digit-circle.active .circle{background:#10b981;border-color:#10b981}
+    .digit-circle .circle{width:50px;height:50px;border-radius:50%;background:#1f2937;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:18px;font-weight:bold;margin:0 auto;border:2px solid #374151;transition:0.3s}
+    .digit-circle .circle.win{background:#10b981;border-color:#10b981}
+    .digit-circle .circle.loss{background:#ef4444;border-color:#ef4444}
     .digit-circle .percent{font-size:10px;color:#10b981;margin-top:2px}
-    .tabs{display:flex;gap:5px;margin:10px 0}
-    .tab{flex:1;padding:10px;background:#1f2937;border:none;color:white;border-radius:8px;cursor:pointer}
-    .tab.active{background:#3b82f6}
-    .btn-trade{width:100%;padding:14px;font-size:16px;border:none;border-radius:10px;color:white;margin:6px 0;font-weight:bold;cursor:pointer}
-    .btn-even{background:#10b981} .btn-odd{background:#ef4444}
-    .btn-over{background:#8b5cf6} .btn-under{background:#f59e0b}
-    .btn-match{background:#06b6d4} .btn-differs{background:#ec4899}
-    input{padding:10px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:white;width:100%;text-align:center;margin:5px 0}
+    .market-btns{display:flex;gap:8px;margin:15px 0;flex-wrap:wrap}
+    .m-btn{flex:1;min-width:120px;padding:12px;background:#1f2937;border:1px solid #374151;color:white;border-radius:8px;cursor:pointer;font-weight:bold}
+    .m-btn.active{border-color:#3b82f6;background:#1e3a8a}
+    .trade-row{display:flex;gap:10px;margin:15px 0}
+    .trade-row input{flex:1;padding:12px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:white;text-align:center}
+    .btn-trade{width:100%;padding:16px;font-size:18px;border:none;border-radius:10px;background:#10b981;color:white;font-weight:bold;cursor:pointer;margin-top:10px}
     .auth{text-align:center;padding-top:80px}
     .auth input{display:block;margin:12px auto;padding:12px;width:300px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:white}
     .dashboard{display:none}
-    #pointerBar{height:4px;background:#374151;border-radius:2px;margin-top:5px}
+    .history-item{padding:10px;background:#1f2937;margin:5px 0;border-radius:8px;font-size:13px}
+    .history-item.open{border-left:3px solid #f59e0b}
+    .history-item.win{border-left:3px solid #10b981} 
+    .history-item.loss{border-left:3px solid #ef4444}
   </style>
 </head>
 <body>
   
-  <!-- 1. LOGIN / REGISTER - FIXED -->
+  <!-- AUTH -->
   <div id="authBox" class="auth">
     <h1>Binary<span style="color:#3b82f6">Pro</span></h1>
     <div id="registerBox">
@@ -57,13 +63,14 @@
     <div id="authMsg" style="color:#10b981"></div>
   </div>
 
-  <!-- 2. DASHBOARD -->
+  <!-- DASHBOARD -->
   <div id="dashboard" class="dashboard">
     <div class="navbar">
       <div><b>Binary</b><span style="color:#3b82f6">Pro</span></div>
-      <div>
-        <button class="btn">Deposit</button>
-        <button class="btn">Withdraw</button>
+      <div class="nav-right">
+        <div class="nav-btn">➕ Deposit</div>
+        <div class="nav-btn">➖ Withdraw</div>
+        <div class="nav-btn">🕒 History</div>
         <span>Real</span>
         <span class="balance">$<span id="balance">8000.00</span></span>
         <button class="btn" onclick="logout()">Logout</button>
@@ -71,69 +78,67 @@
     </div>
 
     <div class="main">
+      <!-- LEFT: HISTORY WITH OPEN POSITIONS -->
       <div class="left-panel">
-        <h3>No open positions</h3>
-        <p style="color:#9ca3af">Your active trades will appear here</p>
+        <div class="position-tabs">
+          <div class="p-tab active" onclick="showTab('open')">Open (<span id="openCount">0</span>)</div>
+          <div class="p-tab" onclick="showTab('closed')">Closed (<span id="closedCount">0</span>)</div>
+          <div class="p-tab" onclick="showTab('transactions')">Transactions</div>
+        </div>
+        <div id="openTab"><p style="color:#9ca3af;text-align:center;padding-top:20px">No open positions</p></div>
+        <div id="closedTab" style="display:none"></div>
+        <div id="transactionsTab" style="display:none"></div>
       </div>
 
       <div class="chart-area">
-        <!-- VOL DROPDOWN -->
+        <!-- 1. VOLATILITY -->
         <select class="vol-select" id="volSelect">
-          <option>Volatility 10 Index</option>
-          <option>Volatility 25 Index</option>
-          <option>Volatility 50 Index</option>
-          <option>Volatility 75 Index</option>
-          <option>Volatility 100 Index</option>
+          <option>Volatility 10 (1s) Index</option>
+          <option>Volatility 25 (1s) Index</option>
+          <option>Volatility 50 (1s) Index</option>
+          <option>Volatility 75 (1s) Index</option>
+          <option>Volatility 100 (1s) Index</option>
         </select>
-        <div class="vol-header">9547.77 -47.77 (0.50%)</div>
+
+        <!-- 2. CHART -->
+        <div class="fake-chart"><canvas id="priceChart" width="900" height="330"></canvas></div>
         
-        <!-- FAKE DERIV CHART -->
-        <div class="fake-chart" id="chart">
-          <canvas id="priceChart" width="800" height="350"></canvas>
-        </div>
-        
-        <!-- 10 CIRCLES WITH % INSIDE -->
+        <!-- 3. 10 DIGIT CIRCLES -->
         <div class="digits-row" id="digitsRow"></div>
-        <div id="pointerBar"></div>
+
+        <!-- 4. MARKET BUTTONS BELOW CIRCLES -->
+        <div class="market-btns">
+          <button class="m-btn active" onclick="setMode('EVEN')">Even/Odd</button>
+          <button class="m-btn" onclick="setMode('OVER')">Over/Under</button>
+          <button class="m-btn" onclick="setMode('RISE')">Rise/Fall</button>
+          <button class="m-btn" onclick="setMode('MATCH')">Matches/Differs</button>
+        </div>
+
+        <!-- 5. STAKE | TP | SL HORIZONTAL -->
+        <div class="trade-row">
+          <input id="amount" type="number" placeholder="Stake $">
+          <input id="tp" type="number" placeholder="Take Profit $">
+          <input id="sl" type="number" placeholder="Stop Loss $">
+        </div>
+        <div id="modeInputs"></div>
+        <button class="btn-trade" onclick="placeTrade()">Place Trade</button>
+        <div id="msg" style="margin-top:10px;font-weight:bold;text-align:center"></div>
       </div>
 
       <div class="right-panel">
-        <div class="tabs">
-          <button class="tab active" onclick="setTab('MANUAL')">MANUAL</button>
-          <button class="tab" onclick="setTab('AUTO')">AUTO</button>
-        </div>
-
-        <h4>TRADE TYPE</h4>
-        <!-- ALL 4 MODES YOU ASKED -->
-        <button class="btn-trade btn-even" onclick="setMode('EVEN')">Even 95.22%</button>
-        <button class="btn-trade btn-odd" onclick="setMode('ODD')">Odd 95.22%</button>
-        <button class="btn-trade btn-over" onclick="setMode('OVER')">Over</button>
-        <button class="btn-trade btn-under" onclick="setMode('UNDER')">Under</button>
-        <button class="btn-trade btn-match" onclick="setMode('MATCH')">Matches Digit</button>
-        <button class="btn-trade btn-differs" onclick="setMode('DIFFERS')">Differs Digit</button>
-        
-        <div id="modeInputs"></div>
-
-        <h4>STAKE AMOUNT</h4>
-        <input id="amount" type="number" value="10">
-
-        <h4>TAKE PROFIT</h4>
-        <input id="tp" type="number" placeholder="Auto close at profit $">
-
-        <h4>STOP LOSS</h4>
-        <input id="sl" type="number" placeholder="Auto close at loss $">
-
-        <button class="btn green" style="width:100%;margin-top:10px" onclick="placeTrade()">Place Trade</button>
-        <div id="msg" style="margin-top:10px;font-weight:bold;text-align:center"></div>
+        <h3>Market Info</h3>
+        <p style="color:#9ca3af">Select a market above to trade</p>
       </div>
     </div>
   </div>
 
 <script>
-let balance = 8000; // REAL $8000
+let balance = 8000;
 let token = localStorage.getItem('token');
 let currentMode = 'EVEN';
 let currentDigit = 0;
+let openTrades = [];
+let tradeHistory = [];
 
 function logout(){ localStorage.removeItem('token'); location.reload(); }
 
@@ -143,25 +148,26 @@ if(!token){
 } else {
   document.getElementById('authBox').style.display='none'; 
   document.getElementById('dashboard').style.display='block'; 
-  drawDigits(); drawChart();
+  drawDigits(); drawChart(); renderInputs();
 }
 
 function showLogin(){document.getElementById('registerBox').style.display='none'; document.getElementById('loginBox').style.display='block';}
 function showRegister(){document.getElementById('loginBox').style.display='none'; document.getElementById('registerBox').style.display='block';}
 
-async function register(){
-  const res = await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:regName.value,email:regEmail.value,password:regPass.value})});
-  authMsg.innerText = (await res.json()).message;
-}
-async function login(){
-  const res = await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:logEmail.value,password:logPass.value})});
-  const data = await res.json();
-  if(data.token){ localStorage.setItem('token', data.token); location.reload(); }
-  else{ authMsg.innerText = data.message; }
+function showTab(t){
+  document.querySelectorAll('.p-tab').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('openTab').style.display = t==='open'?'block':'none';
+  document.getElementById('closedTab').style.display = t==='closed'?'block':'none';
+  document.getElementById('transactionsTab').style.display = t==='transactions'?'block':'none';
 }
 
-function setTab(t){ document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active')); event.target.classList.add('active'); }
-function setMode(m){ currentMode=m; renderInputs(); }
+function setMode(m){ 
+  currentMode=m; 
+  document.querySelectorAll('.m-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderInputs(); 
+}
 
 function renderInputs(){
   let html = '';
@@ -169,7 +175,6 @@ function renderInputs(){
   if(currentMode === 'MATCH' || currentMode === 'DIFFERS') html = `<input id="digitPick" placeholder="Pick Digit 0-9">`;
   document.getElementById('modeInputs').innerHTML = html;
 }
-renderInputs();
 
 function drawDigits(){
   const row = document.getElementById('digitsRow');
@@ -183,20 +188,17 @@ function drawDigits(){
     `;
   }
   setInterval(()=>{
-    document.querySelectorAll('.digit-circle').forEach(c=>c.classList.remove('active'));
+    document.querySelectorAll('.circle').forEach(c=>c.classList.remove('win','loss'));
     currentDigit = Math.floor(Math.random()*10);
-    document.getElementById(`digit${currentDigit}`).classList.add('active');
+    document.getElementById(`digit${currentDigit} .circle`).classList.add('win'); // moving pointer = green
+    setTimeout(()=>{document.getElementById(`digit${currentDigit} .circle`).classList.remove('win')}, 1000);
   }, 1500);
 }
 
 function drawChart(){
   const ctx = document.getElementById('priceChart').getContext('2d');
-  let y = 175;
-  ctx.strokeStyle='#3b82f6'; ctx.lineWidth=2; ctx.beginPath();
-  for(let x=0;x<800;x+=5){
-    y += (Math.random()-0.5)*10;
-    if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-  }
+  let y = 165; ctx.strokeStyle='#ffffff'; ctx.lineWidth=2; ctx.beginPath();
+  for(let x=0;x<900;x+=5){ y += (Math.random()-0.5)*8; if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
   ctx.stroke();
 }
 
@@ -204,27 +206,59 @@ function placeTrade(){
   let amount = parseFloat(document.getElementById('amount').value);
   if(amount > balance){ msg.innerText = "Not enough balance"; msg.style.color="#ef4444"; return; }
   balance -= amount;
-  let lastDigit = currentDigit;
-  let win = false;
   
-  if(currentMode === 'EVEN') win = lastDigit % 2 === 0;
-  if(currentMode === 'ODD') win = lastDigit % 2 === 1;
-  if(currentMode === 'OVER'){ let b = parseFloat(document.getElementById('barrier').value)||5; win = lastDigit > b; }
-  if(currentMode === 'UNDER'){ let b = parseFloat(document.getElementById('barrier').value)||5; win = lastDigit < b; }
-  if(currentMode === 'MATCH'){ let d = parseInt(document.getElementById('digitPick').value); win = lastDigit === d; }
-  if(currentMode === 'DIFFERS'){ let d = parseInt(document.getElementById('digitPick').value); win = lastDigit !== d; }
+  // ADD TO OPEN POSITIONS
+  let tradeId = Date.now();
+  openTrades.push({id:tradeId, mode:currentMode, amount, time:new Date().toLocaleTimeString()});
+  updateHistory();
   
-  document.getElementById('pointerBar').style.background = win ? '#10b981' : '#ef4444';
+  setTimeout(()=>{ // simulate trade result after 3s
+    let lastDigit = currentDigit;
+    let win = false;
+    if(currentMode === 'EVEN') win = lastDigit % 2 === 0;
+    if(currentMode === 'ODD') win = lastDigit % 2 === 1;
+    if(currentMode === 'OVER'){ let b = parseFloat(document.getElementById('barrier').value)||5; win = lastDigit > b; }
+    if(currentMode === 'UNDER'){ let b = parseFloat(document.getElementById('barrier').value)||5; win = lastDigit < b; }
+    if(currentMode === 'RISE') win = Math.random() > 0.5; // fake
+    if(currentMode === 'FALL') win = Math.random() < 0.5;
+    if(currentMode === 'MATCH'){ let d = parseInt(document.getElementById('digitPick').value); win = lastDigit === d; }
+    if(currentMode === 'DIFFERS'){ let d = parseInt(document.getElementById('digitPick').value); win = lastDigit !== d; }
+    
+    // COLOR THE CIRCLE: GREEN WIN, RED LOSS
+    let circle = document.getElementById(`digit${lastDigit} .circle`);
+    circle.classList.add(win?'win':'loss');
+    
+    // MOVE FROM OPEN TO CLOSED
+    let profit = win ? amount * 0.8 : -amount;
+    balance += win ? amount * 1.8 : 0;
+    tradeHistory.push({mode:currentMode, amount, profit, digit:lastDigit, time:new Date().toLocaleTimeString()});
+    openTrades = openTrades.filter(t=>t.id!==tradeId);
+    updateHistory();
+    
+    msg.innerText = win ? `WIN! +$${profit.toFixed(2)} | Digit: ${lastDigit}` : `LOSS $${Math.abs(profit).toFixed(2)} | Digit: ${lastDigit}`; 
+    msg.style.color = win ? "#10b981" : "#ef4444";
+    document.getElementById('balance').innerText = balance.toFixed(2);
+  }, 3000);
+}
+
+function updateHistory(){
+  let openHtml = openTrades.length ? '' : '<p style="color:#9ca3af;text-align:center">No open positions</p>';
+  openTrades.forEach(t=>{
+    openHtml += `<div class="history-item open">OPEN: ${t.mode} - $${t.amount}<br><small>${t.time}</small></div>`;
+  });
+  document.getElementById('openTab').innerHTML = openHtml;
+  document.getElementById('openCount').innerText = openTrades.length;
   
-  if(win){ 
-    balance += amount * 1.8; 
-    msg.innerText = `WIN! +$${(amount*0.8).toFixed(2)} | Digit: ${lastDigit}`; 
-    msg.style.color="#10b981"; 
-  } else { 
-    msg.innerText = `LOSS -$${amount.toFixed(2)} | Digit: ${lastDigit}`; 
-    msg.style.color="#ef4444"; 
-  }
-  document.getElementById('balance').innerText = balance.toFixed(2);
+  let closedHtml = '';
+  tradeHistory.forEach(t=>{
+    closedHtml += `<div class="history-item ${t.profit>0?'win':'loss'}">
+      ${t.mode} - $${t.amount} - Digit:${t.digit} - ${t.profit>0?'+':''}$${t.profit.toFixed(2)}<br>
+      <small style="color:#9ca3af">${t.time}</small>
+    </div>`;
+  });
+  document.getElementById('closedTab').innerHTML = closedHtml || '<p style="color:#9ca3af;text-align:center">No closed trades</p>';
+  document.getElementById('closedCount').innerText = tradeHistory.length;
+  document.getElementById('transactionsTab').innerHTML = closedHtml;
 }
 </script>
 </body>
