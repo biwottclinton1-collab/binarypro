@@ -22,20 +22,21 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
 .tab.active{color:#60a5fa;border-bottom:2px solid #60a5fa}
 .no-trade{text-align:center;padding-top:70px;color:#64748b;font-size:13px}
 .no-trade.icon{font-size:32px;margin-bottom:8px;color:#ef4444}
-.center{flex:1;display:flex;flex-direction:column;padding:12px}
+.center{flex:1;display:flex;flex-direction:column;padding:12px 12px 0 12px} /* NO BOTTOM PADDING */
 .vol{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .vol select{background:#1a2332;color:#fff;border:0;padding:8px 12px;border-radius:6px;font-size:13px}
 .vol-price{font-size:13px}
 .vol-price.red{color:#f87171}
-#chart{flex:1;background:#070b14;border-radius:6px}
-.digits-wrap{padding:8px 0}
+.chart-box{flex:1;position:relative} /* CHART TAKES ALL SPACE */
+#chart{width:100%;height:100%;background:#070b14;border-radius:6px}
+.digits-wrap{padding:0 0 8px 0;background:#0a0e1a} /* STICK TO BOTTOM */
 .digits{display:flex;justify-content:center;gap:8px;margin-bottom:4px}
 .digit{width:50px;height:50px;border-radius:50%;background:#1a2332;border:2px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:15px;gap:0}
-.digit.p{font-size:6px;color:#22c55e;font-weight:600} /* 6PX INSIDE */
+.digit.p{font-size:6px;color:#22c55e;font-weight:600} /* 6PX */
 .digit.active{border-color:#60a5fa;box-shadow:0 0 12px #60a5fa}
 .digit.win{border-color:#22c55e;background:#052e16}
 .digit.loss{border-color:#ef4444;background:#2f0a0a}
-.times{display:flex;justify-content:center;gap:35px;font-size:10px;color:#64748b;margin-bottom:8px}
+.times{display:flex;justify-content:center;gap:35px;font-size:10px;color:#64748b;margin-bottom:6px}
 .trade-action-bar{display:flex;gap:8px;justify-content:center}
 .trade-action-bar button{padding:12px 22px;border:0;border-radius:8px;font-weight:800;font-size:14px;cursor:pointer;color:#fff;min-width:150px}
 .btn-even{background:#16a34a}
@@ -62,7 +63,7 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
 .btn-auth{padding:14px 50px;background:#2563eb;border:0;color:#fff;border-radius:8px;font-size:16px;font-weight:800;cursor:pointer}
 .dashboard{display:none}
 #msg{color:#22c55e;text-align:center;margin-top:6px;font-weight:700;font-size:13px}
-.price-label{position:absolute;right:10px;background:#1a2332;padding:3px 8px;border-radius:4px;font-size:11px;border:1px solid #334155}
+.price-label{position:absolute;right:10px;background:#1a2332;padding:3px 8px;border-radius:4px;font-size:11px;border:1px solid #334155;z-index:10}
 </style>
 </head>
 <body>
@@ -123,14 +124,15 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
         <select>
           <option>Volatility 10 (1s) Index</option>
         </select>
-        <div class="vol-price"><span id="currentPrice">9547.77</span> <span class="red" id="priceChange">-47.77 (0.50%)</span></div>
-      </div>
-      <div style="position:relative;flex:1">
-        <canvas id="chart"></canvas>
-        <div class="price-label" id="priceTag" style="top:50%">9547.77</div>
+        <div class="vol-price"><span id="currentPrice">9536.31</span> <span class="red">-47.77 (0.50%)</span></div>
       </div>
 
-      <div class="digits-wrap">
+      <div class="chart-box"> <!-- CHART NOW FULL HEIGHT -->
+        <canvas id="chart"></canvas>
+        <div class="price-label" id="priceTag" style="top:50%">9536.31</div>
+      </div>
+
+      <div class="digits-wrap"> <!-- STUCK TO BOTTOM -->
         <div class="digits" id="digitsRow"></div>
         <div class="times">
           <span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span><span>03:15:19</span>
@@ -166,7 +168,6 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
           <button onclick="setStake(50)">$50</button><button onclick="setStake(100)">$100</button>
         </div>
       </div>
-      <!-- NO PAYOUT -->
       <div id="msg"></div>
     </div>
   </div>
@@ -175,7 +176,7 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
 <script>
 let balance=8000, stake=10, digit=0, token=localStorage.getItem('token'), tradeType='EVEN';
 const pct=[10.8,10.2,10.2,9.0,10.6,9.6,9.2,11.6,9.8,9.0];
-let price = 9547.77;
+let price = 9536.31;
 
 if(!token){authBox.style.display='block';dashboard.style.display='none';}
 else{authBox.style.display='none';dashboard.style.display='block';init();}
@@ -267,41 +268,36 @@ function drawChart(){
   const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=c.offsetHeight;
   let data=[];
 
-  // GENERATE BIG SPIKES LIKE VOLATILITY 10
   for(let i=0;i<c.width;i++){
     if(i===0) data.push(c.height/2);
     else{
-      let change = (Math.random()-0.5)*25; // BIG MOVES
-      if(Math.random()<0.05) change *= 4; // SPIKE
+      let change = (Math.random()-0.5)*20;
+      if(Math.random()<0.04) change *= 3.5; // SPIKES
       let newY = data[i-1] + change;
-      newY = Math.max(50, Math.min(c.height-50, newY));
+      newY = Math.max(30, Math.min(c.height-30, newY));
       data.push(newY);
     }
   }
 
   function render(){
     ctx.clearRect(0,0,c.width,c.height);
-
-    // GRID LINES
     ctx.strokeStyle='#1a2332'; ctx.lineWidth=1;
-    for(let y=0;y<c.height;y+=c.height/5){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();}
+    for(let y=0;y<c.height;y+=c.height/6){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();}
 
-    // CHART LINE
     ctx.strokeStyle='#ffffff'; ctx.lineWidth=2;
     ctx.beginPath();
     for(let x=0;x<data.length;x++)x?ctx.lineTo(x,data[x]):ctx.moveTo(x,data[x]);
     ctx.stroke();
 
-    // UPDATE PRICE
     data.shift();
     let lastY=data[data.length-1];
-    let change = (Math.random()-0.5)*25;
-    if(Math.random()<0.05) change *= 4;
+    let change = (Math.random()-0.5)*20;
+    if(Math.random()<0.04) change *= 3.5;
     let newY = lastY + change;
-    newY = Math.max(50, Math.min(c.height-50, newY));
+    newY = Math.max(30, Math.min(c.height-30, newY));
     data.push(newY);
 
-    price += (Math.random()-0.5)*8;
+    price += (Math.random()-0.5)*6;
     document.getElementById('currentPrice').innerText=price.toFixed(2);
     document.getElementById('priceTag').innerText=price.toFixed(2);
     document.getElementById('priceTag').style.top = newY-15+'px';
