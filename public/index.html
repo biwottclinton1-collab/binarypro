@@ -5,7 +5,7 @@
   <style>
     body{background:#0a0d17;color:white;font-family:'Segoe UI',Arial;margin:0}
     .navbar{background:#111827;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
-    .nav-right{display:flex;gap:15px;align-items:center}
+    .nav-right{display:flex;gap:20px;align-items:center}
     .nav-btn{color:#9ca3af;cursor:pointer}
     .btn{background:#3b82f6;border:none;color:white;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:bold}
     .btn.green{background:#10b981}
@@ -16,21 +16,21 @@
     .p-tab{flex:1;padding:10px;text-align:center;cursor:pointer;color:#9ca3af}
     .p-tab.active{color:white;border-bottom:2px solid #3b82f6}
     .chart-area{flex:1;padding:15px;overflow-y:auto}
-    .right-panel{width:320px;background:#111827;padding:15px}
-    .fake-chart{height:350px;background:linear-gradient(180deg,#0f172a 0%,#020617 100%);border-radius:10px}
-    .vol-select{background:#1f2937;color:white;padding:10px;border:none;border-radius:8px;width:100%;font-size:16px;margin-bottom:10px}
-    .digits-row{display:flex;justify-content:space-between;margin:15px 0;padding:15px;background:#111827;border-radius:12px}
+    .fake-chart{height:350px;background:linear-gradient(180deg,#0f172a 0%,#020617 100%);border-radius:10px;margin-bottom:15px}
+    .vol-select{background:#1f2937;color:white;padding:12px;border:none;border-radius:8px;width:100%;font-size:16px;margin-bottom:10px}
+    .digits-row{display:flex;justify-content:space-between;margin:15px 0;padding:15px;background:#0f172a;border-radius:12px}
     .digit-circle{text-align:center;flex:1}
-    .digit-circle .circle{width:50px;height:50px;border-radius:50%;background:#1f2937;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:18px;font-weight:bold;margin:0 auto;border:2px solid #374151;transition:0.3s}
+    .digit-circle .circle{width:55px;height:55px;border-radius:50%;background:#1f2937;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:18px;font-weight:bold;margin:0 auto;border:2px solid #374151;transition:0.3s}
     .digit-circle .circle.win{background:#10b981;border-color:#10b981}
     .digit-circle .circle.loss{background:#ef4444;border-color:#ef4444}
-    .digit-circle .percent{font-size:10px;color:#10b981;margin-top:2px}
-    .market-btns{display:flex;gap:8px;margin:15px 0;flex-wrap:wrap}
-    .m-btn{flex:1;min-width:120px;padding:12px;background:#1f2937;border:1px solid #374151;color:white;border-radius:8px;cursor:pointer;font-weight:bold}
-    .m-btn.active{border-color:#3b82f6;background:#1e3a8a}
-    .trade-row{display:flex;gap:10px;margin:15px 0}
+    .digit-circle .percent{font-size:11px;color:#10b981;margin-top:3px}
+    .market-btns{display:flex;gap:10px;margin:15px 0}
+    .m-btn{flex:1;padding:14px;background:#1f2937;border:1px solid #374151;color:white;border-radius:10px;cursor:pointer;font-weight:bold;font-size:15px}
+    .m-btn.active{background:#1e3a8a;border-color:#3b82f6}
+    .trade-bar{background:#111827;padding:15px;border-radius:12px;margin-top:15px}
+    .trade-row{display:flex;gap:10px;margin-bottom:10px}
     .trade-row input{flex:1;padding:12px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:white;text-align:center}
-    .btn-trade{width:100%;padding:16px;font-size:18px;border:none;border-radius:10px;background:#10b981;color:white;font-weight:bold;cursor:pointer;margin-top:10px}
+    .btn-trade{width:100%;padding:16px;font-size:18px;border:none;border-radius:10px;background:#10b981;color:white;font-weight:bold;cursor:pointer}
     .auth{text-align:center;padding-top:80px}
     .auth input{display:block;margin:12px auto;padding:12px;width:300px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:white}
     .dashboard{display:none}
@@ -68,8 +68,8 @@
     <div class="navbar">
       <div><b>Binary</b><span style="color:#3b82f6">Pro</span></div>
       <div class="nav-right">
-        <div class="nav-btn">➕ Deposit</div>
-        <div class="nav-btn">➖ Withdraw</div>
+        <div class="nav-btn">+ Deposit</div>
+        <div class="nav-btn">- Withdraw</div>
         <div class="nav-btn">🕒 History</div>
         <span>Real</span>
         <span class="balance">$<span id="balance">8000.00</span></span>
@@ -78,7 +78,7 @@
     </div>
 
     <div class="main">
-      <!-- LEFT: HISTORY WITH OPEN POSITIONS -->
+      <!-- LEFT: HISTORY -->
       <div class="left-panel">
         <div class="position-tabs">
           <div class="p-tab active" onclick="showTab('open')">Open (<span id="openCount">0</span>)</div>
@@ -106,28 +106,25 @@
         <!-- 3. 10 DIGIT CIRCLES -->
         <div class="digits-row" id="digitsRow"></div>
 
-        <!-- 4. MARKET BUTTONS BELOW CIRCLES -->
+        <!-- 4. MARKET BUTTONS ABOVE TRADE BAR -->
         <div class="market-btns">
-          <button class="m-btn active" onclick="setMode('EVEN')">Even/Odd</button>
-          <button class="m-btn" onclick="setMode('OVER')">Over/Under</button>
-          <button class="m-btn" onclick="setMode('RISE')">Rise/Fall</button>
-          <button class="m-btn" onclick="setMode('MATCH')">Matches/Differs</button>
+          <button class="m-btn active" onclick="setMode('EVEN', this)">Even/Odd</button>
+          <button class="m-btn" onclick="setMode('OVER', this)">Over/Under</button>
+          <button class="m-btn" onclick="setMode('RISE', this)">Rise/Fall</button>
+          <button class="m-btn" onclick="setMode('MATCH', this)">Matches/Differs</button>
         </div>
 
-        <!-- 5. STAKE | TP | SL HORIZONTAL -->
-        <div class="trade-row">
-          <input id="amount" type="number" placeholder="Stake $">
-          <input id="tp" type="number" placeholder="Take Profit $">
-          <input id="sl" type="number" placeholder="Stop Loss $">
+        <!-- 5. TRADE BAR BELOW CIRCLES -->
+        <div class="trade-bar">
+          <div id="modeInputs"></div>
+          <div class="trade-row">
+            <input id="amount" type="number" placeholder="Stake Amount $">
+            <input id="tp" type="number" placeholder="Take Profit $">
+            <input id="sl" type="number" placeholder="Stop Loss $">
+          </div>
+          <button class="btn-trade" onclick="placeTrade()">Place Trade</button>
+          <div id="msg" style="margin-top:10px;font-weight:bold;text-align:center"></div>
         </div>
-        <div id="modeInputs"></div>
-        <button class="btn-trade" onclick="placeTrade()">Place Trade</button>
-        <div id="msg" style="margin-top:10px;font-weight:bold;text-align:center"></div>
-      </div>
-
-      <div class="right-panel">
-        <h3>Market Info</h3>
-        <p style="color:#9ca3af">Select a market above to trade</p>
       </div>
     </div>
   </div>
@@ -162,10 +159,10 @@ function showTab(t){
   document.getElementById('transactionsTab').style.display = t==='transactions'?'block':'none';
 }
 
-function setMode(m){ 
+function setMode(m, btn){ 
   currentMode=m; 
   document.querySelectorAll('.m-btn').forEach(b=>b.classList.remove('active'));
-  event.target.classList.add('active');
+  btn.classList.add('active');
   renderInputs(); 
 }
 
@@ -190,8 +187,8 @@ function drawDigits(){
   setInterval(()=>{
     document.querySelectorAll('.circle').forEach(c=>c.classList.remove('win','loss'));
     currentDigit = Math.floor(Math.random()*10);
-    document.getElementById(`digit${currentDigit} .circle`).classList.add('win'); // moving pointer = green
-    setTimeout(()=>{document.getElementById(`digit${currentDigit} .circle`).classList.remove('win')}, 1000);
+    document.getElementById(`digit${currentDigit}`).querySelector('.circle').classList.add('win');
+    setTimeout(()=>{document.getElementById(`digit${currentDigit}`).querySelector('.circle').classList.remove('win')}, 1000);
   }, 1500);
 }
 
@@ -207,28 +204,24 @@ function placeTrade(){
   if(amount > balance){ msg.innerText = "Not enough balance"; msg.style.color="#ef4444"; return; }
   balance -= amount;
   
-  // ADD TO OPEN POSITIONS
   let tradeId = Date.now();
   openTrades.push({id:tradeId, mode:currentMode, amount, time:new Date().toLocaleTimeString()});
   updateHistory();
   
-  setTimeout(()=>{ // simulate trade result after 3s
+  setTimeout(()=>{
     let lastDigit = currentDigit;
     let win = false;
     if(currentMode === 'EVEN') win = lastDigit % 2 === 0;
     if(currentMode === 'ODD') win = lastDigit % 2 === 1;
     if(currentMode === 'OVER'){ let b = parseFloat(document.getElementById('barrier').value)||5; win = lastDigit > b; }
     if(currentMode === 'UNDER'){ let b = parseFloat(document.getElementById('barrier').value)||5; win = lastDigit < b; }
-    if(currentMode === 'RISE') win = Math.random() > 0.5; // fake
+    if(currentMode === 'RISE') win = Math.random() > 0.5;
     if(currentMode === 'FALL') win = Math.random() < 0.5;
     if(currentMode === 'MATCH'){ let d = parseInt(document.getElementById('digitPick').value); win = lastDigit === d; }
     if(currentMode === 'DIFFERS'){ let d = parseInt(document.getElementById('digitPick').value); win = lastDigit !== d; }
     
-    // COLOR THE CIRCLE: GREEN WIN, RED LOSS
-    let circle = document.getElementById(`digit${lastDigit} .circle`);
-    circle.classList.add(win?'win':'loss');
+    document.getElementById(`digit${lastDigit}`).querySelector('.circle').classList.add(win?'win':'loss');
     
-    // MOVE FROM OPEN TO CLOSED
     let profit = win ? amount * 0.8 : -amount;
     balance += win ? amount * 1.8 : 0;
     tradeHistory.push({mode:currentMode, amount, profit, digit:lastDigit, time:new Date().toLocaleTimeString()});
