@@ -2,49 +2,50 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>BinaryPro</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,Arial}
-body{background:#0a0e14;color:#fff}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#0f1421;position:sticky;top:0;z-index:10}
-.logo{font-size:18px;font-weight:800}.logo span{color:#3b82f6}
-.bal{background:#1a2332;padding:5px 10px;border-radius:6px;font-size:13px}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial}
+body{background:#0a0e14;color:#fff;overflow-x:hidden}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#0f1421}
+.logo{font-size:19px;font-weight:800}.logo span{color:#3b82f6}
+.bal{background:#1a2332;padding:5px 10px;border-radius:6px;font-size:13px;font-weight:600}
 .btn{padding:6px 12px;border:0;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer}
 .btn-blue{background:#2563eb;color:#fff}.btn-gray{background:#374151;color:#fff}
 .container{padding:8px}
 .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.select{background:#1a2332;color:#fff;border:1px solid #334155;padding:5px 8px;border-radius:5px;font-size:12px}
-.price{font-size:12px}
-#chartBox{position:relative;width:100%;height:45vh;background:#070b14;border-radius:8px;overflow:hidden}
+.select{background:#1a2332;color:#fff;border:1px solid #334155;padding:6px 8px;border-radius:5px;font-size:12px}
+.price{font-size:12px;font-weight:600}
+#chartBox{position:relative;width:100%;height:42vh;min-height:280px;background:#070b14;border-radius:8px}
 #chart{width:100%;height:100%}
-.price-tag{position:absolute;right:8px;background:#1a2332;padding:3px 6px;border-radius:4px;font-size:11px}
-.grid{position:absolute;left:0;right:0;height:1px;background:#1a2332}
-.digits{display:flex;justify-content:space-between;margin:6px 2px}
-.digit{width:9%;aspect-ratio:1;border-radius:50%;background:#111827;border:2px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.price-tag{position:absolute;right:8px;background:#1a2332;padding:3px 7px;border-radius:4px;font-size:11px;font-weight:600}
+.grid{position:absolute;left:0;right:0;height:1px;background:#151e2e}
+.digits{display:flex;justify-content:space-between;margin:6px 0;gap:3px}
+.digit{flex:1;aspect-ratio:1;border-radius:50%;background:#111827;border:2px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0}
+.digit span{font-size:8px;margin-top:1px}
 .digit.active{border-color:#3b82f6;box-shadow:0 0 8px #3b82f6}
 .digit.win{border-color:#22c55e;background:#22c55e;color:#000}
 .digit.loss{border-color:#ef4444;background:#ef4444;color:#000}
 .times{display:flex;justify-content:space-between;font-size:9px;color:#64748b;margin:3px 0 8px 0}
 .tabs{display:flex;background:#1a2332;border-radius:6px;padding:3px;margin:8px 0}
-.tab{flex:1;text-align:center;padding:8px;border-radius:4px;cursor:pointer;font-weight:700;font-size:13px}
+.tab{flex:1;text-align:center;padding:9px;border-radius:4px;cursor:pointer;font-weight:700;font-size:13px}
 .tab.active{background:#2563eb}
 .subtabs{display:flex;gap:5px;margin-bottom:8px}
-.subtab{flex:1;text-align:center;padding:8px;background:#1a2332;border-radius:6px;cursor:pointer;font-size:12px}
+.subtab{flex:1;text-align:center;padding:9px;background:#1a2332;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600}
 .subtab.active{background:#2563eb}
 .trade{display:flex;gap:6px}
 .trade button{flex:1;padding:16px;border:0;border-radius:8px;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
-.trade button small{display:block;font-weight:400;font-size:10px;margin-top:3px}
-.green{background:#16a34a}.red{background:#dc2626}.blue{background:#2563eb}.purple{background:#9333ea}
+.trade button small{display:block;font-weight:500;font-size:10px;margin-top:3px;opacity:0.9}
+.green{background:#16a34a}.red{background:#dc2626}
 .stake{background:#0a1120;padding:10px;border-radius:8px;margin-top:8px}
-.stake-head{text-align:center;font-size:11px;color:#94a3b8;margin-bottom:6px}
+.stake-head{text-align:center;font-size:11px;color:#94a3b8;margin-bottom:6px;letter-spacing:0.5px}
 .stake-ctrl{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.stake-btn{width:32px;height:32px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:5px;font-size:16px}
+.stake-btn{width:32px;height:32px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:5px;font-size:16px;font-weight:700}
 .stake-amounts{display:flex;gap:4px}
-.stake-amounts button{flex:1;padding:7px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:5px;font-size:12px}
+.stake-amounts button{flex:1;padding:7px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:5px;font-size:12px;font-weight:600}
 .stake-amounts button.active{background:#2563eb;border-color:#2563eb}
 .payout{text-align:center;margin:6px 0;color:#94a3b8;font-size:12px}
-.ai-btn{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;font-weight:800;font-size:16px;margin:8px auto;display:block;box-shadow:0 0 15px #3b82f6;cursor:pointer}
+.ai-btn{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;font-weight:800;font-size:16px;margin:8px auto;display:block;box-shadow:0 0 18px rgba(59,130,246,0.5);cursor:pointer}
 .auth{text-align:center;padding-top:80px}
 .auth input{width:90%;max-width:320px;padding:12px;margin:8px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:6px}
 #dashboard{display:none}.hidden{display:none}
@@ -58,13 +59,13 @@ body{background:#0a0e14;color:#fff}
 <input id="rpass" type="password" placeholder="Password"><br>
 <button class="btn btn-blue" onclick="reg()">Register</button>
 <button class="btn btn-blue" onclick="log()">Login</button>
-<div id="msg"></div>
+<div id="msg" style="margin-top:10px"></div>
 </div>
 
 <div id="dashboard">
 <div class="topbar">
 <div class="logo">Binary<span>Pro</span></div>
-<div style="display:flex;gap:5px">
+<div style="display:flex;gap:6px">
 <span class="bal">Real $<span id="balance">8000.00</span></span>
 <button class="btn btn-blue">Deposit</button>
 <button class="btn btn-gray" onclick="logout()">Logout</button>
@@ -102,13 +103,13 @@ body{background:#0a0e14;color:#fff}
 </div>
 
 <div id="md" class="trade hidden">
-<button class="blue" onclick="trade('MATCH')">Match<br><small id="matchP">19.52 USD 95.22%</small></button>
-<button class="purple" onclick="trade('DIFFER')">Differ<br><small id="differP">19.52 USD 95.22%</small></button>
+<button class="green" onclick="trade('MATCH')">Match<br><small id="matchP">19.52 USD 95.22%</small></button>
+<button class="red" onclick="trade('DIFFER')">Differ<br><small id="differP">19.52 USD 95.22%</small></button>
 </div>
 
 <div id="ou" class="trade hidden">
-<button class="blue" onclick="trade('OVER')">Over<br><small id="overP">19.52 USD 95.22%</small></button>
-<button class="purple" onclick="trade('UNDER')">Under<br><small id="underP">19.52 USD 95.22%</small></button>
+<button class="green" onclick="trade('OVER')">Over<br><small id="overP">19.52 USD 95.22%</small></button>
+<button class="red" onclick="trade('UNDER')">Under<br><small id="underP">19.52 USD 95.22%</small></button>
 </div>
 
 <div class="stake">
@@ -138,40 +139,44 @@ if(token){auth.style.display='none';dashboard.style.display='block';me();}
 
 function showTab(tab){document.querySelectorAll('.subtab').forEach(s=>s.classList.remove('active'));event.target.classList.add('active');document.querySelectorAll('.trade').forEach(t=>t.classList.add('hidden'));document.getElementById(tab).classList.remove('hidden');}
 
-async function reg(){let r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'boss',email:remail.value,password:rpass.value})});msg.innerText=(await r.json()).message;}
-async function log(){let r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:remail.value,password:rpass.value})});let d=await r.json();if(d.token){localStorage.t=d.token;location.reload();}else{msg.innerText=d.message;}}
+async function reg(){let r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'boss',email:remail.value,password:rpass.value})});msg.innerText=(await r.json()).message;msg.style.color='#22c55e';}
+async function log(){let r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:remail.value,password:rpass.value})});let d=await r.json();if(d.token){localStorage.t=d.token;location.reload();}else{msg.innerText=d.message;msg.style.color='#ef4444';}}
 async function me(){let r=await fetch('/api/me',{headers:{'Authorization':'Bearer '+token}});let u=await r.json();bal=parseFloat(u.balance);balance.innerText=bal.toFixed(2);draw();}
 function logout(){localStorage.removeItem('t');location.reload();}
 function setS(x){stake=x;document.querySelectorAll('.stake-amounts button').forEach(b=>b.classList.remove('active'));document.getElementById('s'+x).classList.add('active');update();}
 function s(x){stake+=x;if(stake<1)stake=1;update();}
 function update(){stake.innerText=stake;payout.innerText=(stake*1.952).toFixed(2);['evenP','oddP','matchP','differP','overP','underP'].forEach(id=>document.getElementById(id).innerText=(stake*1.952).toFixed(2)+' USD 95.22%');}
-async function trade(t){if(stake>bal){tmsg.innerText='Insufficient balance';tmsg.style.color='#ef4444';return;}bal-=stake;tradeType=t;tmsg.innerText='Waiting for result...';tmsg.style.color='#60a5fa';}
+async function trade(t){if(stake>bal){tmsg.innerText='Insufficient balance';tmsg.style.color='#ef4444';return;}bal-=stake;tradeType=t;tmsg.innerText='Waiting for digit...';tmsg.style.color='#60a5fa';}
 
-// AI SCAN FUNCTION
 function aiScan(){
 targetDigit=Math.floor(Math.random()*10);
-let signal='';
-if(targetDigit%2==0)signal='Even';else signal='Odd';
-tmsg.innerText='AI SCAN: Trade '+signal+' on digit '+targetDigit+' 💚';
+let signal=targetDigit%2==0?'Even':'Odd';
+tmsg.innerText='AI SCAN: Trade '+signal+' 💚';
 tmsg.style.color='#22c55e';
 }
 
 function draw(){
 const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=c.offsetHeight;
-digits.innerHTML='';for(let i=0;i<10;i++)digits.innerHTML+=`<div class="digit" id="d${i}">${i}<div style="font-size:7px">${pct[i]}%</div></div>`;
-let data=Array(300).fill(c.height/2);
+digits.innerHTML='';for(let i=0;i<10;i++)digits.innerHTML+=`<div class="digit" id="d${i}">${i}<span>${pct[i]}%</span></div>`;
+let data=Array(350).fill(c.height/2);
 
 setInterval(()=>{
 ctx.clearRect(0,0,c.width,c.height);
+
+// EXACT JAGGED SPIKE GRAPH
 ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();
-for(let i=0;i<data.length;i++)i?ctx.lineTo(i*(c.width/data.length),data[i]):ctx.moveTo(i*(c.width/data.length),data[i]);ctx.stroke();
+for(let i=0;i<data.length;i++){
+  let x=i*(c.width/data.length);
+  i?ctx.lineTo(x,data[i]):ctx.moveTo(x,data[i]);
+}
+ctx.stroke();
 
 data.shift();
-let y=prevY+(Math.random()-0.5)*20;
-y=Math.max(20,Math.min(c.height-20,y));
+let y=prevY+(Math.random()-0.5)*32; 
+y=Math.max(25,Math.min(c.height-25,y));
 data.push(y);prevY=y;
 
-let digit=Math.floor((y-20)/(c.height/10));
+let digit=Math.floor((y-25)/((c.height-50)/10));
 if(digit!=lastDigit && digit>=0 && digit<10){
 document.querySelectorAll('.digit').forEach(d=>d.classList.remove('active','win','loss'));
 document.getElementById('d'+digit).classList.add('active');
@@ -184,7 +189,7 @@ if(tradeType=='MATCH'&&digit==targetDigit)win=true;
 if(tradeType=='DIFFER'&&digit!=targetDigit)win=true;
 if(tradeType=='OVER'&&digit>5)win=true;
 if(tradeType=='UNDER'&&digit<5)win=true;
-if(!tradeType && targetDigit==digit)win=true; // AI win
+if(!tradeType && targetDigit==digit)win=true;
 
 if(win){bal+=stake*1.952;document.getElementById('d'+digit).classList.add('win');tmsg.innerText='WIN 💚 +'+(stake*0.952).toFixed(2);tmsg.style.color='#22c55e';}
 else{document.getElementById('d'+digit).classList.add('loss');tmsg.innerText='LOSS ♥️ -'+stake;tmsg.style.color='#ef4444';}
@@ -196,7 +201,7 @@ lastDigit=digit;
 
 let price=(9500+Math.random()*200).toFixed(2);
 cprice.innerText=price;ptag.innerText=price;ptag.style.top=(y-15)+'px';
-},150);
+},140);
 }
 </script>
 </body>
