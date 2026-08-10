@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Binary Pro - Login</title>
+</head>
+<body style="background:#0a0a0a; color:white; text-align:center; padding-top:100px; font-family:Arial">
+  <h1>Binary Pro</h1>
+  <h3>Login To Your Account</h3>
+  
+  <input id="email" placeholder="Email" style="padding:10px; width:250px"><br><br>
+  <input id="password" type="password" placeholder="Password" style="padding:10px; width:250px"><br><br>
+  
+  <button onclick="login()" style="padding:10px 20px; background:cyan; border:none; cursor:pointer">Login</button>
+  
+  <p id="msg" style="color:lightgreen; margin-top:20px"></p>
+  <p>No account? <a href="/register.html" style="color:cyan">Sign Up</a></p>
+
+<script>
+async function login(){
+  let response = await fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: document.getElementById('email').value,
+      password: document.getElementById('password').value
+    })
+  });
+  let data = await response.json();
+  document.getElementById('msg').innerText = data.message || data.error;
+}
+</script>
+</body>
+</html>
