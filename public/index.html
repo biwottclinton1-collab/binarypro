@@ -30,38 +30,37 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
 .chart-box{flex:1;position:relative}
 #chart{width:100%;height:100%;background:#070b14;border-radius:5px}
 .digits-wrap{padding:0 0 6px 0;background:#0a0e1a}
-.digits{display:flex;justify-content:center;gap:6px;margin-bottom:3px;overflow-x:auto}
+.digits{display:flex;justify-content:center;gap:6px;margin-bottom:3px;overflow-x:auto;padding:0 4px}
 .digit{width:46px;height:46px;min-width:46px;border-radius:50%;background:#1a2332;border:2px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:14px;gap:0}
 .digit.p{font-size:5.5px;color:#22c55e;font-weight:600}
 .digit.active{border-color:#60a5fa;box-shadow:0 0 10px #60a5fa}
 .digit.win{border-color:#22c55e;background:#052e16}
 .digit.loss{border-color:#ef4444;background:#2f0a0a}
 .times{display:flex;justify-content:center;gap:30px;font-size:9px;color:#64748b;margin-bottom:5px}
-.trade-action-bar{display:flex;gap:6px;justify-content:center}
-.trade-action-bar button{padding:10px 18px;border:0;border-radius:7px;font-weight:800;font-size:13px;cursor:pointer;color:#fff;min-width:130px}
+.trade-action-bar{display:flex;gap:8px;justify-content:center;padding:0 4px}
+.trade-action-bar button{padding:14px 0;border:0;border-radius:8px;font-weight:800;font-size:15px;cursor:pointer;color:#fff;flex:1}
 .btn-even{background:#16a34a}
 .btn-odd{background:#dc2626}
-.trade-action-bar small{font-weight:500;font-size:10px;display:block;margin-top:1px;opacity:0.9}
+.trade-action-bar small{font-weight:500;font-size:10px;display:block;margin-top:1px;opacity:0.9} /* KEEP THIS */
 .right{width:300px;background:#0b101d;border-left:1px solid #1a2332;padding:10px;overflow-y:auto}
 .mode{display:flex;background:#1a2332;border-radius:7px;margin-bottom:8px}
-.mode button{flex:1;background:0;border:0;color:#94a3b8;padding:9px;border-radius:7px;font-weight:700;cursor:pointer;font-size:12px}
+.mode button{flex:1;background:0;border:0;color:#94a3b8;padding:11px;border-radius:7px;font-weight:800;cursor:pointer;font-size:13px}
 .mode button.on{background:#2563eb;color:#fff}
 .types{display:flex;gap:5px;margin-bottom:8px}
-.types button{flex:1;background:#1a2332;border:0;color:#94a3b8;padding:7px;border-radius:5px;font-size:11px;cursor:pointer}
+.types button{flex:1;background:#1a2332;border:0;color:#94a3b8;padding:9px;border-radius:5px;font-size:12px;cursor:pointer;font-weight:700}
 .types button.on{background:#2563eb;color:#fff}
 .stake{background:#1a2332;padding:10px;border-radius:6px;margin-bottom:6px}
 .stake label{font-size:10px;color:#94a3b8}
 .s-row{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
-.s-row button{width:30px;height:30px;background:#2a3441;border:0;color:#fff;border-radius:5px;font-size:16px;cursor:pointer}
-.s-row b{font-size:18px}
+.s-row button{width:32px;height:32px;background:#2a3441;border:0;color:#fff;border-radius:5px;font-size:18px;cursor:pointer}
+.s-row b{font-size:19px}
 .presets{display:flex;gap:4px;margin-top:6px}
-.presets button{flex:1;background:#2a3441;border:0;color:#fff;padding:5px;border-radius:3px;font-size:11px;cursor:pointer}
+.presets button{flex:1;background:#2a3441;border:0;color:#fff;padding:6px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:600}
 .presets button.on{background:#2563eb}
-.payout-box{text-align:center;font-size:12px;color:#94a3b8;margin:6px 0}
 .ai-btn{width:65px;height:65px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;font-weight:900;font-size:17px;margin:8px auto;display:block;cursor:pointer;box-shadow:0 0 18px #3b82f6}
 .ai-btn:hover{transform:scale(1.05)}
 .ai-signal{color:#22c55e;text-align:center;font-size:11px;margin-bottom:6px;font-weight:700}
-.ai-trade-btn{width:100%;padding:10px;background:#22c55e;border:0;color:#fff;border-radius:6px;font-weight:800;cursor:pointer;margin-top:4px;display:none}
+.ai-trade-btn{width:100%;padding:12px;background:#22c55e;border:0;color:#fff;border-radius:6px;font-weight:800;cursor:pointer;margin-top:4px;display:none;font-size:14px}
 .input-box{width:100%;padding:8px;margin-bottom:6px;border-radius:4px;border:1px solid #2a3441;background:#1a2332;color:#fff;font-size:12px}
 .auth{padding:90px 20px;text-align:center}
 .auth input{width:330px;padding:13px;margin:9px;border-radius:7px;border:1px solid #2a3441;background:#1a2332;color:#fff;font-size:13px}
@@ -72,19 +71,20 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
 
 /* MOBILE VIEW */
 @media (max-width: 768px){
- .main{flex-direction:column}
- .left{display:none}
- .right{width:100%;height:42%;border-left:0;border-top:1px solid #1a2332}
- .center{height:58%;padding:8px}
- .topbar{height:44px;padding:0 10px}
- .nav{display:none}
- .btn{padding:5px 10px;font-size:11px}
- .digit{width:42px;height:42px;min-width:42px;font-size:13px}
- .trade-action-bar button{padding:12px 0;flex:1;min-width:0;font-size:14px}
- .ai-btn{width:55px;height:55px;font-size:15px}
- .vol-price{font-size:11px}
- .auth input{width:90%}
-}
+.main{flex-direction:column}
+.left{display:none}
+.right{width:100%;height:40%;border-left:0;border-top:1px solid #1a2332;padding:8px}
+.center{height:60%;padding:8px}
+.topbar{height:44px;padding:0 10px}
+.nav{display:none}
+.btn{padding:5px 10px;font-size:11px}
+.digit{width:42px;height:42px;min-width:42px;font-size:13px}
+.trade-action-bar button{padding:16px 0;font-size:16px}
+.ai-btn{width:55px;height:55px;font-size:15px}
+.vol-price{font-size:11px}
+.auth input{width:90%}
+.mode button{padding:12px;font-size:14px}
+.types button{padding:10px;font-size:13px}
 </style>
 </head>
 <body>
@@ -190,7 +190,7 @@ body{background:#0a0e1a;color:#fff;overflow:hidden}
         </div>
       </div>
 
-      <div class="payout-box">Payout: $<span id="payout">19.52</span></div>
+      <!-- REMOVED PAYOUT LINE HERE -->
 
       <button class="ai-btn" onclick="aiScan()">AI</button>
       <div class="ai-signal" id="aiSignal"></div>
@@ -208,7 +208,19 @@ const pct=[10.8,10.2,10.2,9.0,10.6,9.6,9.2,11.6,9.8,9.0];
 let price = 9590.76;
 
 if(!token){authBox.style.display='block';dashboard.style.display='none';}
-else{authBox.style.display='none';dashboard.style.display='block';init();}
+else{
+  authBox.style.display='none';
+  dashboard.style.display='block';
+  loadUser();
+}
+
+async function loadUser(){
+  let r = await fetch('/api/me', {headers:{'Authorization':'Bearer '+token}});
+  let user = await r.json();
+  balance = parseFloat(user.balance);
+  document.getElementById('balance').innerText = balance.toFixed(2);
+  init();
+}
 
 function logout(){localStorage.removeItem('token');location.reload();}
 function showLogin(){registerBox.style.display='none';loginBox.style.display='block';}
@@ -228,7 +240,6 @@ function stakeChange(n){stake+=n;if(stake<1)stake=1;updateStake();}
 function setStake(s){stake=s;updateStake();}
 function updateStake(){
   document.getElementById('stake').innerText=stake;
-  document.getElementById('payout').innerText=(stake*1.952).toFixed(2);
   document.querySelectorAll('.presets button').forEach(b=>b.classList.remove('on'));
   event.target.classList.add('on');
   renderTradeUI();
@@ -245,7 +256,7 @@ function renderTradeUI(){
   let inputs='', buttons='';
   if(tradeType==='EVEN'){
     buttons=`<button class="btn-even" onclick="trade('EVEN')">Even<br><small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>
-             <button class="btn-odd" onclick="trade('ODD')">Odd<br><small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>`;
+             <button class="btn-odd" onclick="trade('ODD')">Odd<br><small>${(stake*1.952).toFixed(2)} USD 95.22%</small></button>`; // 19.52 IS BACK
   }
   if(tradeType==='OVER'){
     inputs=`<input id="barrier" class="input-box" type="number" placeholder="Barrier 0-9" value="5">`;
@@ -261,7 +272,7 @@ function renderTradeUI(){
   document.getElementById('tradeActionBar').innerHTML=buttons;
 }
 
-function trade(t){
+async function trade(t){
   if(stake>balance){msg.innerText='Not enough balance';msg.style.color='#ef4444';return;}
   balance-=stake;
 
@@ -285,6 +296,7 @@ function trade(t){
   else{msg.innerText=`LOSS -$${stake.toFixed(2)} | Digit:${digit}`; msg.style.color='#ef4444';}
 
   document.getElementById('balance').innerText=balance.toFixed(2);
+  await fetch('/api/update-balance',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({newBalance:balance})});
 }
 
 function aiScan(){
