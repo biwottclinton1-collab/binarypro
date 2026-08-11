@@ -11,9 +11,6 @@ app.use(express.static('public'));
 
 const JWT_SECRET = 'binarypro_secret_key_2026';
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
 });
 
 // TEMP WIPE - DELETE ALL USERS ON START
