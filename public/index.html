@@ -7,12 +7,15 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#0a0e14;color:#fff}
-.top{display:flex;justify-content:space-between;padding:10px;background:#0f1421}
+.top{display:flex;justify-content:space-between;padding:10px;background:#0f1421;position:relative}
 .logo{font-size:18px;font-weight:800}.logo span{color:#3b82f6}
 .rtop{display:flex;gap:6px;align-items:center}
 .bal{background:#1a2332;padding:5px 10px;border-radius:6px;font-size:12px;font-weight:800}
 .btn{padding:6px 10px;border:0;border-radius:5px;font-weight:700;font-size:12px;cursor:pointer}
 .btn-blue{background:#2563eb;color:#fff}.btn-gray{background:#374151;color:#fff}
+.dropdown{position:absolute;top:45px;right:80px;background:#1a2332;border-radius:6px;display:none;flex-direction:column;z-index:99;min-width:120px;border:1px solid #334155;box-shadow:0 4px 10px rgba(0,0,0,0.5)}
+.dropdown button{padding:10px 12px;background:0;border:0;color:#fff;text-align:left;font-size:13px;width:100%;cursor:pointer}
+.dropdown button:hover{background:#2563eb}
 .wrap{padding:8px}
 .row{display:flex;justify-content:space-between;margin-bottom:6px}
 .sel{background:#1a2332;color:#fff;border:1px solid #334155;padding:5px;border-radius:5px}
@@ -84,7 +87,13 @@ body{background:#0a0e14;color:#fff}
 <div class="logo">Binary<span>Pro</span></div>
 <div class="rtop">
 <span class="bal">Real $<span id="balance">8000.00</span></span>
-<button class="btn btn-blue">Deposit</button>
+<div style="position:relative">
+<button class="btn btn-blue" onclick="drop()">Deposit ▼</button>
+<div class="dropdown" id="dropdown">
+<button onclick="alert('Deposit Modal Coming Soon')">💰 Deposit</button>
+<button onclick="alert('Withdraw Modal Coming Soon')">🏦 Withdraw</button>
+</div>
+</div>
 <button class="btn btn-gray" onclick="logout()">Logout</button>
 </div>
 </div>
@@ -94,7 +103,7 @@ body{background:#0a0e14;color:#fff}
 <select class="sel" id="volSelect" onchange="changeVol()">
 <option value="10">Volatility 10 (1s) Index</option>
 <option value="25">Volatility 25 (1s) Index</option>
-<option value="50">Volatility 50 (1s) Index</option>
+<option value="50" selected>Volatility 50 (1s) Index</option>
 <option value="75">Volatility 75 (1s) Index</option>
 <option value="100">Volatility 100 (1s) Index</option>
 </select>
@@ -157,10 +166,13 @@ body{background:#0a0e14;color:#fff}
 <div class="popup" id="popup"></div>
 
 <script>
-let bal=8000,currentStake=10,token=localStorage.t,mode='auto',type='eo',lastDigit=-1,lastPrice=9500,totalProfit=0,recommended='',volatility=10,digitHistory=[];
+let bal=8000,currentStake=10,token=localStorage.t,mode='auto',type='eo',lastDigit=-1,lastPrice=9500,totalProfit=0,recommended='',volatility=50,digitHistory=[];
 const pct=[10.8,10.2,10.2,9,10.6,9.6,9.2,11.6,9.8,9];
 
 if(token){auth.style.display='none';dash.style.display='block';start();}
+
+function drop(){dropdown.style.display=dropdown.style.display=='flex'?'none':'flex';}
+window.onclick = function(e){if(!e.target.matches('.btn-blue')){dropdown.style.display='none';}}
 
 async function reg(){let r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'user',email:remail.value,password:rpass.value})});let d=await r.json();msg.innerText=d.message;if(d.message.includes('success')){msg.style.color='#22c55e'}}
 async function log(){let r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:remail.value,password:rpass.value})});let d=await r.json();if(d.token){localStorage.t=d.token;location.reload();}else{msg.innerText=d.message;msg.style.color='#ef4444'}}
@@ -243,10 +255,9 @@ for(let i=0;i<data.length;i++){let x=i*(c.width/data.length);i==0?ctx.moveTo(x,d
 ctx.stroke();
 
 data.shift();
-// SLOWER SPIKES
-let spikeChance = volatility/200; // HALVED
+let spikeChance = volatility/200;
 let move = (Math.random()-0.5);
-if(Math.random() < spikeChance){move = (Math.random()-0.5) * (volatility * 1.2);} else {move = move * (volatility/8);} // SMALLER
+if(Math.random() < spikeChance){move = (Math.random()-0.5) * (volatility * 1.2);} else {move = move * (volatility/8);}
 let y=data[data.length-1]+move;if(y<10)y=10;if(y>c.height-10)y=c.height-10;data.push(y);
 
 let price=(9500+Math.random()*volatility*2).toFixed(2);lastPrice=parseFloat(price);cprice.innerText=price;ptag.innerText=price;ptag.style.top=(y-10)+'px';
@@ -259,7 +270,7 @@ if(digit!=lastDigit && digit>=0 && digit<10){
   pointer.style.left=(digit*10+5)+'%';
   lastDigit=digit;
 }
-},250); // CHANGED FROM 90 TO 250ms = SLOWER
+},250);
 }
 </script>
 </body>
