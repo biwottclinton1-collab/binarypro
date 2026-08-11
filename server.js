@@ -11,12 +11,6 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
-    pool.query('DELETE FROM users2').then(()=>console.log('DB WIPED')).catch(e=>console.log(e));
-
-// TEMP WIPE - RUNS 3 SECONDS AFTER START TO DELETE ALL OLD USERS
-setTimeout(()=>{
-  pool.query('DELETE FROM users2').then(()=>console.log('DB WIPED')).catch(e=>console.log(e));
-},3000);
 
 const JWT_SECRET = 'binarypro_secret_key_2025';
 
@@ -24,7 +18,7 @@ const JWT_SECRET = 'binarypro_secret_key_2025';
 app.post('/api/register', async (req, res) => {
   const { username, email, password } = req.body;
   const hashed = await bcrypt.hash(password, 10);
-  const startingBalance = 0.00; 
+  const startingBalance = 0.00; // <-- ALL NEW USERS START WITH $0
   try {
     await pool.query('INSERT INTO users2(username,email,password,balance) VALUES($1,$2,$3,$4)',[username, email, hashed, startingBalance]);
     return res.status(200).json({ message: `Registration successful! Please deposit to start trading.`, success: true });
