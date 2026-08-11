@@ -203,5 +203,21 @@ let price=(9500+Math.random()*volatility*2).toFixed(2);cprice.innerText=price;pt
 }
 if(token)start();
 </script>
+<script>
+async function loadBalance() {
+  const token = localStorage.getItem('token');
+  if(!token) return;
+  try {
+    const res = await fetch('/api/balance', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const data = await res.json();
+    document.getElementById('balance').innerText = (data.balance || 0).toFixed(2);
+  } catch(e) {
+    document.getElementById('balance').innerText = '0.00';
+  }
+}
+window.onload = loadBalance;
+</script>
 </body>
 </html>
