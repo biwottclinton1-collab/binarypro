@@ -61,5 +61,18 @@ app.post('/api/admin/resetboss', async (req,res)=>{
 
 // THIS MUST BE THE VERY LAST ROUTE
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
+// DEBUG: See DB data
+app.get('/api/debugboss', async (req,res)=>{
+  try{
+    const u1 = await pool.query('SELECT * FROM users WHERE email = $1', ['boss1@gmail.com']);
+    const u2 = await pool.query('SELECT * FROM users2 WHERE email = $1', ['boss1@gmail.com']);
+    res.json({
+      users_table: u1.rows[0] || "NOT FOUND",
+      users2_table: u2.rows[0] || "NOT FOUND"
+    });
+  }catch(e){
+    res.json({error: e.message})
+  }
+});
 
 app.listen(process.env.PORT || 3000);
