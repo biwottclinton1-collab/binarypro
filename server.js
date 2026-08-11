@@ -21,7 +21,7 @@ app.post('/api/register', async (req, res) => {
   const startingBalance = email.includes('boss')? 8000.00 : 0.00;
   try {
     await pool.query('INSERT INTO users2(username,email,password,balance) VALUES($1,$2,$3,$4)',[username, email, hashed, startingBalance]);
-    res.json({ message: `Account created! $8000 added. Login now` });
+    res.json({ message: `Account created! Please deposit to start trading.` });
   } catch(e) { res.json({ message: 'Email already exists. Try login' }); }
 });
 
