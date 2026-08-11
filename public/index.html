@@ -1,21 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BinaryPro</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#0a0e14;color:#fff}
+.top{display:flex;justify-content:space-between;padding:10px;background:#0f1421;position:relative}
+.logo{font-size:18px;font-weight:800}.logo span{color:#3b82f6}
+.rtop{display:flex;gap:6px;align-items:center}
+.bal{background:#1a2332;padding:5px 10px;border-radius:6px;font-size:12px;font-weight:800}
+.btn{padding:6px 10px;border:0;border-radius:5px;font-weight:700;font-size:12px;cursor:pointer}
+.btn-blue{background:#2563eb;color:#fff}.btn-gray{background:#374151;color:#fff}
+.dropdown{position:absolute;top:45px;right:80px;background:#1a2332;border-radius:6px;display:none;flex-direction:column;z-index:99;min-width:120px;border:1px solid #334155;box-shadow:0 4px 10px rgba(0,0,0,0.5)}
+.dropdown button{padding:10px 12px;background:0;border:0;color:#fff;text-align:left;font-size:13px;width:100%;cursor:pointer}
+.dropdown button:hover{background:#2563eb}
+.wrap{padding:8px}
+.auth{text-align:center;padding-top:100px;background:#0a0e14;min-height:100vh}
+.auth h1{font-size:32px;margin-bottom:20px}
+.auth input{width:85%;max-width:350px;padding:12px;margin:8px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:6px;font-size:14px}
+.auth.btn{padding:12px 30px;margin:5px;font-size:14px}
+#msg{font-size:14px;margin-top:10px}
+#dash{display:none}
+</style>
+</head>
+<body>
+
+<div id="auth" class="auth">
+<h1 class="logo">Binary<span>Pro</span></h1>
+<input id="remail" placeholder="Email"><br>
+<input id="rpass" type="password" placeholder="Password"><br>
+<button class="btn btn-blue" onclick="reg()">Register</button>
+<button class="btn btn-blue" onclick="log()">Login</button>
+<div id="msg"></div>
+</div>
+
+<div id="dash">
+<div class="top">
+<div class="logo">Binary<span>Pro</span></div>
+<div class="rtop">
+<span class="bal">Real $<span id="balance">0.00</span></span>
+<button class="btn btn-gray" onclick="logout()">Logout</button>
+</div>
+</div>
+<h2 style="padding:20px;text-align:center">Dashboard Loading...</h2>
+</div>
+
 <script>
-let bal=0,currentStake=10,token=localStorage.t,mode='auto',type='eo',lastDigit=-1,lastPrice=9500,totalProfit=0,recommended='',volatility=50,digitHistory=[];
-const pct=[10.8,10.2,10.2,9,10.6,9.6,9.2,11.6,9.8,9];
+let bal=0,token=localStorage.t;
 
 if(token){
   auth.style.display='none'; 
   dash.style.display='block'; 
-  fetchBalance();
-  start();
-}
-
-async function fetchBalance(){
-  try{
-    let r=await fetch('/api/balance',{headers:{'Authorization':'Bearer '+token}});
-    let d=await r.json(); 
-    bal = d.balance; 
-    balance.innerText=bal.toFixed(2);
-  }catch(e){console.log(e)}
 }
 
 async function reg(){
@@ -32,24 +69,6 @@ async function log(){
 }
 
 function logout(){localStorage.removeItem('t');location.reload();}
-function drop(){dropdown.style.display=dropdown.style.display=='flex'?'none':'flex';}
-window.onclick = function(e){if(!e.target.matches('.btn-blue')){dropdown.style.display='none';}}
-
-function start(){
-digs.innerHTML='<div class="pointer" id="pointer"></div>';
-for(let i=0;i<10;i++)digs.innerHTML+=`<div class="dig" id="d${i}">${i}<span>${pct[i]}%</span></div>`;
-const c=chart,ctx=c.getContext('2d');
-function resize(){c.width=c.offsetWidth;c.height=c.offsetHeight;}
-resize(); window.addEventListener('resize', resize);
-let data=Array(400).fill(c.height/2);
-setInterval(()=>{
-ctx.clearRect(0,0,c.width,c.height);
-ctx.strokeStyle='#ffffff';ctx.lineWidth=2.5;ctx.beginPath();
-for(let i=0;i<data.length;i++){let x=i*(c.width/data.length);i==0?ctx.moveTo(x,data[i]):ctx.lineTo(x,data[i]);}
-ctx.stroke();
-data.shift();
-let y=data[data.length-1]+(Math.random()-0.5)*(volatility/8);if(y<10)y=10;if(y>c.height-10)y=c.height-10;data.push(y);
-let price=(9500+Math.random()*volatility*2).toFixed(2);cprice.innerText=price;ptag.innerText=price;ptag.style.top=(y-10)+'px';
-},250);
-}
 </script>
+</body>
+</html>
