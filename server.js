@@ -49,4 +49,11 @@ app.get('/api/balance', async (req, res) => {
 });
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
+// TEMP: Give boss admin money
+app.post('/api/admin/resetboss', async (req,res)=>{
+  try{
+    await pool.query('UPDATE users2 SET balance = 8009.52 WHERE email = $1', ['boss1@gmail.com']);
+    res.json({msg: 'boss1@gmail.com balance set to 8009.52'});
+  }catch(e){ res.status(500).json({error: e.message}) }
+})
 app.listen(process.env.PORT || 3000);
