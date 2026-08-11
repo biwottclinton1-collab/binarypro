@@ -10,7 +10,7 @@ body{background:#0a0e14;color:#fff}
 .top{display:flex;justify-content:space-between;padding:10px;background:#0f1421;position:relative}
 .logo{font-size:18px;font-weight:800}.logo span{color:#3b82f6}
 .rtop{display:flex;gap:6px;align-items:center}
-.bal{background:#1a2332;padding:5px 10px;border-radius:6px;font-size:12px;font-weight:800} /* BOLD */
+.bal{background:#1a2332;padding:5px 10px;border-radius:6px;font-size:12px;font-weight:800}
 .btn{padding:6px 10px;border:0;border-radius:5px;font-weight:700;font-size:12px;cursor:pointer}
 .btn-blue{background:#2563eb;color:#fff}.btn-gray{background:#374151;color:#fff}
 .dropdown{position:absolute;top:45px;right:10px;background:#1a2332;border-radius:6px;display:none;flex-direction:column;z-index:99}
@@ -19,6 +19,13 @@ body{background:#0a0e14;color:#fff}
 .wrap{padding:8px}
 .row{display:flex;justify-content:space-between;margin-bottom:6px}
 .sel{background:#1a2332;color:#fff;border:1px solid #334155;padding:5px;border-radius:5px}
+.main{display:flex;gap:8px}
+.history{width:120px;background:#0a1120;border-radius:8px;padding:6px;font-size:10px;overflow-y:auto;max-height:40vh}
+.history h4{font-size:11px;margin-bottom:4px;text-align:center;color:#94a3b8}
+.hist-item{padding:4px;margin:3px 0;border-radius:4px;font-size:9px}
+.hist-win{background:#16a34a33;color:#22c55e}
+.hist-loss{background:#dc262633;color:#ef4444}
+.chart-wrap{flex:1}
 .chart{width:100%;height:40vh;background:#000;border-radius:8px;position:relative}
 #chart{width:100%;height:100%}
 .pTag{position:absolute;right:8px;background:#1f2937;padding:3px 6px;border-radius:3px;font-size:10px}
@@ -48,6 +55,9 @@ body{background:#0a0e14;color:#fff}
 .sam.active{background:#2563eb;border-color:#2563eb}
 .ai{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;font-weight:800;font-size:16px;margin:8px auto;display:block;box-shadow:0 0 18px rgba(59,130,246,0.6)}
 .signal{color:#22c55e;font-size:12px;font-weight:700;margin:5px 0;text-align:center}
+.popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a2332;padding:15px 20px;border-radius:8px;font-weight:800;font-size:16px;z-index:999;display:none}
+.popup.win{border:2px solid #22c55e;color:#22c55e}
+.popup.loss{border:2px solid #ef4444;color:#ef4444}
 .auth{text-align:center;padding-top:100px}
 .auth input{width:85%;padding:12px;margin:8px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:6px}
 #dash{display:none}
@@ -72,8 +82,8 @@ body{background:#0a0e14;color:#fff}
 <div style="position:relative">
 <button class="btn btn-blue" onclick="drop()">Deposit ▼</button>
 <div class="dropdown" id="drop">
-<button onclick="alert('Deposit coming soon')">Deposit</button>
-<button onclick="alert('Withdraw coming soon')">Withdraw</button>
+<button onclick="alert('Deposit coming')">Deposit</button>
+<button onclick="alert('Withdraw coming')">Withdraw</button>
 </div>
 </div>
 <button class="btn btn-gray" onclick="logout()">Logout</button>
@@ -86,18 +96,25 @@ body{background:#0a0e14;color:#fff}
 <div><span id="cprice">9599.71</span> <span style="color:#ef4444">-47.77 (0.50%)</span></div>
 </div>
 
+<div class="main">
+<div class="history">
+<h4>TRADE HISTORY</h4>
+<div id="hist"></div>
+</div>
+<div class="chart-wrap">
 <div class="chart">
 <canvas id="chart"></canvas>
 <div class="pTag" id="ptag">9599.71</div>
 <div class="grid" style="top:25%"></div><div class="grid" style="top:50%"></div><div class="grid" style="top:75%"></div>
 </div>
-
 <div class="digs" id="digs"><div class="pointer" id="pointer"></div></div>
 <div class="time"><span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span><span>03:15:19</span></div>
+</div>
+</div>
 
 <div class="btns" id="btns">
-<button class="g" onclick="trade('even')">Even<br><small id="evenP">19.52 USD 95.22%</small></button>
-<button class="r" onclick="trade('odd')">Odd<br><small id="oddP">19.52 USD 95.22%</small></button>
+<button class="g" onclick="trade('even')">Even<br><small>19.52 USD 95.22%</small></button>
+<button class="r" onclick="trade('odd')">Odd<br><small>19.52 USD 95.22%</small></button>
 </div>
 
 <div class="tabs"><div class="tab active" onclick="setMode('auto',this)">AUTO</div><div class="tab" onclick="setMode('manual',this)">MANUAL</div></div>
@@ -126,8 +143,10 @@ body{background:#0a0e14;color:#fff}
 </div>
 </div>
 
+<div class="popup" id="popup"></div>
+
 <script>
-let bal=8000,stake=10,token=localStorage.t,mode='auto',type='eo',lastDigit=-1,lastPrice=9500;
+let bal=8000,stake=10,token=localStorage.t,mode='auto',type='eo',lastDigit=-1,lastPrice=9500,history=[];
 const pct=[10.8,10.2,10.2,9,10.6,9.6,9.2,11.6,9.8,9];
 
 if(token){auth.style.display='none';dash.style.display='block';start();}
@@ -144,36 +163,57 @@ function setMode(m,el){mode=m;document.querySelectorAll('.tab').forEach(t=>t.cla
 function setType(t,el){type=t;document.querySelectorAll('.sub div').forEach(s=>s.classList.remove('active'));el.classList.add('active');
   if(t=='eo')btns.innerHTML=`<button class="g" onclick="trade('even')">Even<br><small>19.52 USD 95.22%</small></button><button class="r" onclick="trade('odd')">Odd<br><small>19.52 USD 95.22%</small></button>`;
   if(t=='md')btns.innerHTML=`<button class="g" onclick="trade('match')">Match<br><small>19.52 USD 95.22%</small></button><button class="r" onclick="trade('differ')">Differ<br><small>19.52 USD 95.22%</small></button>`;
-  if(t=='ou')btns.innerHTML=`<button class="g" onclick="trade('over')">Over<br><small>19.52 USD 95.22%</small></button><button class="r" onclick="trade('under')">Under<br><small>19.52 USD 95.22%</small></button>`;
+  if(t=='ou')btns.innerHTML=`<button class="g" onclick="trade('over')">Over 2<br><small>19.52 USD 95.22%</small></button><button class="r" onclick="trade('under')">Under 8<br><small>19.52 USD 95.22%</small></button>`;
+}
+
+function addHistory(type,dir,win,profit){
+  let item=document.createElement('div');
+  item.className='hist-item '+(win?'hist-win':'hist-loss');
+  item.innerText=`${type.toUpperCase()} ${dir.toUpperCase()} ${win?'+':'-'}$${Math.abs(profit).toFixed(2)}`;
+  hist.prepend(item);
+  if(hist.children.length>10)hist.removeChild(hist.lastChild);
+}
+
+function showPopup(win,amount){
+  popup.className='popup '+(win?'win':'loss');
+  popup.innerText=win?`PROFIT: +$${amount.toFixed(2)}`:`LOSS: -$${amount.toFixed(2)}`;
+  popup.style.display='block';
+  setTimeout(()=>popup.style.display='none',2000);
 }
 
 function checkWin(dir, digit, price){
   if(type=='eo') return dir=='even'? digit%2==0 : digit%2==1;
   if(type=='md') return dir=='match'? digit==lastDigit : digit!=lastDigit;
-  if(type=='ou') return dir=='over'? price>lastPrice : price<lastPrice;
+  if(type=='ou') return dir=='over'? digit>2 : digit<8; // Over 2, Under 8
 }
 
 function trade(dir){
   if(bal<stake)return alert('Low balance');
   bal-=stake;
-  let win=Math.random()>0.5; // for demo. Real will use checkWin
-  setTimeout(()=>{bal+= win? stake*1.952 : 0;balance.innerText=bal.toFixed(2);balance.style.color=win?'#22c55e':'#ef4444';setTimeout(()=>balance.style.color='#fff',1000)},1000);
+  let win=checkWin(dir, lastDigit, lastPrice);
+  let profit = win? stake*0.952 : -stake;
+  setTimeout(()=>{
+    bal+= win? stake*1.952 : 0;
+    balance.innerText=bal.toFixed(2);
+    addHistory(type,dir,win,profit);
+    showPopup(win,Math.abs(profit));
+  },1000);
 }
 
 function aiScan(){
   signal.innerText='AI SCANNING...';
   setTimeout(()=>{
-    let best=pct.indexOf(Math.max(...pct));
-    let sig = best%2==0?'EVEN':'ODD';
+    let sig='';
+    if(type=='eo') sig = lastDigit%2==0?'EVEN':'ODD';
     if(type=='md') sig = Math.random()>0.5?'MATCH':'DIFFER';
-    if(type=='ou') sig = Math.random()>0.5?'OVER':'UNDER';
+    if(type=='ou') sig = lastDigit>2?'OVER 2':'UNDER 8';
+
     signal.innerText=`BEST SIGNAL: ${sig}`;
-    pointer.style.left=(best*10+5)+'%';
     if(mode=='auto'){
-      trade(sig.toLowerCase());
+      trade(sig.toLowerCase().replace(' 2','').replace(' 8',''));
       signal.innerText+=` | AUTO TRADE: ${sig}`;
     }
-  },3000);
+  },2000);
 }
 
 function start(){
