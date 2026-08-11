@@ -48,12 +48,18 @@ app.get('/api/balance', async (req, res) => {
   res.json({ balance: result.rows[0].balance });
 });
 
-app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
-// TEMP: Give boss admin money
+// TEMP: Give boss admin money - MUST BE ABOVE app.get('*')
 app.post('/api/admin/resetboss', async (req,res)=>{
   try{
     await pool.query('UPDATE users2 SET balance = 8009.52 WHERE email = $1', ['boss1@gmail.com']);
     res.json({msg: 'boss1@gmail.com balance set to 8009.52'});
-  }catch(e){ res.status(500).json({error: e.message}) }
-})
+  }catch(e){ 
+    console.log(e)
+    res.status(500).json({error: e.message}) 
+  }
+});
+
+// THIS MUST BE THE VERY LAST ROUTE
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
+
 app.listen(process.env.PORT || 3000);
