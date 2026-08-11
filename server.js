@@ -11,6 +11,7 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
+    pool.query('DELETE FROM users2').then(()=>console.log('DB WIPED')).catch(e=>console.log(e));
 
 // TEMP WIPE - RUNS 3 SECONDS AFTER START TO DELETE ALL OLD USERS
 setTimeout(()=>{
