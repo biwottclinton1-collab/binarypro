@@ -2,49 +2,48 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>BinaryPro</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,Arial}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#0a0e14;color:#fff}
-.top{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#0f1421}
-.logo{font-size:17px;font-weight:800}.logo span{color:#3b82f6}
-.rtop{display:flex;gap:6px;align-items:center}
-.bal{background:#1a2332;padding:4px 8px;border-radius:5px;font-size:11px}
-.btn{padding:5px 10px;border:0;border-radius:5px;font-weight:700;font-size:11px}
+.top{display:flex;justify-content:space-between;padding:10px;background:#0f1421}
+.logo{font-size:18px;font-weight:800}.logo span{color:#3b82f6}
+.bal{background:#1a2332;padding:5px 10px;border-radius:6px;font-size:12px}
+.btn{padding:6px 10px;border:0;border-radius:5px;font-weight:700;font-size:12px}
 .btn-blue{background:#2563eb;color:#fff}.btn-gray{background:#374151;color:#fff}
 .wrap{padding:8px}
-.row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.sel{background:#1a2332;color:#fff;border:1px solid #334155;padding:5px 8px;border-radius:5px;font-size:11px}
-.price{font-size:11px}
-.chart{width:100%;height:42vh;background:#000;border-radius:8px;position:relative}
+.row{display:flex;justify-content:space-between;margin-bottom:6px}
+.sel{background:#1a2332;color:#fff;border:1px solid #334155;padding:5px;border-radius:5px}
+.chart{width:100%;height:40vh;background:#000;border-radius:8px;position:relative}
 #chart{width:100%;height:100%}
-.pTag{position:absolute;right:6px;background:#1f2937;padding:2px 5px;border-radius:3px;font-size:9px}
+.pTag{position:absolute;right:8px;background:#1f2937;padding:3px 6px;border-radius:3px;font-size:10px}
 .grid{position:absolute;left:0;right:0;height:1px;background:#1a2332}
-.digs{display:flex;justify-content:space-between;margin:8px 0}
-.dig{width:30px;height:30px;border-radius:50%;background:#111827;border:1px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:8px;font-weight:700}
-.dig span{font-size:6px;margin-top:1px}
-.dig.active{border:2px solid #3b82f6;box-shadow:0 0 6px #3b82f6}
-.time{display:flex;justify-content:space-between;font-size:7px;color:#64748b;margin-bottom:8px}
+.digs{display:flex;justify-content:space-between;margin:10px 0;position:relative}
+.dig{width:36px;height:36px;border-radius:50%;background:#111827;border:1.5px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+.dig span{font-size:7px}
+.dig.active{border-color:#3b82f6}
+.pointer{position:absolute;width:10px;height:10px;border-radius:50%;background:#3b82f6;box-shadow:0 0 10px #3b82f6;top:-5px;transition:0.2s}
+.time{display:flex;justify-content:space-between;font-size:8px;color:#64748b;margin-bottom:8px}
 .btns{display:flex;gap:6px;margin-bottom:8px}
-.btns button{flex:1;padding:15px;border:0;border-radius:8px;color:#fff;font-weight:800;font-size:14px}
+.btns button{flex:1;padding:16px;border:0;border-radius:8px;color:#fff;font-weight:800;font-size:15px}
 .g{background:#16a34a}.r{background:#dc2626}
-.btns button small{display:block;font-size:9px;font-weight:500;margin-top:2px;opacity:0.9}
-.tab1{display:flex;background:#1a2332;border-radius:6px;padding:3px;margin-bottom:6px}
-.tab1 div{flex:1;text-align:center;padding:9px;border-radius:4px;font-weight:700;font-size:12px}
-.tab1.a{background:#2563eb}
-.tab2{display:flex;gap:5px;margin-bottom:8px}
-.tab2 div{flex:1;text-align:center;padding:9px;background:#1a2332;border-radius:6px;font-size:11px;font-weight:600}
-.tab2.a{background:#2563eb}
+.btns button small{display:block;font-size:10px;font-weight:500;margin-top:3px}
+.tabs{display:flex;background:#1a2332;border-radius:6px;padding:3px;margin-bottom:6px}
+.tab{flex:1;text-align:center;padding:10px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer}
+.tab.active{background:#2563eb}
+.sub{display:flex;gap:5px;margin-bottom:8px}
+.sub div{flex:1;text-align:center;padding:10px;background:#1a2332;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+.sub.active{background:#2563eb}
 .stake{background:#0a1120;padding:10px;border-radius:8px;text-align:center}
-.sth{font-size:10px;color:#94a3b8;margin-bottom:6px}
+.sth{font-size:11px;color:#94a3b8;margin-bottom:6px}
 .srow{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.sb{width:28px;height:28px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:4px;font-size:16px}
+.sb{width:30px;height:30px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:4px;font-size:16px}
 .sam{display:flex;gap:4px}
-.sam button{flex:1;padding:6px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:5px;font-size:11px}
-.sam.a{background:#2563eb;border-color:#2563eb}
-.pay{text-align:center;margin:6px 0;color:#94a3b8;font-size:11px}
-.ai{width:65px;height:65px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;font-weight:800;font-size:15px;margin:6px auto;display:block;box-shadow:0 0 15px rgba(59,130,246,0.6)}
+.sam button{flex:1;padding:7px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:5px;font-size:11px}
+.sam.active{background:#2563eb;border-color:#2563eb}
+.ai{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;font-weight:800;font-size:16px;margin:8px auto;display:block;box-shadow:0 0 18px rgba(59,130,246,0.6)}
+.signal{color:#22c55e;font-size:12px;font-weight:700;margin:5px 0}
 .auth{text-align:center;padding-top:100px}
 .auth input{width:85%;padding:12px;margin:8px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:6px}
 #dash{display:none}
@@ -64,41 +63,35 @@ body{background:#0a0e14;color:#fff}
 <div id="dash">
 <div class="top">
 <div class="logo">Binary<span>Pro</span></div>
-<div class="rtop">
-<span class="bal">Real $<span id="balance">8000.00</span></span>
-<button class="btn btn-blue">Deposit</button>
-<button class="btn btn-gray" onclick="logout()">Logout</button>
-</div>
+<div><span class="bal">Real $<span id="balance">8000.00</span></span> <button class="btn btn-blue">Deposit</button> <button class="btn btn-gray" onclick="logout()">Logout</button></div>
 </div>
 
 <div class="wrap">
-<div class="row1">
+<div class="row">
 <select class="sel"><option>Volatility 10 (1s) Index</option></select>
-<div class="price"><span id="cprice">9599.71</span> <span style="color:#ef4444">-47.77 (0.50%)</span></div>
+<div><span id="cprice">9599.71</span> <span style="color:#ef4444">-47.77 (0.50%)</span></div>
 </div>
 
 <div class="chart">
 <canvas id="chart"></canvas>
 <div class="pTag" id="ptag">9599.71</div>
-<div class="grid" style="top:25%"></div>
-<div class="grid" style="top:50%"></div>
-<div class="grid" style="top:75%"></div>
+<div class="grid" style="top:25%"></div><div class="grid" style="top:50%"></div><div class="grid" style="top:75%"></div>
 </div>
 
-<div class="digs" id="digs"></div>
+<div class="digs" id="digs"><div class="pointer" id="pointer"></div></div>
 <div class="time"><span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span><span>03:15:19</span></div>
 
 <div class="btns">
-<button class="g">Even<br><small id="evenP">19.52 USD 95.22%</small></button>
-<button class="r">Odd<br><small id="oddP">19.52 USD 95.22%</small></button>
+<button class="g" onclick="trade('even')">Even<br><small id="evenP">19.52 USD 95.22%</small></button>
+<button class="r" onclick="trade('odd')">Odd<br><small id="oddP">19.52 USD 95.22%</small></button>
 </div>
 
-<div class="tab1"><div class="a">AUTO</div><div>MANUAL</div></div>
+<div class="tabs"><div class="tab active" onclick="setMode('auto',this)">AUTO</div><div class="tab" onclick="setMode('manual',this)">MANUAL</div></div>
 
-<div class="tab2">
-<div class="a">Even / Odd</div>
-<div>Match / Differ</div>
-<div>Over / Under</div>
+<div class="sub">
+<div class="active" onclick="setType('eo',this)">Even / Odd</div>
+<div onclick="setType('md',this)">Match / Differ</div>
+<div onclick="setType('ou',this)">Over / Under</div>
 </div>
 
 <div class="stake">
@@ -110,33 +103,57 @@ body{background:#0a0e14;color:#fff}
 </div>
 <div class="sam">
 <button onclick="setS(1)">$1</button><button onclick="setS(5)">$5</button>
-<button onclick="setS(10)" class="a" id="s10">$10</button>
+<button onclick="setS(10)" class="active" id="s10">$10</button>
 <button onclick="setS(25)">$25</button><button onclick="setS(50)">$50</button><button onclick="setS(100)">$100</button>
 </div>
-<div class="pay">Payout: $<span id="payout">19.52</span></div>
-<button class="ai">AI</button>
+<div class="signal" id="signal"></div>
+<button class="ai" onclick="aiScan()">AI</button>
 </div>
 </div>
 </div>
 
 <script>
-let stake=10,token=localStorage.t;
+let bal=8000,stake=10,token=localStorage.t,mode='auto',type='eo',lastDigit=-1;
 const pct=[10.8,10.2,10.2,9,10.6,9.6,9.2,11.6,9.8,9];
 
 if(token){auth.style.display='none';dash.style.display='block';start();}
 
-async function reg(){let r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'b',email:remail.value,password:rpass.value})});msg.innerText=(await r.json()).message;}
+async function reg(){let r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'u',email:remail.value,password:rpass.value})});msg.innerText=(await r.json()).message;}
 async function log(){let r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:remail.value,password:rpass.value})});let d=await r.json();if(d.token){localStorage.t=d.token;location.reload();}else{msg.innerText=d.message;}}
-async function me(){let r=await fetch('/api/me',{headers:{'Authorization':'Bearer '+token}});balance.innerText=(await r.json()).balance;}
+async function me(){let r=await fetch('/api/me',{headers:{'Authorization':'Bearer '+token}});bal=parseFloat((await r.json()).balance);balance.innerText=bal.toFixed(2);}
 function logout(){localStorage.removeItem('t');location.reload();}
-function setS(x){stake=x;document.querySelectorAll('.sam button').forEach(b=>b.classList.remove('a'));document.getElementById('s'+x).classList.add('a');upd();}
+function setS(x){stake=x;document.querySelectorAll('.sam button').forEach(b=>b.classList.remove('active'));document.getElementById('s'+x).classList.add('active');upd();}
 function s(x){stake+=x;if(stake<1)stake=1;upd();}
-function upd(){stake.innerText=stake;payout.innerText=(stake*1.952).toFixed(2);evenP.innerText=oddP.innerText=(stake*1.952).toFixed(2)+' USD 95.22%';}
+function upd(){stake.innerText=stake;['evenP','oddP'].forEach(id=>document.getElementById(id).innerText=(stake*1.952).toFixed(2)+' USD 95.22%');}
+function setMode(m,el){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+function setType(t,el){type=t;document.querySelectorAll('.sub div').forEach(s=>s.classList.remove('active'));el.classList.add('active');}
+
+function trade(dir){
+  if(bal<stake)return alert('Low balance');
+  bal-=stake;
+  let win=Math.random()>0.5;
+  setTimeout(()=>{bal+= win? stake*1.952 : 0;balance.innerText=bal.toFixed(2);balance.style.color=win?'#22c55e':'#ef4444';setTimeout(()=>balance.style.color='#fff',1000)},1000);
+}
+
+function aiScan(){
+  signal.innerText='AI SCANNING...';
+  setTimeout(()=>{
+    let best=pct.indexOf(Math.max(...pct));
+    signal.innerText=`BEST SIGNAL: DIGIT ${best} - ${pct[best]}%`;
+    pointer.style.left=(best*10+5)+'%';
+    if(mode=='auto'){
+      let dir = best%2==0?'even':'odd';
+      trade(dir);
+      signal.innerText+=` | AUTO TRADE: ${dir.toUpperCase()}`;
+    }
+  },3000);
+}
 
 function start(){
 me();
 const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=c.offsetHeight;
-digs.innerHTML='';for(let i=0;i<10;i++)digs.innerHTML+=`<div class="dig" id="d${i}">${i}<span>${pct[i]}%</span></div>`;
+digs.innerHTML='<div class="pointer" id="pointer"></div>';
+for(let i=0;i<10;i++)digs.innerHTML+=`<div class="dig" id="d${i}">${i}<span>${pct[i]}%</span></div>`;
 
 let data=Array(300).fill(c.height/2);
 setInterval(()=>{
@@ -146,7 +163,13 @@ for(let i=0;i<data.length;i++){let x=i*(c.width/data.length);i?ctx.lineTo(x,data
 ctx.stroke();
 data.shift();let y=data[data.length-1]+(Math.random()-0.5)*28;if(y<20)y=20;if(y>c.height-20)y=c.height-20;data.push(y);
 let price=(9500+Math.random()*200).toFixed(2);cprice.innerText=price;ptag.innerText=price;ptag.style.top=(y-10)+'px';
-let digit=Math.floor((y/c.height)*10);document.querySelectorAll('.dig').forEach(d=>d.classList.remove('active'));if(digit<10)document.getElementById('d'+digit).classList.add('active');
+let digit=Math.floor((y/c.height)*10);
+if(digit!=lastDigit && digit<10){
+  document.querySelectorAll('.dig').forEach(d=>d.classList.remove('active'));
+  document.getElementById('d'+digit).classList.add('active');
+  pointer.style.left=(digit*10+5)+'%';
+  lastDigit=digit;
+}
 },130);
 }
 </script>
