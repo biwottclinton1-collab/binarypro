@@ -27,15 +27,15 @@ body{background:#0a0e14;color:#fff}
 .hist-win{background:#16a34a33;color:#22c55e}
 .hist-loss{background:#dc262633;color:#ef4444}
 .chart-wrap{flex:1}
-.chart{width:100%;height:40vh;background:#000;border-radius:8px;position:relative}
-#chart{width:100%;height:100%}
-.pTag{position:absolute;right:8px;background:#1f2937;padding:3px 6px;border-radius:3px;font-size:10px}
-.grid{position:absolute;left:0;right:0;height:1px;background:#1a2332}
+.chart{width:100%;height:40vh;background:#000;border-radius:8px;position:relative;overflow:hidden}
+#chart{width:100%;height:100%;display:block}
+.pTag{position:absolute;right:8px;background:#1f2937;padding:3px 6px;border-radius:3px;font-size:10px;z-index:2}
+.grid{position:absolute;left:0;right:0;height:1px;background:#1a2332;z-index:1}
 .digs{display:flex;justify-content:space-between;margin:10px 0;position:relative}
 .dig{width:36px;height:36px;border-radius:50%;background:#111827;border:1.5px solid #2a3441;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;font-weight:700}
-.dig span{font-size:7px}
-.dig.active{border-color:#3b82f6}
-.pointer{position:absolute;width:10px;height:10px;border-radius:50%;background:#3b82f6;box-shadow:0 0 10px #3b82f6;top:-5px;transition:0.2s}
+.dig span{font-size:7px;color:#94a3b8}
+.dig.active{border:2px solid #3b82f6;box-shadow:0 0 8px #3b82f6}
+.pointer{position:absolute;width:10px;height:10px;border-radius:50%;background:#3b82f6;box-shadow:0 0 10px #3b82f6;top:-5px;transition:0.2s;z-index:3}
 .time{display:flex;justify-content:space-between;font-size:8px;color:#64748b;margin-bottom:8px}
 .btns{display:flex;gap:6px;margin-bottom:8px}
 .btns button{flex:1;padding:16px;border:0;border-radius:8px;color:#fff;font-weight:800;font-size:15px;cursor:pointer;opacity:0.6}
@@ -97,7 +97,13 @@ body{background:#0a0e14;color:#fff}
 
 <div class="wrap">
 <div class="row">
-<select class="sel"><option>Volatility 10 (1s) Index</option></select>
+<select class="sel" id="volSelect" onchange="changeVol()">
+<option value="10">Volatility 10 (1s) Index</option>
+<option value="25">Volatility 25 (1s) Index</option>
+<option value="50">Volatility 50 (1s) Index</option>
+<option value="75">Volatility 75 (1s) Index</option>
+<option value="100">Volatility 100 (1s) Index</option>
+</select>
 <div><span id="cprice">9599.71</span> <span style="color:#ef4444">-47.77 (0.50%)</span></div>
 </div>
 
@@ -113,7 +119,7 @@ body{background:#0a0e14;color:#fff}
 <div class="pTag" id="ptag">9599.71</div>
 <div class="grid" style="top:25%"></div><div class="grid" style="top:50%"></div><div class="grid" style="top:75%"></div>
 </div>
-<div class="digs" id="digs"><div class="pointer" id="pointer"></div></div>
+<div class="digs" id="digs"></div>
 <div class="time"><span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span><span>03:15:19</span></div>
 </div>
 </div>
@@ -154,17 +160,19 @@ body{background:#0a0e14;color:#fff}
 <div class="popup" id="popup"></div>
 
 <script>
-let bal=8000,currentStake=10,token=localStorage.t,mode='auto',type='eo',lastDigit=-1,lastPrice=9500,totalProfit=0,recommended='';
+let bal=8000,currentStake=10,token=localStorage.t,mode='auto',type='eo',lastDigit=-1,lastPrice=9500,totalProfit=0,recommended='',volatility=10,digitHistory=[];
+const pct=[10.8,10.2,10.2,9,10.6,9.6,9.2,11.6,9.8,9];
 
 if(token){auth.style.display='none';dash.style.display='block';start();}
 
 function drop(){dropdown.style.display=dropdown.style.display=='flex'?'none':'flex';}
+function changeVol(){volatility=parseInt(volSelect.value);}
 async function reg(){let r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'u',email:remail.value,password:rpass.value})});msg.innerText=(await r.json()).message;}
 async function log(){let r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:remail.value,password:rpass.value})});let d=await r.json();if(d.token){localStorage.t=d.token;location.reload();}else{msg.innerText=d.message;}}
 async function me(){let r=await fetch('/api/me',{headers:{'Authorization':'Bearer '+token}});bal=parseFloat((await r.json()).balance);balance.innerText=bal.toFixed(2);}
 function logout(){localStorage.removeItem('t');location.reload();}
 function setS(x){currentStake=x;document.querySelectorAll('.sam button').forEach(b=>b.classList.remove('active'));document.getElementById('s'+x).classList.add('active');upd();}
-function changeStake(x){currentStake=currentStake+x;if(currentStake<1)currentStake=1;if(currentStake>1000)currentStake=1000;upd();} // FIXED
+function changeStake(x){currentStake=currentStake+x;if(currentStake<1)currentStake=1;if(currentStake>1000)currentStake=1000;upd();}
 function upd(){stake.innerText=currentStake;document.querySelectorAll('#btns small').forEach(s=>s.innerText=(currentStake*1.952).toFixed(2)+' USD 95.22%');}
 function setMode(m,el){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
 function setType(t,el){type=t;document.querySelectorAll('.sub div').forEach(s=>s.classList.remove('active'));el.classList.add('active');
@@ -176,6 +184,7 @@ function setType(t,el){type=t;document.querySelectorAll('.sub div').forEach(s=>s
 function addHistory(t,d,win,profit){
   totalProfit+=profit;
   totalP.innerText=totalProfit.toFixed(2);
+  totalP.style.color=totalProfit>=0?'#22c55e':'#ef4444';
   let item=document.createElement('div');
   item.className='hist-item '+(win?'hist-win':'hist-loss');
   item.innerText=`${t.toUpperCase()} ${d.toUpperCase()} ${win?'+':'-'}$${Math.abs(profit).toFixed(2)}`;
@@ -197,9 +206,9 @@ function checkWin(dir, digit){
 
 function trade(dir){
   if(bal<currentStake)return alert('Low balance');
-  if(mode=='auto' && dir!=recommended)return alert('Tap PLACE TRADE button or '+recommended.toUpperCase());
+  if(mode=='auto' && dir!=recommended)return alert('Tap PLACE TRADE button: '+recommended.toUpperCase());
   bal-=currentStake;
-  let win=checkWin(dir, lastDigit);
+  let win=Math.random()<0.7; // 70% WIN RATE FOR YOU
   let profit = win? currentStake*0.952 : -currentStake;
   setTimeout(()=>{
     bal+= win? currentStake*1.952 : 0;
@@ -217,32 +226,43 @@ function aiScan(){
   placeBar.style.display='none';
   document.querySelectorAll('#btns button').forEach(b=>b.classList.remove('recommended'));
   setTimeout(()=>{
-    if(type=='eo') recommended = lastDigit%2==0?'even':'odd';
+    let bestIdx = pct.indexOf(Math.max(...pct));
+    if(type=='eo') recommended = bestIdx%2==0?'even':'odd';
     if(type=='md') recommended = Math.random()>0.5?'match':'differ';
-    if(type=='ou') recommended = lastDigit>2?'over':'under';
-    signal.innerText=`BEST SIGNAL: ${recommended.toUpperCase()}`;
+    if(type=='ou') recommended = bestIdx>2?'over':'under';
+    signal.innerText=`BEST SIGNAL: ${recommended.toUpperCase()} | ${pct[bestIdx]}%`;
     document.getElementById(recommended=='even'||recommended=='match'||recommended=='over'?'btn1':'btn2').classList.add('recommended');
     placeBar.innerText=`PLACE TRADE: ${recommended.toUpperCase()}`;
     placeBar.style.display='block';
-  },2000);
+  },1500);
 }
 
 function start(){
 me();
-const c=chart,ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=c.offsetHeight;
+// BUILD CIRCLES ONCE
 digs.innerHTML='<div class="pointer" id="pointer"></div>';
 for(let i=0;i<10;i++)digs.innerHTML+=`<div class="dig" id="d${i}">${i}<span>${pct[i]}%</span></div>`;
+
+const c=chart,ctx=c.getContext('2d');
+function resize(){c.width=c.offsetWidth;c.height=c.offsetHeight;}
+resize(); window.addEventListener('resize', resize);
 
 let data=Array(300).fill(c.height/2);
 setInterval(()=>{
 ctx.clearRect(0,0,c.width,c.height);
-ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();
-for(let i=0;i<data.length;i++){let x=i*(c.width/data.length);i?ctx.lineTo(x,data[i]):ctx.moveTo(x,data[i]);}
+ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.beginPath();
+for(let i=0;i<data.length;i++){let x=i*(c.width/data.length);i==0?ctx.moveTo(x,data[i]):ctx.lineTo(x,data[i]);}
 ctx.stroke();
-data.shift();let y=data[data.length-1]+(Math.random()-0.5)*28;if(y<20)y=20;if(y>c.height-20)y=c.height-20;data.push(y);
-let price=(9500+Math.random()*200).toFixed(2);lastPrice=parseFloat(price);cprice.innerText=price;ptag.innerText=price;ptag.style.top=(y-10)+'px';
+
+data.shift();
+let move=(Math.random()-0.5)* (volatility/2);
+let y=data[data.length-1]+move;if(y<20)y=20;if(y>c.height-20)y=c.height-20;data.push(y);
+
+let price=(9500+Math.random()*volatility*2).toFixed(2);lastPrice=parseFloat(price);cprice.innerText=price;ptag.innerText=price;ptag.style.top=(y-10)+'px';
+
 let digit=Math.floor((y/c.height)*10);
-if(digit!=lastDigit && digit<10){
+if(digit!=lastDigit && digit>=0 && digit<10){
+  digitHistory.push(digit); if(digitHistory.length>20) digitHistory.shift();
   document.querySelectorAll('.dig').forEach(d=>d.classList.remove('active'));
   document.getElementById('d'+digit).classList.add('active');
   pointer.style.left=(digit*10+5)+'%';
