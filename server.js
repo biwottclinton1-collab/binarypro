@@ -11,6 +11,15 @@ app.use(express.static('public'));
 
 const JWT_SECRET = 'binarypro_secret_key_2026';
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
+
+// TEMP WIPE - DELETE ALL USERS ON START
+pool.query('DELETE FROM users2').then(()=>console.log('DB WIPED')).catch(e=>console.log(e));
+
+const JWT_SECRET = 'binarypro_secret_key_2025';
 
 // NEW TABLE NAME: users2 - this one is clean
 pool.query(`CREATE TABLE IF NOT EXISTS users2 (id SERIAL PRIMARY KEY, username VARCHAR(100), email VARCHAR(100) UNIQUE, password VARCHAR(200), balance DECIMAL(10,2) DEFAULT 0.00)`);
