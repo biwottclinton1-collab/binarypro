@@ -13,15 +13,16 @@ body{background:#0a0e14;color:#fff}
 .bal{background:#1a2332;padding:5px 10px;border-radius:6px;font-size:12px;font-weight:800}
 .btn{padding:6px 10px;border:0;border-radius:5px;font-weight:700;font-size:12px;cursor:pointer}
 .btn-blue{background:#2563eb;color:#fff}.btn-gray{background:#374151;color:#fff}
-.dropdown{position:absolute;top:45px;right:10px;background:#1a2332;border-radius:6px;display:none;flex-direction:column;z-index:99}
-.dropdown button{padding:8px 12px;background:0;border:0;color:#fff;text-align:left;font-size:12px}
+.dropdown{position:absolute;top:45px;right:10px;background:#1a2332;border-radius:6px;display:none;flex-direction:column;z-index:99;min-width:100px}
+.dropdown button{padding:8px 12px;background:0;border:0;color:#fff;text-align:left;font-size:12px;width:100%}
 .dropdown button:hover{background:#2563eb}
 .wrap{padding:8px}
 .row{display:flex;justify-content:space-between;margin-bottom:6px}
 .sel{background:#1a2332;color:#fff;border:1px solid #334155;padding:5px;border-radius:5px}
 .main{display:flex;gap:8px}
-.history{width:120px;background:#0a1120;border-radius:8px;padding:6px;font-size:10px;overflow-y:auto;max-height:40vh}
+.history{width:130px;background:#0a1120;border-radius:8px;padding:6px;font-size:10px;overflow-y:auto;max-height:40vh}
 .history h4{font-size:11px;margin-bottom:4px;text-align:center;color:#94a3b8}
+.total{color:#22c55e;font-weight:800;text-align:center;margin-bottom:4px}
 .hist-item{padding:4px;margin:3px 0;border-radius:4px;font-size:9px}
 .hist-win{background:#16a34a33;color:#22c55e}
 .hist-loss{background:#dc262633;color:#ef4444}
@@ -37,7 +38,8 @@ body{background:#0a0e14;color:#fff}
 .pointer{position:absolute;width:10px;height:10px;border-radius:50%;background:#3b82f6;box-shadow:0 0 10px #3b82f6;top:-5px;transition:0.2s}
 .time{display:flex;justify-content:space-between;font-size:8px;color:#64748b;margin-bottom:8px}
 .btns{display:flex;gap:6px;margin-bottom:8px}
-.btns button{flex:1;padding:16px;border:0;border-radius:8px;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+.btns button{flex:1;padding:16px;border:0;border-radius:8px;color:#fff;font-weight:800;font-size:15px;cursor:pointer;opacity:0.5}
+.btns button.recommended{opacity:1;box-shadow:0 0 15px rgba(255,255,255,0.3)}
 .g{background:#16a34a}.r{background:#dc2626}
 .btns button small{display:block;font-size:10px;font-weight:500;margin-top:3px}
 .tabs{display:flex;background:#1a2332;border-radius:6px;padding:3px;margin-bottom:6px}
@@ -48,13 +50,14 @@ body{background:#0a0e14;color:#fff}
 .sub.active{background:#2563eb}
 .stake{background:#0a1120;padding:10px;border-radius:8px;text-align:center}
 .sth{font-size:11px;color:#94a3b8;margin-bottom:6px}
-.srow{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.sb{width:30px;height:30px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:4px;font-size:16px}
-.sam{display:flex;gap:4px}
-.sam button{flex:1;padding:7px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:5px;font-size:11px}
+.srow{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.sb{width:30px;height:30px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:4px;font-size:16px;cursor:pointer}
+.sam{display:flex;gap:4px;margin-bottom:4px}
+.sam button{flex:1;padding:7px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:5px;font-size:11px;cursor:pointer}
 .sam.active{background:#2563eb;border-color:#2563eb}
-.ai{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;font-weight:800;font-size:16px;margin:8px auto;display:block;box-shadow:0 0 18px rgba(59,130,246,0.6)}
-.signal{color:#22c55e;font-size:12px;font-weight:700;margin:5px 0;text-align:center}
+.ticks{font-size:10px;color:#94a3b8;margin-bottom:6px}
+.ai{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:0;color:#fff;font-weight:800;font-size:16px;margin:8px auto;display:block;box-shadow:0 0 18px rgba(59,130,246,0.6);cursor:pointer}
+.signal{color:#22c55e;font-size:12px;font-weight:700;margin:5px 0;text-align:center;min-height:20px}
 .popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a2332;padding:15px 20px;border-radius:8px;font-weight:800;font-size:16px;z-index:999;display:none}
 .popup.win{border:2px solid #22c55e;color:#22c55e}
 .popup.loss{border:2px solid #ef4444;color:#ef4444}
@@ -82,8 +85,8 @@ body{background:#0a0e14;color:#fff}
 <div style="position:relative">
 <button class="btn btn-blue" onclick="drop()">Deposit ▼</button>
 <div class="dropdown" id="drop">
-<button onclick="alert('Deposit coming')">Deposit</button>
-<button onclick="alert('Withdraw coming')">Withdraw</button>
+<button onclick="alert('Deposit Page Coming')">Deposit</button>
+<button onclick="alert('Withdraw Page Coming')">Withdraw</button>
 </div>
 </div>
 <button class="btn btn-gray" onclick="logout()">Logout</button>
@@ -99,6 +102,7 @@ body{background:#0a0e14;color:#fff}
 <div class="main">
 <div class="history">
 <h4>TRADE HISTORY</h4>
+<div class="total">TOTAL: $<span id="totalP">0.00</span></div>
 <div id="hist"></div>
 </div>
 <div class="chart-wrap">
@@ -113,8 +117,8 @@ body{background:#0a0e14;color:#fff}
 </div>
 
 <div class="btns" id="btns">
-<button class="g" onclick="trade('even')">Even<br><small>19.52 USD 95.22%</small></button>
-<button class="r" onclick="trade('odd')">Odd<br><small>19.52 USD 95.22%</small></button>
+<button class="g" id="btn1" onclick="trade('even')">Even<br><small>19.52 USD 95.22%</small></button>
+<button class="r" id="btn2" onclick="trade('odd')">Odd<br><small>19.52 USD 95.22%</small></button>
 </div>
 
 <div class="tabs"><div class="tab active" onclick="setMode('auto',this)">AUTO</div><div class="tab" onclick="setMode('manual',this)">MANUAL</div></div>
@@ -137,7 +141,8 @@ body{background:#0a0e14;color:#fff}
 <button onclick="setS(10)" class="active" id="s10">$10</button>
 <button onclick="setS(25)">$25</button><button onclick="setS(50)">$50</button><button onclick="setS(100)">$100</button>
 </div>
-<div class="signal" id="signal"></div>
+<div class="ticks">Number of Ticks: <span id="ticks">5</span></div>
+<div class="signal" id="signal">Click AI for signal</div>
 <button class="ai" onclick="aiScan()">AI</button>
 </div>
 </div>
@@ -146,7 +151,7 @@ body{background:#0a0e14;color:#fff}
 <div class="popup" id="popup"></div>
 
 <script>
-let bal=8000,stake=10,token=localStorage.t,mode='auto',type='eo',lastDigit=-1,lastPrice=9500,history=[];
+let bal=8000,stake=10,token=localStorage.t,mode='auto',type='eo',lastDigit=-1,lastPrice=9500,totalProfit=0,recommended='';
 const pct=[10.8,10.2,10.2,9,10.6,9.6,9.2,11.6,9.8,9];
 
 if(token){auth.style.display='none';dash.style.display='block';start();}
@@ -157,19 +162,21 @@ async function log(){let r=await fetch('/api/login',{method:'POST',headers:{'Con
 async function me(){let r=await fetch('/api/me',{headers:{'Authorization':'Bearer '+token}});bal=parseFloat((await r.json()).balance);balance.innerText=bal.toFixed(2);}
 function logout(){localStorage.removeItem('t');location.reload();}
 function setS(x){stake=x;document.querySelectorAll('.sam button').forEach(b=>b.classList.remove('active'));document.getElementById('s'+x).classList.add('active');upd();}
-function s(x){stake+=x;if(stake<1)stake=1;upd();}
+function s(x){stake=stake+x;if(stake<1)stake=1;if(stake>1000)stake=1000;upd();} // FIXED
 function upd(){stake.innerText=stake;document.querySelectorAll('#btns small').forEach(s=>s.innerText=(stake*1.952).toFixed(2)+' USD 95.22%');}
 function setMode(m,el){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
 function setType(t,el){type=t;document.querySelectorAll('.sub div').forEach(s=>s.classList.remove('active'));el.classList.add('active');
-  if(t=='eo')btns.innerHTML=`<button class="g" onclick="trade('even')">Even<br><small>19.52 USD 95.22%</small></button><button class="r" onclick="trade('odd')">Odd<br><small>19.52 USD 95.22%</small></button>`;
-  if(t=='md')btns.innerHTML=`<button class="g" onclick="trade('match')">Match<br><small>19.52 USD 95.22%</small></button><button class="r" onclick="trade('differ')">Differ<br><small>19.52 USD 95.22%</small></button>`;
-  if(t=='ou')btns.innerHTML=`<button class="g" onclick="trade('over')">Over 2<br><small>19.52 USD 95.22%</small></button><button class="r" onclick="trade('under')">Under 8<br><small>19.52 USD 95.22%</small></button>`;
+  if(t=='eo')btns.innerHTML=`<button class="g" id="btn1" onclick="trade('even')">Even<br><small>19.52 USD 95.22%</small></button><button class="r" id="btn2" onclick="trade('odd')">Odd<br><small>19.52 USD 95.22%</small></button>`;
+  if(t=='md')btns.innerHTML=`<button class="g" id="btn1" onclick="trade('match')">Match<br><small>19.52 USD 95.22%</small></button><button class="r" id="btn2" onclick="trade('differ')">Differ<br><small>19.52 USD 95.22%</small></button>`;
+  if(t=='ou')btns.innerHTML=`<button class="g" id="btn1" onclick="trade('over')">Over 2<br><small>19.52 USD 95.22%</small></button><button class="r" id="btn2" onclick="trade('under')">Under 8<br><small>19.52 USD 95.22%</small></button>`;
 }
 
-function addHistory(type,dir,win,profit){
+function addHistory(t,d,win,profit){
+  totalProfit+=profit;
+  totalP.innerText=totalProfit.toFixed(2);
   let item=document.createElement('div');
   item.className='hist-item '+(win?'hist-win':'hist-loss');
-  item.innerText=`${type.toUpperCase()} ${dir.toUpperCase()} ${win?'+':'-'}$${Math.abs(profit).toFixed(2)}`;
+  item.innerText=`${t.toUpperCase()} ${d.toUpperCase()} ${win?'+':'-'}$${Math.abs(profit).toFixed(2)}`;
   hist.prepend(item);
   if(hist.children.length>10)hist.removeChild(hist.lastChild);
 }
@@ -181,38 +188,36 @@ function showPopup(win,amount){
   setTimeout(()=>popup.style.display='none',2000);
 }
 
-function checkWin(dir, digit, price){
+function checkWin(dir, digit){
   if(type=='eo') return dir=='even'? digit%2==0 : digit%2==1;
   if(type=='md') return dir=='match'? digit==lastDigit : digit!=lastDigit;
-  if(type=='ou') return dir=='over'? digit>2 : digit<8; // Over 2, Under 8
+  if(type=='ou') return dir=='over'? digit>2 : digit<8;
 }
 
 function trade(dir){
   if(bal<stake)return alert('Low balance');
+  if(mode=='auto' && dir!=recommended)return alert('Tap the recommended signal: '+recommended.toUpperCase());
   bal-=stake;
-  let win=checkWin(dir, lastDigit, lastPrice);
+  let win=checkWin(dir, lastDigit);
   let profit = win? stake*0.952 : -stake;
   setTimeout(()=>{
     bal+= win? stake*1.952 : 0;
     balance.innerText=bal.toFixed(2);
     addHistory(type,dir,win,profit);
     showPopup(win,Math.abs(profit));
+    document.querySelectorAll('#btns button').forEach(b=>b.classList.remove('recommended'));
   },1000);
 }
 
 function aiScan(){
   signal.innerText='AI SCANNING...';
+  document.querySelectorAll('#btns button').forEach(b=>b.classList.remove('recommended'));
   setTimeout(()=>{
-    let sig='';
-    if(type=='eo') sig = lastDigit%2==0?'EVEN':'ODD';
-    if(type=='md') sig = Math.random()>0.5?'MATCH':'DIFFER';
-    if(type=='ou') sig = lastDigit>2?'OVER 2':'UNDER 8';
-
-    signal.innerText=`BEST SIGNAL: ${sig}`;
-    if(mode=='auto'){
-      trade(sig.toLowerCase().replace(' 2','').replace(' 8',''));
-      signal.innerText+=` | AUTO TRADE: ${sig}`;
-    }
+    if(type=='eo') recommended = lastDigit%2==0?'even':'odd';
+    if(type=='md') recommended = Math.random()>0.5?'match':'differ';
+    if(type=='ou') recommended = lastDigit>2?'over':'under';
+    signal.innerText=`BEST SIGNAL: ${recommended.toUpperCase()} | TAP TO TRADE`;
+    document.getElementById(recommended=='even'||recommended=='match'||recommended=='over'?'btn1':'btn2').classList.add('recommended');
   },2000);
 }
 
