@@ -60,8 +60,6 @@ body{background:#0a0e14;color:#fff}
 .popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a2332;padding:15px 20px;border-radius:8px;font-weight:800;font-size:16px;z-index:999;display:none}
 .popup.win{border:2px solid #22c55e;color:#22c55e}
 .popup.loss{border:2px solid #ef4444;color:#ef4444}
-
-/* AUTH SCREEN */
 .auth{text-align:center;padding-top:100px;background:#0a0e14;min-height:100vh}
 .auth h1{font-size:32px;margin-bottom:20px}
 .auth input{width:85%;max-width:350px;padding:12px;margin:8px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:6px;font-size:14px}
@@ -72,7 +70,6 @@ body{background:#0a0e14;color:#fff}
 </head>
 <body>
 
-<!-- LOGIN / REGISTER SCREEN -->
 <div id="auth" class="auth">
 <h1 class="logo">Binary<span>Pro</span></h1>
 <input id="remail" placeholder="Email"><br>
@@ -82,7 +79,6 @@ body{background:#0a0e14;color:#fff}
 <div id="msg"></div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dash">
 <div class="top">
 <div class="logo">Binary<span>Pro</span></div>
@@ -164,19 +160,10 @@ body{background:#0a0e14;color:#fff}
 let bal=8000,currentStake=10,token=localStorage.t,mode='auto',type='eo',lastDigit=-1,lastPrice=9500,totalProfit=0,recommended='',volatility=10,digitHistory=[];
 const pct=[10.8,10.2,10.2,9,10.6,9.6,9.2,11.6,9.8,9];
 
-// CHECK IF LOGGED IN
 if(token){auth.style.display='none';dash.style.display='block';start();}
 
-async function reg(){
-  let r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'user',email:remail.value,password:rpass.value})});
-  let d=await r.json();msg.innerText=d.message;
-  if(d.message.includes('success')){msg.style.color='#22c55e'}
-}
-async function log(){
-  let r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:remail.value,password:rpass.value})});
-  let d=await r.json();
-  if(d.token){localStorage.t=d.token;location.reload();}else{msg.innerText=d.message;msg.style.color='#ef4444'}
-}
+async function reg(){let r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'user',email:remail.value,password:rpass.value})});let d=await r.json();msg.innerText=d.message;if(d.message.includes('success')){msg.style.color='#22c55e'}}
+async function log(){let r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:remail.value,password:rpass.value})});let d=await r.json();if(d.token){localStorage.t=d.token;location.reload();}else{msg.innerText=d.message;msg.style.color='#ef4444'}}
 function logout(){localStorage.removeItem('t');location.reload();}
 
 function changeVol(){volatility=parseInt(volSelect.value);}
@@ -256,12 +243,13 @@ for(let i=0;i<data.length;i++){let x=i*(c.width/data.length);i==0?ctx.moveTo(x,d
 ctx.stroke();
 
 data.shift();
-let spikeChance = volatility/100;
+// SLOWER SPIKES
+let spikeChance = volatility/200; // HALVED
 let move = (Math.random()-0.5);
-if(Math.random() < spikeChance){move = (Math.random()-0.5) * (volatility * 2);} else {move = move * (volatility/5);}
+if(Math.random() < spikeChance){move = (Math.random()-0.5) * (volatility * 1.2);} else {move = move * (volatility/8);} // SMALLER
 let y=data[data.length-1]+move;if(y<10)y=10;if(y>c.height-10)y=c.height-10;data.push(y);
 
-let price=(9500+Math.random()*volatility*5).toFixed(2);lastPrice=parseFloat(price);cprice.innerText=price;ptag.innerText=price;ptag.style.top=(y-10)+'px';
+let price=(9500+Math.random()*volatility*2).toFixed(2);lastPrice=parseFloat(price);cprice.innerText=price;ptag.innerText=price;ptag.style.top=(y-10)+'px';
 
 let digit=Math.floor((y/c.height)*10);
 if(digit!=lastDigit && digit>=0 && digit<10){
@@ -271,7 +259,7 @@ if(digit!=lastDigit && digit>=0 && digit<10){
   pointer.style.left=(digit*10+5)+'%';
   lastDigit=digit;
 }
-},90);
+},250); // CHANGED FROM 90 TO 250ms = SLOWER
 }
 </script>
 </body>
