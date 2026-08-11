@@ -6,18 +6,17 @@ if(token){
   auth.style.display='none'; 
   dash.style.display='block'; 
   fetchBalance();
-  start(); 
+  start();
 }
 
 async function fetchBalance(){
-  let r=await fetch('/api/balance',{headers:{'Authorization':'Bearer '+token}});
-  let d=await r.json(); 
-  bal = d.balance; 
-  balance.innerText=bal.toFixed(2);
+  try{
+    let r=await fetch('/api/balance',{headers:{'Authorization':'Bearer '+token}});
+    let d=await r.json(); 
+    bal = d.balance; 
+    balance.innerText=bal.toFixed(2);
+  }catch(e){console.log(e)}
 }
-
-function drop(){dropdown.style.display=dropdown.style.display=='flex'?'none':'flex';}
-window.onclick = function(e){if(!e.target.matches('.btn-blue')){dropdown.style.display='none';}}
 
 async function reg(){
   let r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'user',email:remail.value,password:rpass.value})});
@@ -33,78 +32,24 @@ async function log(){
 }
 
 function logout(){localStorage.removeItem('t');location.reload();}
-
-function changeVol(){volatility=parseInt(volSelect.value);}
-function setS(x){currentStake=x;document.querySelectorAll('.sam button').forEach(b=>b.classList.remove('active'));document.getElementById('s'+x).classList.add('active');upd();}
-function changeStake(x){currentStake=currentStake+x;if(currentStake<1)currentStake=1;if(currentStake>1000)currentStake=1000;upd();}
-function upd(){stake.innerText=currentStake;document.querySelectorAll('#btns small').forEach(s=>s.innerText=(currentStake*1.952).toFixed(2)+' USD 95.22%');}
-function setMode(m,el){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
-function setType(t,el){type=t;document.querySelectorAll('.sub div').forEach(s=>s.classList.remove('active'));el.classList.add('active');
-  if(t=='eo')btns.innerHTML=`<button class="g" id="btn1" onclick="trade('even')">Even<br><small>19.52 USD 95.22%</small></button><button class="r" id="btn2" onclick="trade('odd')">Odd<br><small>19.52 USD 95.22%</small></button>`;
-  if(t=='md')btns.innerHTML=`<button class="g" id="btn1" onclick="trade('match')">Match<br><small>19.52 USD 95.22%</small></button><button class="r" id="btn2" onclick="trade('differ')">Differ<br><small>19.52 USD 95.22%</small></button>`;
-  if(t=='ou')btns.innerHTML=`<button class="g" id="btn1" onclick="trade('over')">Over 2<br><small>19.52 USD 95.22%</small></button><button class="r" id="btn2" onclick="trade('under')">Under 8<br><small>19.52 USD 95.22%</small></button>`;
-}
-
-function addHistory(t,d,win,profit){
-  totalProfit+=profit;
-  totalP.innerText=totalProfit.toFixed(2);
-  totalP.style.color=totalProfit>=0?'#22c55e':'#ef4444';
-  let item=document.createElement('div');
-  item.className='hist-item '+(win?'hist-win':'hist-loss');
-  item.innerText=`${t.toUpperCase()} ${d.toUpperCase()} ${win?'+':'-'}$${Math.abs(profit).toFixed(2)}`;
-  hist.prepend(item);
-  if(hist.children.length>15)hist.removeChild(hist.lastChild);
-}
-
-function showPopup(win,amount){
-  popup.className='popup '+(win?'win':'loss');
-  popup.innerText=win?`PROFIT: +$${amount.toFixed(2)}`:`LOSS: -$${amount.toFixed(2)}`;
-  popup.style.display='block';
-  setTimeout(()=>popup.style.display='none',2000);
-}
-
-function trade(dir){
-  if(bal<currentStake)return alert('Low balance');
-  bal-=currentStake;
-  let win=Math.random()<0.7;
-  let profit = win? currentStake*0.952 : -currentStake;
-  setTimeout(()=>{
-    bal+= win? currentStake*1.952 : 0;
-    balance.innerText=bal.toFixed(2);
-    addHistory(type,dir,win,profit);
-    showPopup(win,Math.abs(profit));
-    placeBar.style.display='none';
-  },1000);
-}
-
-function placeRecommendedTrade(){ trade(recommended); }
-
-function aiScan(){
-  signal.innerText='AI SCANNING...';
-  placeBar.style.display='none';
-  document.querySelectorAll('#btns button').forEach(b=>b.classList.remove('recommended'));
-  setTimeout(()=>{
-    let bestIdx = pct.indexOf(Math.max(...pct));
-    if(type=='eo') recommended = bestIdx%2==0?'even':'odd';
-    if(type=='md') recommended = Math.random()>0.5?'match':'differ';
-    if(type=='ou') recommended = bestIdx>2?'over':'under';
-    signal.innerText=`BEST SIGNAL: ${recommended.toUpperCase()} | ${pct[bestIdx]}%`;
-    document.getElementById(recommended=='even'||recommended=='match'||recommended=='over'?'btn1':'btn2').classList.add('recommended');
-    placeBar.innerText=`PLACE TRADE: ${recommended.toUpperCase()}`;
-    placeBar.style.display='block';
-  },1500);
-}
+function drop(){dropdown.style.display=dropdown.style.display=='flex'?'none':'flex';}
+window.onclick = function(e){if(!e.target.matches('.btn-blue')){dropdown.style.display='none';}}
 
 function start(){
 digs.innerHTML='<div class="pointer" id="pointer"></div>';
 for(let i=0;i<10;i++)digs.innerHTML+=`<div class="dig" id="d${i}">${i}<span>${pct[i]}%</span></div>`;
-
 const c=chart,ctx=c.getContext('2d');
 function resize(){c.width=c.offsetWidth;c.height=c.offsetHeight;}
 resize(); window.addEventListener('resize', resize);
-
 let data=Array(400).fill(c.height/2);
 setInterval(()=>{
 ctx.clearRect(0,0,c.width,c.height);
 ctx.strokeStyle='#ffffff';ctx.lineWidth=2.5;ctx.beginPath();
-for(let i=
+for(let i=0;i<data.length;i++){let x=i*(c.width/data.length);i==0?ctx.moveTo(x,data[i]):ctx.lineTo(x,data[i]);}
+ctx.stroke();
+data.shift();
+let y=data[data.length-1]+(Math.random()-0.5)*(volatility/8);if(y<10)y=10;if(y>c.height-10)y=c.height-10;data.push(y);
+let price=(9500+Math.random()*volatility*2).toFixed(2);cprice.innerText=price;ptag.innerText=price;ptag.style.top=(y-10)+'px';
+},250);
+}
+</script>
