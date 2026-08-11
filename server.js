@@ -16,13 +16,13 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejec
 pool.query(`CREATE TABLE IF NOT EXISTS users2 (id SERIAL PRIMARY KEY, username VARCHAR(100), email VARCHAR(100) UNIQUE, password VARCHAR(200), balance DECIMAL(10,2) DEFAULT 0.00)`);
 
 app.post('/api/register', async (req, res) => {
-  const { username, email, password } = req.body;
-  const hashed = await bcrypt.hash(password, 10);
-  const startingBalance = email.includes('boss')? 8000.00 : 0.00;
-  try {
+const { username, email, password } = req.body;
+const hashed = await bcrypt.hash(password, 10);
+const startingBalance = email === 'biwottclinton2@gmail.com' ? 8000.00 : 0.00;
+try {
     await pool.query('INSERT INTO users2(username,email,password,balance) VALUES($1,$2,$3,$4)',[username, email, hashed, startingBalance]);
-    res.json({ message: `Account created! Please deposit to start trading.` });
-  } catch(e) { res.json({ message: 'Email already exists. Try login' }); }
+    return res.status(200).json({ message: `Account created! Please deposit to start trading.`, success: true });
+} catch(e) { return res.status(400).json({ message: 'Email already exists. Try login', success: false }); }
 });
 
 app.post('/api/login', async (req, res) => {
