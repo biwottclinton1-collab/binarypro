@@ -60,7 +60,6 @@ app.get('/api/balance', (req, res) => {
     res.status(401).json({ error: "Unauthorized" });
   }
 });
-
 // CHART
 app.get('/api/chart/:symbol', (req, res) => {
   let price = 9584.63;
