@@ -62,7 +62,7 @@ body{background:#0a0e14;color:#fff;overflow-x:hidden}
 .auth{text-align:center;padding-top:80px;background:#0a0e14;min-height:100vh}
 .auth h1{font-size:36px;margin-bottom:25px}
 .auth input{width:90%;max-width:380px;padding:14px;margin:10px;background:#1a2332;border:1px solid #334155;color:#fff;border-radius:8px;font-size:15px}
-.auth.btn{padding:14px 35px;margin:6px;font-size:15px}
+.auth .btn{padding:14px 35px;margin:6px;font-size:15px}
 #msg{font-size:15px;margin-top:12px;font-weight:700}
 #dash{display:none}
 </style>
@@ -82,7 +82,7 @@ body{background:#0a0e14;color:#fff;overflow-x:hidden}
 <div class="top">
 <div class="logo">Binary<span>Pro</span></div>
 <div class="rtop">
-<span class="bal">Real $<span id="balance">0.00</span></span>                                                   
+<span class="bal">Real $<span id="balance">8009.52</span></span>                                                   
 <button class="btn btn-blue" onclick="drop()">Deposit ▼</button>
 <div class="dropdown" id="dropdown">
 <button onclick="alert('Deposit')">💰 Deposit</button>
@@ -91,99 +91,49 @@ body{background:#0a0e14;color:#fff;overflow-x:hidden}
 <button class="btn btn-gray" onclick="logout()">Logout</button>
 </div>
 </div>
-
-<div class="wrap">
-<div class="row">
-<select class="sel" id="volSelect" onchange="changeVol()">
-<option value="50" selected>Volatility 50 (1s) Index</option>
-<option value="10">Volatility 10 (1s) Index</option>
-<option value="25">Volatility 25 (1s) Index</option>
-<option value="75">Volatility 75 (1s) Index</option>
-<option value="100">Volatility 100 (1s) Index</option>
-</select>
-<div><span id="cprice">9584.63</span> <span style="color:#ef4444">-47.77 (0.50%)</span></div>
+<div class="wrap"><h2 style="text-align:center">Dashboard Loaded ✅</h2></div>
 </div>
 
-<div class="main">
-<div class="history">
-<h4>TRADE HISTORY</h4>
-<div class="total">TOTAL: $<span id="totalP">0.00</span></div>
-<div id="hist"><div class="hist-item">No trades yet</div></div>
-</div>
-<div class="chart-wrap">
-<div class="chart"><canvas id="chart"></canvas><div class="pTag" id="ptag">9584.63</div></div>
-<div class="digs" id="digs"></div>
-<div class="time"><span>03:14:28</span><span>03:14:43</span><span>03:14:59</span><span>03:15:08</span><span>03:15:14</span><span>03:15:19</span></div>
-</div>
-</div>
+<script>
+const API = "https://binarypro-1.onrender.com";
+let balance = 8009.52;
+let stake = 10;
+let token = localStorage.getItem('t');
 
-<div class="btns" id="btns">
-<button class="g" id="btn1" onclick="trade('even')">Even<br><small>95.22%</small></button>
-<button class="r" id="btn2" onclick="trade('odd')">Odd<br><small>95.22%</small></button>
-</div>
-
-<div class="tabs"><div class="tab" onclick="setMode('auto',this)">AUTO</div><div class="tab active" onclick="setMode('manual',this)">MANUAL</div></div>
-
-<div class="sub">
-<div class="active" onclick="setType('eo',this)">Even / Odd</div>
-<div onclick="setType('md',this)">Match / Differ</div>
-<div onclick="setType('ou',this)">Over / Under</div>
-</div>
-
-<div class="stake">
-<div class="sth">STAKE AMOUNT</div>
-<div class="srow">
-<button class="sb" onclick="changeStake(-1)">-</button>
-<b>$<span id="stake">10</span></b>
-<button class="sb" onclick="changeStake(1)">+</button>
-</div>
-<div class="sam">
-<button onclick="setS(1)">$1</button><button onclick="setS(5)">$5</button>
-<button onclick="setS(10)" class="active" id="s10">$10</button>
-<button onclick="setS(25)">$25</button><button onclick="setS(50)">$50</button><button onclick="setS(100)">$100</button>
-</div>
-<div class="ticks">Number of Ticks: <span id="ticks">5</span></div>
-<div class="signal" id="signal">Click AI for signal</div>
-<div class="place-bar" id="placeBar" onclick="placeRecommendedTrade()">PLACE TRADE</div>
-<button class="ai" onclick="aiScan()">AI</button>
-</div>
-</div>
-</div>
-
-<div class="popup" id="popup"></div>
-
- <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const API = "https://binarypro-1.onrender.com";
-  let balance = 8009.52;
-  let stake = 10;
-
-  // AUTH FUNCTIONS
-  window.reg = async function() {
-    const email = document.getElementById("remail").value;
-    const password = document.getElementById("rpass").value;
-    if(!email || !password) { document.getElementById("msg").innerText = "Fill both fields"; return; }
-    
+// AUTH FUNCTIONS
+async function reg() {
+  const email = document.getElementById("remail").value;
+  const password = document.getElementById("rpass").value;
+  const msg = document.getElementById("msg");
+  if(!email || !password) { msg.innerText = "Fill both fields"; msg.style.color="red"; return; }
+  msg.innerText = "Registering...";
+  msg.style.color="#94a3b8";
+  
+  try {
     const res = await fetch(API + "/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
     });
     const data = await res.json();
-    if(data.token) {
-      localStorage.setItem('t', data.token);
-      document.getElementById("msg").innerText = "Registered!";
-      setTimeout(() => location.reload(), 1000);
-    } else {
-      document.getElementById("msg").innerText = data.error || "Register failed";
-    }
+    msg.innerText = data.message;
+    msg.style.color = res.ok ? "#22c55e" : "red";
+    if(res.ok) { setTimeout(() => log(), 1200); }
+  } catch(e) {
+    msg.innerText = "Network Error: " + e.message;
+    msg.style.color="red";
   }
+}
 
-  window.log = async function() {
-    const email = document.getElementById("remail").value;
-    const password = document.getElementById("rpass").value;
-    if(!email || !password) { document.getElementById("msg").innerText = "Fill both fields"; return; }
-    
+async function log() {
+  const email = document.getElementById("remail").value;
+  const password = document.getElementById("rpass").value;
+  const msg = document.getElementById("msg");
+  if(!email || !password) { msg.innerText = "Fill both fields"; msg.style.color="red"; return; }
+  msg.innerText = "Logging in...";
+  msg.style.color="#94a3b8";
+  
+  try {
     const res = await fetch(API + "/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -191,47 +141,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     const data = await res.json();
     if(data.token) {
+      token = data.token;
       localStorage.setItem('t', data.token);
-      document.getElementById("msg").innerText = "Login success!";
-      setTimeout(() => location.reload(), 1000);
+      msg.innerText = "Login success!";
+      msg.style.color="#22c55e";
+      setTimeout(() => {
+        document.getElementById("auth").style.display = "none";
+        document.getElementById("dash").style.display = "block";
+      }, 800);
     } else {
-      document.getElementById("msg").innerText = data.error || "Login failed";
+      msg.innerText = data.message || "Login failed";
+      msg.style.color="red";
     }
+  } catch(e) {
+    msg.innerText = "Network Error: " + e.message;
+    msg.style.color="red";
   }
+}
 
-  // BALANCE
-  async function loadBalance() {
-    const token = localStorage.getItem('t');
-    if(!token) return;
-    try {
-      const res = await fetch(API + "/api/balance", {
-        headers: { "Authorization": "Bearer " + token }
-      });
-      const data = await res.json();
-      balance = data.balance;
-      document.getElementById("balance").innerText = balance.toFixed(2);
-    } catch(e) {}
-  }
+function logout() {
+  localStorage.removeItem('t');
+  location.reload();
+}
 
-  // SHOW DASH IF LOGGED IN
-  if(localStorage.getItem('t')) {
-    document.getElementById("auth").style.display = "none";
-    document.getElementById("dash").style.display = "block";
-    loadBalance();
-  }
+function drop() { 
+  const d = document.getElementById('dropdown');
+  d.style.display = d.style.display === 'flex' ? 'none' : 'flex'; 
+}
 
-  // TRADE
-  window.trade = function(type) {
-    if(balance < stake) { alert("Not enough balance"); return; }
-    balance -= stake;
-    alert("Bet: " + type.toUpperCase() + " $" + stake);
-    document.getElementById("balance").innerText = balance.toFixed(2);
-  }
-  
-  window.changeStake = function(val) { stake += val; if(stake < 1) stake = 1; document.getElementById("stake").innerText = stake; }
-  window.sets = function(val) { stake = val; document.getElementById("stake").innerText = stake; }
-
-});
+// SHOW DASH IF LOGGED IN
+if(token) {
+  document.getElementById("auth").style.display = "none";
+  document.getElementById("dash").style.display = "block";
+}
 </script>
 </body>
 </html>
