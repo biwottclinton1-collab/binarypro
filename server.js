@@ -28,14 +28,25 @@ app.post('/api/register', async (req, res) => {
 });
 
 // LOGIN
-app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
-  const user = users.find(u => u.email === email);
-  if(!user) return res.status(400).json({ error: "User not found" });
-  const ok = await bcrypt.compare(password, user.password);
-  if(!ok) return res.status(400).json({ error: "Wrong password" });
-  const token = jwt.sign({ email }, JWT_SECRET);
-  res.json({ token });
+document.getElementById('loginBtn').onclick = async () => {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  
+  const res = await fetch('/api/login', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({email, password})
+  });
+  
+  const data = await res.json();
+  
+  if(res.ok) { // ONLY redirect if success
+    localStorage.setItem('token', data.token);
+    window.location = '/dashboard.html';
+  } else {
+    alert(data.error); // Show "User not found" or "Wrong password"
+  }
+}
 });
 
 // BALANCE
