@@ -1,65 +1,76 @@
 const express = require('express');
-const cors = require('cors');
-const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const path = require('path');
+const jwt = require('jsonwebtoken');
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-const JWT_SECRET = "supersecretkey123";
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => console.log("Mongo Connected"))
+ .catch(err => console.log(err));
 
-// MEMORY DATABASE - resets when Render sleeps
-let users = [
-  { email: "admin@admin.com", password: "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", balance: 8009.52 } // password = password
-];
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: { type: String, unique: true },
+  password: String,
+  balance: { type: Number, default: 0 },
+  referralCode: String
+});
+const User = mongoose.model('User', userSchema);
 
 // REGISTER
 app.post('/api/register', async (req, res) => {
-  const { email, password } = req.body;
-  if(users.find(u => u.email === email)) {
-    return res.status(400).json({ error: "Email already exists" });
+  try {
+    const { name, email, password, referralCode } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ error: 'User already exists' });
+    
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hashedPassword, referralCode, balance: 0 });
+    await user.save();
+    
+    res.json({ message: 'User registered successfully', balance: 0 });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  const hash = await bcrypt.hash(password, 10);
-  users.push({ email, password: hash, balance: 0 }); // NEW USERS = $0
-  res.json({ success: true, message: "Registered. Please login" }); // NO AUTO LOGIN
 });
 
 // LOGIN
-document.getElementById('loginBtn').onclick = async () => {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  
-  const res = await fetch('/api/login', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({email, password})
-  });
-  
-  const data = await res.json();
-  
-  if(res.ok) { // ONLY redirect if success
-    localStorage.setItem('token', data.token);
-    window.location = '/dashboard.html';
-  } else {
-    alert(data.error); // Show "User not found" or "Wrong password"
+app.post('/api/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ error: 'User not found' });
+    
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ error: 'Wrong password' });
+    
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    res.json({ message: 'Login success', token, balance: user.balance });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-}
 });
 
 // BALANCE
-app.get('/api/balance', (req, res) => {
-  const token = req.headers.authorization?.split(' ')[1];
+app.get('/api/balance', async (req, res) => {
   try {
-    const { email } = jwt.verify(token, JWT_SECRET);
-    const user = users.find(u => u.email === email);
+    const token = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
     res.json({ balance: user.balance });
-  } catch(e) {
-    res.status(401).json({ error: "Unauthorized" });
+  } catch (err) {
+    res.status(401).json({ error: 'Invalid token' });
   }
 });
+
 // CHART
 app.get('/api/chart/:symbol', (req, res) => {
   let price = 9584.63;
