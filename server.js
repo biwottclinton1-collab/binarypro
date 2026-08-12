@@ -42,11 +42,26 @@ app.post('/api/login', async (req, res) => {
 // BALANCE
 app.get('/api/balance', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
-  if(!token) return res.status(401).json({ message: 'No token' });
-  const decoded = jwt.verify(token, JWT_SECRET);
-  const result = await pool.query('SELECT balance FROM users2 WHERE id=$1', [decoded.id]);
-  res.json({ balance: result.rows[0].balance });
+if(!token) return res.status(401).json({ message: 'No token' });
+const decoded = jwt.verify(token, JWT_SECRET);
+const result = await pool.query('SELECT balance FROM users2 WHERE id=$1', [decoded.id]);
+res.json({ balance: result.rows[0].balance });
 });
+// PUBLIC BALANCE - NO TOKEN NEEDED
+app.get('/api/balance', async (req,res)=>{
+  try{
+    const result = await pool.query("SELECT balance FROM users2 WHERE email = 'boss1@gmail.com'");
+    if(result.rows.length > 0){
+      res.json({balance: parseFloat(result.rows[0].balance)})
+    } else {
+      res.json({balance: 0})
+    }
+  }catch(e){
+    res.json({balance: 0, error: e.message})
+  }
+});
+
+// TEMP: Give boss admin money - MUST BE ABOVE app.get('*')
 
 // TEMP: Give boss admin money - MUST BE ABOVE app.get('*')
 app.post('/api/admin/resetboss', async (req,res)=>{
