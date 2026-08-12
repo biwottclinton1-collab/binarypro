@@ -222,19 +222,24 @@ window.onload = loadBalance;
 // LOAD BALANCE FROM BACKEND
 async function loadBalance(){
   try{
-    const res = await fetch('/api/balance?t=' + Date.now()); // kills cache
-    const data = await res.json();
-    document.getElementById('balance').innerText = data.balance.toFixed(2);
-    console.log('Balance loaded:', data.balance);
-  }catch(e){
-    console.log('Balance error:', e)
-  }
+async function loadBalance(){
+try{
+  console.log('Trying to fetch balance...')
+  const res = await fetch('/api/balance?t=' + Date.now());
+  const data = await res.json();
+  console.log('Got data:', data)
+  document.getElementById('balance').innerText = data.balance.toFixed(2);
+}catch(e){
+  console.log('Balance error:', e)
+  document.getElementById('balance').innerText = 'ERROR';
+}
 }
 
 // Run when page loads
 window.onload = function(){
   loadBalance();
-  setInterval(loadBalance, 3000); // refresh every 3 seconds
+  setInterval(loadBalance, 3000);
+}
 }
 </body>
 </html>
