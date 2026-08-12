@@ -208,42 +208,20 @@ async function loadBalance() {
   const token = localStorage.getItem('token');
   if(!token) return;
   try {
+    console.log('Fetching balance with token...')
     const res = await fetch('/api/balance', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     const data = await res.json();
+    console.log('Got data:', data)
     document.getElementById('balance').innerText = (data.balance || 0).toFixed(2);
   } catch(e) {
+    console.log('Balance error:', e)
     document.getElementById('balance').innerText = '0.00';
   }
 }
 window.onload = loadBalance;
-<script>
-// LOAD BALANCE FROM BACKEND
-async function loadBalance(){
-try{
-  console.log('Trying to fetch balance...')
-  const res = await fetch('/api/balance?t=' + Date.now());
-  const data = await res.json();
-  console.log('Got data:', data)
-  document.getElementById('balance').innerText = data.balance.toFixed(2);
-}catch(e){
-  console.log('Balance error:', e)
-  document.getElementById('balance').innerText = 'ERROR';
-}
-}
-
-// Run when page loads
-window.onload = function(){
-  loadBalance();
-  setInterval(loadBalance, 3000);
-}
+setInterval(loadBalance, 3000);
 </script>
-// Run when page loads
-window.onload = function(){
-  loadBalance();
-  setInterval(loadBalance, 3000);
-}
-}
 </body>
 </html>
