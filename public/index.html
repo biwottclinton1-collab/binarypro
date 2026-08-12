@@ -154,6 +154,51 @@ body{background:#0a0e14;color:#fff;overflow-x:hidden}
 
   <script>
 const API = "https://binarypro-1.onrender.com";
+const API = "https://binarypro-1.onrender.com";
+
+// AUTH FUNCTIONS - ADD THIS
+async function reg() {
+  const email = document.getElementById("remail").value;
+  const password = document.getElementById("rpass").value;
+  if(!email || !password) { document.getElementById("msg").innerText = "Fill both fields"; return; }
+  
+  const res = await fetch(API + "/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+  const data = await res.json();
+  if(data.token) {
+    localStorage.setItem('t', data.token);
+    document.getElementById("msg").innerText = "Registered! Logging in...";
+    setTimeout(() => location.reload(), 1000);
+  } else {
+    document.getElementById("msg").innerText = data.error || "Register failed";
+  }
+}
+
+async function log() {
+  const email = document.getElementById("remail").value;
+  const password = document.getElementById("rpass").value;
+  if(!email || !password) { document.getElementById("msg").innerText = "Fill both fields"; return; }
+  
+  const res = await fetch(API + "/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+  const data = await res.json();
+  if(data.token) {
+    localStorage.setItem('t', data.token);
+    document.getElementById("msg").innerText = "Login success!";
+    setTimeout(() => location.reload(), 1000);
+  } else {
+    document.getElementById("msg").innerText = data.error || "Login failed";
+  }
+}
+
+// 1. BALANCE
+async function loadBalance() {
 let balance = 8009.52;
 let stake = 10;
 let price = 9571.36;
@@ -270,6 +315,12 @@ setInterval(updateChart, 1000);
 setInterval(aiSignal, 5000);
 loadBalance();
 updateChart();
+// SHOW DASH IF LOGGED IN
+if(localStorage.getItem('t')) {
+  document.getElementById("auth").style.display = "none";
+  document.getElementById("dash").style.display = "block";
+  loadBalance();
+}
 </script>
 </body>
 </html>
