@@ -152,175 +152,86 @@ body{background:#0a0e14;color:#fff;overflow-x:hidden}
 
 <div class="popup" id="popup"></div>
 
-  <script>
-const API = "https://binarypro-1.onrender.com";
-const API = "https://binarypro-1.onrender.com";
+ <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const API = "https://binarypro-1.onrender.com";
+  let balance = 8009.52;
+  let stake = 10;
 
-// AUTH FUNCTIONS - ADD THIS
-async function reg() {
-  const email = document.getElementById("remail").value;
-  const password = document.getElementById("rpass").value;
-  if(!email || !password) { document.getElementById("msg").innerText = "Fill both fields"; return; }
-  
-  const res = await fetch(API + "/api/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
-  const data = await res.json();
-  if(data.token) {
-    localStorage.setItem('t', data.token);
-    document.getElementById("msg").innerText = "Registered! Logging in...";
-    setTimeout(() => location.reload(), 1000);
-  } else {
-    document.getElementById("msg").innerText = data.error || "Register failed";
-  }
-}
-
-async function log() {
-  const email = document.getElementById("remail").value;
-  const password = document.getElementById("rpass").value;
-  if(!email || !password) { document.getElementById("msg").innerText = "Fill both fields"; return; }
-  
-  const res = await fetch(API + "/api/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
-  const data = await res.json();
-  if(data.token) {
-    localStorage.setItem('t', data.token);
-    document.getElementById("msg").innerText = "Login success!";
-    setTimeout(() => location.reload(), 1000);
-  } else {
-    document.getElementById("msg").innerText = data.error || "Login failed";
-  }
-}
-
-// 1. BALANCE
-async function loadBalance() {
-let balance = 8009.52;
-let stake = 10;
-let price = 9571.36;
-let tick = 0;
-let ticks = 5;
-// 1. BALANCE
-async function loadBalance() {
-  const token = localStorage.getItem('t');
-  if(!token) return;
-  try {
-    const res = await fetch(API + "/api/balance", {
-      headers: { "Authorization": "Bearer " + token }
+  // AUTH FUNCTIONS
+  window.reg = async function() {
+    const email = document.getElementById("remail").value;
+    const password = document.getElementById("rpass").value;
+    if(!email || !password) { document.getElementById("msg").innerText = "Fill both fields"; return; }
+    
+    const res = await fetch(API + "/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
     });
     const data = await res.json();
-    balance = data.balance;
+    if(data.token) {
+      localStorage.setItem('t', data.token);
+      document.getElementById("msg").innerText = "Registered!";
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      document.getElementById("msg").innerText = data.error || "Register failed";
+    }
+  }
+
+  window.log = async function() {
+    const email = document.getElementById("remail").value;
+    const password = document.getElementById("rpass").value;
+    if(!email || !password) { document.getElementById("msg").innerText = "Fill both fields"; return; }
+    
+    const res = await fetch(API + "/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if(data.token) {
+      localStorage.setItem('t', data.token);
+      document.getElementById("msg").innerText = "Login success!";
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      document.getElementById("msg").innerText = data.error || "Login failed";
+    }
+  }
+
+  // BALANCE
+  async function loadBalance() {
+    const token = localStorage.getItem('t');
+    if(!token) return;
+    try {
+      const res = await fetch(API + "/api/balance", {
+        headers: { "Authorization": "Bearer " + token }
+      });
+      const data = await res.json();
+      balance = data.balance;
+      document.getElementById("balance").innerText = balance.toFixed(2);
+    } catch(e) {}
+  }
+
+  // SHOW DASH IF LOGGED IN
+  if(localStorage.getItem('t')) {
+    document.getElementById("auth").style.display = "none";
+    document.getElementById("dash").style.display = "block";
+    loadBalance();
+  }
+
+  // TRADE
+  window.trade = function(type) {
+    if(balance < stake) { alert("Not enough balance"); return; }
+    balance -= stake;
+    alert("Bet: " + type.toUpperCase() + " $" + stake);
     document.getElementById("balance").innerText = balance.toFixed(2);
-  } catch(e) { console.error(e) }
-}
-
-// 2. STAKE BUTTONS - FROM YOUR SCREENSHOT
-function changeStake(val) {
-  stake += val;
-  if(stake < 1) stake = 1;
-  document.getElementById("stake").innerText = stake;
-}
-
-function sets(val) {
-  stake = val;
-  document.getElementById("stake").innerText = stake;
-  document.querySelectorAll('.sam button').forEach(b => b.classList.remove('active'));
-  document.getElementById("s"+val).classList.add('active');
-}
-
-// 3. TRADING BUTTONS - FROM YOUR OTHER SCREENSHOT
-function trade(type) {
-  if(balance < stake) { alert("Not enough balance"); return; }
-  balance -= stake;
-  alert("Bet placed: " + type.toUpperCase() + " $" + stake);
-  document.getElementById("balance").innerText = balance.toFixed(2);
-}
-
-function setMode(mode, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  alert(mode.toUpperCase() + " Mode ON");
-}
-
-function setType(type, el) {
-  document.querySelectorAll('.sub div').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  alert("Type: " + type.toUpperCase());
-}
-
-// 4. LIVE CHART + CURSOR
-function updateChart() {
-  price = price + (Math.random() - 0.5) * 20;
-  tick++;
-  const priceEl = document.querySelector('.chart-price');
-  if(priceEl) priceEl.innerText = price.toFixed(2);
+  }
   
-  const cursor = document.getElementById("cursor");
-  if(cursor) cursor.style.left = (tick % 100) + "%";
-}
+  window.changeStake = function(val) { stake += val; if(stake < 1) stake = 1; document.getElementById("stake").innerText = stake; }
+  window.sets = function(val) { stake = val; document.getElementById("stake").innerText = stake; }
 
-// 5. AI SCANNER
-function aiSignal() {
-  const signals = ['Even 95%', 'Odd 92%', 'Over 88%', 'Under 90%'];
-  document.getElementById("signal").innerText = 'AI: ' + signals[Math.floor(Math.random()*4)];
-}
-// 4. ALL BUTTON FUNCTIONS
-function updateChart() {
-  price = price + (Math.random() - 0.5) * 20;
-  tick++;
-  const priceEl = document.querySelector('.chart-price');
-  if(priceEl) priceEl.innerText = price.toFixed(2);
-  const cursor = document.getElementById("cursor");
-  if(cursor) cursor.style.left = (tick % 100) + "%";
-}
-
-function trade(type) {
-  if(balance < stake) { alert("Not enough balance"); return; }
-  balance -= stake;
-  alert("Bet placed: " + type.toUpperCase() + " $" + stake);
-  document.getElementById("balance").innerText = balance.toFixed(2);
-}
-
-function setMode(mode, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-}
-
-function setType(type, el) {
-  document.querySelectorAll('.sub div').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-}
-
-function changeStake(val) {
-  stake += val;
-  if(stake < 1) stake = 1;
-  document.getElementById("stake").innerText = stake;
-}
-
-function sets(val) {
-  stake = val;
-  document.getElementById("stake").innerText = stake;
-}
-
-function placeRecommendedTrade() {
-  alert("Placing AI Recommended Trade");
-}
-// 6. RUN EVERYTHING
-setInterval(loadBalance, 3000);
-setInterval(updateChart, 1000);
-setInterval(aiSignal, 5000);
-loadBalance();
-updateChart();
-// SHOW DASH IF LOGGED IN
-if(localStorage.getItem('t')) {
-  document.getElementById("auth").style.display = "none";
-  document.getElementById("dash").style.display = "block";
-  loadBalance();
-}
+});
 </script>
 </body>
 </html>
