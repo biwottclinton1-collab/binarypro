@@ -38,21 +38,6 @@ app.post('/api/login', async (req, res) => {
   const token = jwt.sign({ id: user.id }, JWT_SECRET);
   res.json({ token });
 });
-// PUBLIC BALANCE - NO TOKEN NEEDED
-app.get('/api/balance', async (req,res)=>{
-  try{
-    const result = await pool.query("SELECT balance FROM users2 WHERE email = 'boss1@gmail.com'");
-    if(result.rows.length > 0){
-      res.json({balance: parseFloat(result.rows[0].balance)})
-    } else {
-      res.json({balance: 0})
-    }
-  }catch(e){
-    res.json({balance: 0, error: e.message})
-  }
-});
-
-// TEMP: Give boss admin money - MUST BE ABOVE app.get('*')
 
 // TEMP: Give boss admin money - MUST BE ABOVE app.get('*')
 app.post('/api/admin/resetboss', async (req,res)=>{
