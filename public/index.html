@@ -218,10 +218,8 @@ async function loadBalance() {
   }
 }
 window.onload = loadBalance;
-</script>
+<script>
 // LOAD BALANCE FROM BACKEND
-async function loadBalance(){
-  try{
 async function loadBalance(){
 try{
   console.log('Trying to fetch balance...')
@@ -235,6 +233,12 @@ try{
 }
 }
 
+// Run when page loads
+window.onload = function(){
+  loadBalance();
+  setInterval(loadBalance, 3000);
+}
+</script>
 // Run when page loads
 window.onload = function(){
   loadBalance();
