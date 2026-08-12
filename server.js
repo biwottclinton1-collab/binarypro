@@ -64,17 +64,10 @@ app.get('/api/debugboss', async (req,res)=>{
   }
 });
 
-// FORCE BALANCE TO READ FROM users2
-app.get('/api/balance', async (req,res)=>{
-  try{
-    // Get email from session/JWT. If you don't have auth yet, keep it hardcoded for now
-    const email = req.user?.email || 'boss1@gmail.com'; 
-    
-    const result = await pool.query('SELECT balance FROM users2 WHERE email = $1', [email]);
-    if(result.rows.length > 0){
-      res.json({balance: parseFloat(result.rows[0].balance)})
-    } else {
-      res.json({balance: 0})
+// FORCE BALANCE - HARDCODED FOR TEST
+app.get('/api/balance', (req, res) => {
+  res.json({ balance: 8009.52 });
+});
     }
   }catch(e){
     res.json({balance: 0, error: e.message})
