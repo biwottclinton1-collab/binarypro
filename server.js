@@ -2,85 +2,60 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const cors = require('cors');
+const cors = require('cors'); // ADDED THIS
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+const PORT = process.env.PORT || 10000;
+
+// MIDDLEWARE - THIS FIXES "Register failed"
+app.use(cors()); // ADDED THIS LINE
 app.use(express.json());
-app.use(express.static('public'));
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log("Mongo Connected"))
- .catch(err => console.log(err));
+// MONGO CONNECTION
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log('Mongo Connected'))
+.catch(err => console.log(err));
 
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  password: String,
-  balance: { type: Number, default: 0 },
-  referralCode: String
+// USER MODEL
+const UserSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true }
 });
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', UserSchema);
 
-// REGISTER
+// REGISTER ROUTE
 app.post('/api/register', async (req, res) => {
   try {
-    const { name, email, password, referralCode } = req.body;
+    const { email, password } = req.body;
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ error: 'User already exists' });
+    if (existingUser) return res.status(400).json({ message: 'User already exists' });
     
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword, referralCode, balance: 0 });
-    await user.save();
+    const newUser = new User({ email, password: hashedPassword });
+    await newUser.save();
     
-    res.json({ message: 'User registered successfully', balance: 0 });
+    res.status(201).json({ message: 'Account created' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: 'Register failed', error: err.message });
   }
 });
 
-// LOGIN
+// LOGIN ROUTE
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: 'User not found' });
+    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
     
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ error: 'Wrong password' });
+    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
     
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    res.json({ message: 'Login success', token, balance: user.balance });
+    res.json({ token });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: 'Login failed' });
   }
 });
 
-// BALANCE
-app.get('/api/balance', async (req, res) => {
-  try {
-    const token = req.headers.authorization.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
-    res.json({ balance: user.balance });
-  } catch (err) {
-    res.status(401).json({ error: 'Invalid token' });
-  }
-});
-
-// CHART
-app.get('/api/chart/:symbol', (req, res) => {
-  let price = 9584.63;
-  let data = [];
-  for(let i = 0; i < 100; i++) {
-    price = price + (Math.random() - 0.5) * 20;
-    data.push({ time: Date.now() - (100 - i) * 1000, price: parseFloat(price.toFixed(2)) });
-  }
-  res.json({ price: price.toFixed(2), change: (Math.random()*100-50).toFixed(2), changePercent: (Math.random()*1-0.5).toFixed(2), data: data });
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Server running on " + PORT));
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));
