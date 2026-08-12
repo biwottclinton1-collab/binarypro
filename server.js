@@ -38,15 +38,6 @@ app.post('/api/login', async (req, res) => {
   const token = jwt.sign({ id: user.id }, JWT_SECRET);
   res.json({ token });
 });
-
-// BALANCE
-app.get('/api/balance', async (req, res) => {
-  const token = req.headers.authorization?.split(' ')[1];
-if(!token) return res.status(401).json({ message: 'No token' });
-const decoded = jwt.verify(token, JWT_SECRET);
-const result = await pool.query('SELECT balance FROM users2 WHERE id=$1', [decoded.id]);
-res.json({ balance: result.rows[0].balance });
-});
 // PUBLIC BALANCE - NO TOKEN NEEDED
 app.get('/api/balance', async (req,res)=>{
   try{
