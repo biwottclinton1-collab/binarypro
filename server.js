@@ -59,9 +59,7 @@ app.post('/api/admin/resetboss', async (req,res)=>{
   }
 });
 
-// THIS MUST BE THE VERY LAST ROUTE
-app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
-// DEBUG: See DB data
+// DEBUG: See DB data - MUST BE ABOVE THE * ROUTE
 app.get('/api/debugboss', async (req,res)=>{
   try{
     const u1 = await pool.query('SELECT * FROM users WHERE email = $1', ['boss1@gmail.com']);
@@ -74,5 +72,22 @@ app.get('/api/debugboss', async (req,res)=>{
     res.json({error: e.message})
   }
 });
+
+// FORCE BALANCE TO READ FROM users2
+app.get('/api/balance', async (req,res)=>{
+  try{
+    const result = await pool.query('SELECT balance FROM users2 WHERE email = $1', ['boss1@gmail.com']);
+    if(result.rows.length > 0){
+      res.json({balance: parseFloat(result.rows[0].balance)})
+    } else {
+      res.json({balance: 0})
+    }
+  }catch(e){
+    res.json({balance: 0, error: e.message})
+  }
+});
+
+// THIS MUST BE THE VERY LAST ROUTE
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
 
 app.listen(process.env.PORT || 3000);
