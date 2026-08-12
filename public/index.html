@@ -204,12 +204,15 @@ let price=(9500+Math.random()*volatility*2).toFixed(2);cprice.innerText=price;pt
 if(token)start();
 </script>
 <script>
+<script>
 const API = "https://binarypro-1.onrender.com";
-let balance = 0;
+let balance = 8009.52;
+let stake = 10;
 let price = 9571.36;
 let tick = 0;
+let ticks = 5;
 
-// 1. BALANCE - SAME AS YOURS
+// 1. BALANCE
 async function loadBalance() {
   const token = localStorage.getItem('token');
   if(!token) return;
@@ -219,43 +222,68 @@ async function loadBalance() {
     });
     const data = await res.json();
     balance = data.balance;
-    document.getElementById("balance").innerText = "$" + balance.toFixed(2);
+    document.getElementById("balance").innerText = balance.toFixed(2);
   } catch(e) { console.error(e) }
 }
 
-// 2. LIVE CHART + CURSOR
+// 2. STAKE BUTTONS - FROM YOUR SCREENSHOT
+function changeStake(val) {
+  stake += val;
+  if(stake < 1) stake = 1;
+  document.getElementById("stake").innerText = stake;
+}
+
+function sets(val) {
+  stake = val;
+  document.getElementById("stake").innerText = stake;
+  document.querySelectorAll('.sam button').forEach(b => b.classList.remove('active'));
+  document.getElementById("s"+val).classList.add('active');
+}
+
+// 3. TRADING BUTTONS - FROM YOUR OTHER SCREENSHOT
+function trade(type) {
+  if(balance < stake) { alert("Not enough balance"); return; }
+  balance -= stake;
+  alert("Bet placed: " + type.toUpperCase() + " $" + stake);
+  document.getElementById("balance").innerText = balance.toFixed(2);
+}
+
+function setMode(mode, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  alert(mode.toUpperCase() + " Mode ON");
+}
+
+function setType(type, el) {
+  document.querySelectorAll('.sub div').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  alert("Type: " + type.toUpperCase());
+}
+
+// 4. LIVE CHART + CURSOR
 function updateChart() {
-  price = price + (Math.random() - 0.5) * 15;
+  price = price + (Math.random() - 0.5) * 20;
   tick++;
-  const chartPrice = document.getElementById("chart-price");
-  if(chartPrice) chartPrice.innerText = price.toFixed(2);
+  const priceEl = document.querySelector('.chart-price');
+  if(priceEl) priceEl.innerText = price.toFixed(2);
+  
   const cursor = document.getElementById("cursor");
   if(cursor) cursor.style.left = (tick % 100) + "%";
 }
 
-// 3. AI SCANNER
+// 5. AI SCANNER
 function aiSignal() {
   const signals = ['Even 95%', 'Odd 92%', 'Over 88%', 'Under 90%'];
-  const random = signals[Math.floor(Math.random() * signals.length)];
-  const aiText = document.getElementById("ai-signal");
-  if(aiText) aiText.innerText = 'AI: ' + random;
+  document.getElementById("signal").innerText = 'AI: ' + signals[Math.floor(Math.random()*4)];
 }
 
-// 4. BUTTON CLICKS
-document.addEventListener('click', (e) => {
-  if(e.target.innerText === 'AUTO') alert('AUTO Mode ON');
-  if(e.target.innerText === 'MANUAL') alert('MANUAL Mode ON');
-  if(e.target.innerText.includes('Even')) alert('Bet Placed: Even $10');
-  if(e.target.innerText.includes('Odd')) alert('Bet Placed: Odd $10');
-  if(e.target.id === 'ai-btn') aiSignal();
-})
-
-// 5. RUN EVERYTHING
+// 6. RUN EVERYTHING
 setInterval(loadBalance, 3000);
 setInterval(updateChart, 1000);
 setInterval(aiSignal, 5000);
 loadBalance();
 updateChart();
+</script>
 </script>
 </body>
 </html>
