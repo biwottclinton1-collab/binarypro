@@ -31,10 +31,10 @@ app.post('/api/register', async (req, res) => {
     return res.status(400).json({ error: "Email already exists" });
   }
   const hash = await bcrypt.hash(password, 10);
-  users.push({ email, password: hash, balance: 8009.52 });
+  users.push({ email, password: hash, balance:0 });
   saveUsers(users);
   const token = jwt.sign({ email }, JWT_SECRET);
-  res.json({ token });
+  res.json({ success: true, message: "Registered. Please login" });
 });
 
 // LOGIN
