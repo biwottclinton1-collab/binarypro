@@ -58,5 +58,4 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 module.exports = app;
