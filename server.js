@@ -1,74 +1,77 @@
 const express = require('express');
-const { Pool } = require('pg');
-const bcrypt = require('bcryptjs');
+const cors = require('cors');
+const fs = require('fs');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const path = require('path');
+
 const app = express();
+app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static('public')); // serves your index.html
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
+const JWT_SECRET = "supersecretkey123";
+const USERS_FILE = "users.json";
 
-const JWT_SECRET = 'binarypro_secret_key_2025';
+// read users
+function readUsers() {
+  if(!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, "[]");
+  return JSON.parse(fs.readFileSync(USERS_FILE));
+}
+// save users
+function saveUsers(users) {
+  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+}
 
-// REGISTER - NEW USERS GET $0
+// REGISTER
 app.post('/api/register', async (req, res) => {
-  const { username, email, password } = req.body;
-  const hashed = await bcrypt.hash(password, 10);
-  const startingBalance = 0.00; // <-- ALL NEW USERS START WITH $0
-  try {
-    await pool.query('INSERT INTO users2(username,email,password,balance) VALUES($1,$2,$3,$4)',[username, email, hashed, startingBalance]);
-    return res.status(200).json({ message: `Registration successful! Please deposit to start trading.`, success: true });
-  } catch(e) { 
-    return res.status(400).json({ message: 'Email already exists. Try login', success: false }); 
+  const { email, password } = req.body;
+  let users = readUsers();
+  if(users.find(u => u.email === email)) {
+    return res.status(400).json({ error: "Email already exists" });
   }
+  const hash = await bcrypt.hash(password, 10);
+  users.push({ email, password: hash, balance: 8009.52 });
+  saveUsers(users);
+  const token = jwt.sign({ email }, JWT_SECRET);
+  res.json({ token });
 });
 
 // LOGIN
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
-  const result = await pool.query('SELECT * FROM users2 WHERE email=$1', [email]);
-  if(result.rows.length === 0) return res.status(400).json({ message: 'Invalid email or password' });
-  const user = result.rows[0];
-  const valid = await bcrypt.compare(password, user.password);
-  if(!valid) return res.status(400).json({ message: 'Invalid email or password' });
-  const token = jwt.sign({ id: user.id }, JWT_SECRET);
+  let users = readUsers();
+  const user = users.find(u => u.email === email);
+  if(!user) return res.status(400).json({ error: "User not found" });
+  const ok = await bcrypt.compare(password, user.password);
+  if(!ok) return res.status(400).json({ error: "Wrong password" });
+  const token = jwt.sign({ email }, JWT_SECRET);
   res.json({ token });
 });
 
-// TEMP: Give boss admin money - MUST BE ABOVE app.get('*')
-app.post('/api/admin/resetboss', async (req,res)=>{
-  try{
-    await pool.query('UPDATE users2 SET balance = 8009.52 WHERE email = $1', ['boss1@gmail.com']);
-    res.json({msg: 'boss1@gmail.com balance set to 8009.52'});
-  }catch(e){ 
-    console.log(e)
-    res.status(500).json({error: e.message}) 
-  }
-});
-
-// DEBUG: See DB data - MUST BE ABOVE THE * ROUTE
-app.get('/api/debugboss', async (req,res)=>{
-  try{
-    const u1 = await pool.query('SELECT * FROM users WHERE email = $1', ['boss1@gmail.com']);
-    const u2 = await pool.query('SELECT * FROM users2 WHERE email = $1', ['boss1@gmail.com']);
-    res.json({
-      users_table: u1.rows[0] || "NOT FOUND",
-      users2_table: u2.rows[0] || "NOT FOUND"
-    });
-  }catch(e){
-    res.json({error: e.message})
-  }
-});
-
-// FORCE BALANCE - HARDCODED FOR TEST
+// BALANCE
 app.get('/api/balance', (req, res) => {
-  res.json({ balance: 8009.52 });
+  const token = req.headers.authorization?.split(' ')[1];
+  try {
+    const { email } = jwt.verify(token, JWT_SECRET);
+    let users = readUsers();
+    const user = users.find(u => u.email === email);
+    res.json({ balance: user.balance });
+  } catch(e) {
+    res.status(401).json({ error: "Unauthorized" });
+  }
 });
-// THIS MUST BE THE VERY LAST ROUTE
-app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
 
-app.listen(process.env.PORT || 3000);
+// CHART
+app.get('/api/chart/:symbol', (req, res) => {
+  let price = 9584.63;
+  let data = [];
+  for(let i = 0; i < 100; i++) {
+    price = price + (Math.random() - 0.5) * 20;
+    data.push({ time: Date.now() - (100 - i) * 1000, price: parseFloat(price.toFixed(2)) });
+  }
+  res.json({ price: price.toFixed(2), change: "0", changePercent: "0", data: data });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("Server running on " + PORT));
