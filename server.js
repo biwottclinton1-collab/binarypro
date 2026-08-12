@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const path = require('path');
@@ -8,39 +7,29 @@ const path = require('path');
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public')); // serves your index.html
+app.use(express.static('public'));
 
 const JWT_SECRET = "supersecretkey123";
-const USERS_FILE = "users.json";
 
-// read users
-function readUsers() {
-  if(!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, "[]");
-  return JSON.parse(fs.readFileSync(USERS_FILE));
-}
-// save users
-function saveUsers(users) {
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-}
+// MEMORY DATABASE - resets when Render sleeps
+let users = [
+  { email: "admin@admin.com", password: "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", balance: 8009.52 } // password = password
+];
 
 // REGISTER
 app.post('/api/register', async (req, res) => {
   const { email, password } = req.body;
-  let users = readUsers();
   if(users.find(u => u.email === email)) {
     return res.status(400).json({ error: "Email already exists" });
   }
   const hash = await bcrypt.hash(password, 10);
-  users.push({ email, password: hash, balance:0 });
-  saveUsers(users);
-  const token = jwt.sign({ email }, JWT_SECRET);
-  res.json({ success: true, message: "Registered. Please login" });
+  users.push({ email, password: hash, balance: 0 }); // NEW USERS = $0
+  res.json({ success: true, message: "Registered. Please login" }); // NO AUTO LOGIN
 });
 
 // LOGIN
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
-  let users = readUsers();
   const user = users.find(u => u.email === email);
   if(!user) return res.status(400).json({ error: "User not found" });
   const ok = await bcrypt.compare(password, user.password);
@@ -54,7 +43,6 @@ app.get('/api/balance', (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   try {
     const { email } = jwt.verify(token, JWT_SECRET);
-    let users = readUsers();
     const user = users.find(u => u.email === email);
     res.json({ balance: user.balance });
   } catch(e) {
@@ -70,7 +58,7 @@ app.get('/api/chart/:symbol', (req, res) => {
     price = price + (Math.random() - 0.5) * 20;
     data.push({ time: Date.now() - (100 - i) * 1000, price: parseFloat(price.toFixed(2)) });
   }
-  res.json({ price: price.toFixed(2), change: "0", changePercent: "0", data: data });
+  res.json({ price: price.toFixed(2), change: (Math.random()*100-50).toFixed(2), changePercent: (Math.random()*1-0.5).toFixed(2), data: data });
 });
 
 const PORT = process.env.PORT || 3000;
