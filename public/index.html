@@ -118,8 +118,8 @@ body{background:#0a0e14;color:#fff;overflow-x:hidden}
 </div>
 
 <div class="btns" id="btns">
-<button class="g" id="btn1" onclick="trade('even')">Even<br><small>19.52 USD 95.22%</small></button>
-<button class="r" id="btn2" onclick="trade('odd')">Odd<br><small>19.52 USD 95.22%</small></button>
+<button class="g" id="btn1" onclick="trade('even')">Even<br><small>95.22%</small></button>
+<button class="r" id="btn2" onclick="trade('odd')">Odd<br><small>95.22%</small></button>
 </div>
 
 <div class="tabs"><div class="tab" onclick="setMode('auto',this)">AUTO</div><div class="tab active" onclick="setMode('manual',this)">MANUAL</div></div>
@@ -219,5 +219,22 @@ async function loadBalance() {
 }
 window.onload = loadBalance;
 </script>
+// LOAD BALANCE FROM BACKEND
+async function loadBalance(){
+  try{
+    const res = await fetch('/api/balance?t=' + Date.now()); // kills cache
+    const data = await res.json();
+    document.getElementById('balance').innerText = data.balance.toFixed(2);
+    console.log('Balance loaded:', data.balance);
+  }catch(e){
+    console.log('Balance error:', e)
+  }
+}
+
+// Run when page loads
+window.onload = function(){
+  loadBalance();
+  setInterval(loadBalance, 3000); // refresh every 3 seconds
+}
 </body>
 </html>
