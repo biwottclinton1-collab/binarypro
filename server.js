@@ -68,12 +68,6 @@ app.get('/api/debugboss', async (req,res)=>{
 app.get('/api/balance', (req, res) => {
   res.json({ balance: 8009.52 });
 });
-    }
-  }catch(e){
-    res.json({balance: 0, error: e.message})
-  }
-});
-
 // THIS MUST BE THE VERY LAST ROUTE
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
 
